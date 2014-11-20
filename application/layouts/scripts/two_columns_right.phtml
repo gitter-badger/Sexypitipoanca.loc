@@ -1,0 +1,31 @@
+<?php $starttime = round(microtime(), 4); ?>
+<?php echo $this->doctype('HTML5'); ?>
+<html>
+<head>
+    <?php echo $this->headTitle() ?>
+	<?php echo $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8'); ?>
+    <?php echo $this->headLink(); ?>
+    <?php echo $this->headStyle(); ?>
+    <?php echo $this->headScript(); ?>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="header"><?php echo $this->render('header.phtml'); ?></div>
+		<div class="clear"></div>
+		<div class="empty10"></div>
+		<div class="two-columns-right">
+			<div class="content fL"><?php echo $this->layout()->content; ?></div>
+			<div class="menu-right fR"><?php echo $this->render('menu_right.phtml'); ?></div>
+		</div>
+		<div class="clear"></div>
+		<div class="empty10"></div>
+		
+	</div>
+	<div class="footer"><?php echo $this->render('footer.phtml'); ?></div>asd
+</body>
+</html>
+<?php
+	$endtime = round(microtime(), 4);
+	$totaltime = $endtime - $starttime;
+	echo '<small>pagina generata in '.$totaltime.' secunde</small>';
+?>

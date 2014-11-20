@@ -1,0 +1,420 @@
+<?php
+$tsStatistics = new TS_Statistics();
+$tsProducts = new TS_Products();
+?>
+
+<?php if($this->controller == 'account' && ($this->action == 'wall' || $this->action == 'prieteni' || $this->action == 'messages' || $this->action == 'edit' || $this->action == 'pm' || $this->action == 'favorites' || $this->action == 'galerii' || $this->action == 'clipuri' || $this->action == 'system' || $this->action == 'user-requests')){?>
+<?php
+	$displayUser = $this->display_user;
+	if(NULL != $displayUser){
+		$currentUser = $displayUser;
+	}else{
+		$currentUser = Zend_Registry::get('authUser');
+	}
+?>
+		<div class="myprofile_module">
+			<div class="titlu">
+				<p><?php echo $currentUser->getUsername();?></p>
+				<?php if(Zend_Registry::get('isAuthUser')){?>
+					<?php if(Zend_Registry::get('authUser')->getId() != $currentUser->getId()){?>
+						<a href="/account/pm/uid/<?php echo $currentUser->getId();?>" title="Scrie mesaj">Scrie mesaj</a>
+					<?php }?>
+				<?php }?>
+			</div>
+			<div class="content">
+				<div class="left_content">
+					<?php if(NULL != $currentUser->getAvatar()){?>
+						<img src="/media/avatar/big/<?php echo $currentUser->getAvatar();?>" alt="<?php echo $currentUser->getUsername();?>" title="<?php echo $currentUser->getUsername();?>" />
+					<?php }else{?>
+						<img src="/theme/default/images/user.gif" alt="avatar" alt="<?php echo $currentUser->getUsername();?>" title="<?php echo $currentUser->getUsername();?>" />
+					<?php }?>
+				</div>
+				<div class="right_content">
+					<ul>
+						<li>
+							<a <?php if($this->controller == "account" && $this->action == "wall"){echo "class='selected'";}?> href="/user/<?php echo $currentUser->getUsername();?>">Perete</a>
+						</li>
+						<li>
+							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
+						</li>
+						<li>
+							<a <?php if($this->controller == "account" && $this->action == "clipuri-adaugate"){echo "class='selected'";}?> href="/clipuri-adaugate/<?php echo $currentUser->getUsername();?>">Clipuri adaugate (<?php echo TS_SocialNetwork::userMenuEmbedCount($currentUser->getId());?>)</a>
+						</li>
+						<li>
+							<a <?php if($this->controller == "account" && $this->action == "favorite"){echo "class='selected'";}?> href="/favorite/<?php echo $currentUser->getUsername();?>" title="Favorite">Favorite (<?php echo TS_SocialNetwork::userMenuFavoritesCount($currentUser->getId());?>)</a>
+						</li>
+						<li>
+							<a <?php if($this->controller == "account" && $this->action == "prieteni"){echo "class='selected'";}?> href="/friends/<?php echo $currentUser->getUsername();?>">Prieteni (<?php echo TS_SocialNetwork::userFriendsCount($currentUser->getId());?>)</a>
+						</li>
+					</ul>
+					<?php if(Zend_Registry::get('isAuthUser')){?>
+						<?php
+						$isFriend = TS_SocialNetwork::checkIfFriends(Zend_Registry::get('authUser')->getId(), $currentUser->getId());
+						$isYou = false;
+						if(Zend_Registry::get('authUser')->getId() == $currentUser->getId())
+						{
+							$isYou = true;
+						}
+						if(!$isFriend && !$isYou){?>
+							<a class="action" href="/account/befriend/uid/<?php echo $currentUser->getId();?>"><span>+</span>Adauga prieten</a>
+						<?php }?>
+					<?php }?>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<?php TS_Marketing::customCommercial(true);?>
+	<?php }else{
+	$frontendOptions = array('lifetime' => CACHE_MENU_TOP_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_MENU_TOP);
+	$backendOptions = array('cache_dir' => './data/cache/');
+	$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+	if(!$cache->start('menu_left_top')){?>
+	<div id="tabs" class="modul">
+		<ul class="titlu">
+			<li class="left_titlu">
+				<p><a href="#tabs-1">Galerie foto</a></p>
+			</li>
+			<li class="right_titlu">
+				<p><a href="#tabs-2">Video</a></p>
+			</li>
+		</ul>
+		<div id="tabs-1">
+			<div id="subtabs">
+				<div class="sortare1">
+					<ul>
+						<li>Cele mai:</li>
+						<li><a href="#subtabs-1" class="link3_selected">Tari</a></li>
+						<li>I</li>
+						<li><a href="#subtabs-2" class="link3">Vizionate</a></li>
+						<li>I</li>
+						<li><a href="#subtabs-3" class="link3">Comentate</a></li>
+					</ul>
+				</div>
+				<div id="subtabs-1">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('rating', 'gallery', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+							<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+							<div class="modul_mic">
+								<?php $product = new J_Product(); ?>
+								<?php $product->Product($key, array('category', 'image', 'commentsNo')); ?>
+								<div class="left_modul_mic">
+									<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');?>
+									<a href="<?php echo $link;?>" title="<?php echo $product->getName();?>">
+										<?php if($product->getBigImage()){ ?>
+											<img height="100" src="<?php echo $product->getSmallImage(); ?>" alt="<?php echo $product->getName();?>" title="<?php echo $product->getName(); ?>" />
+										<?php }else {?>
+											<img height="100" src="/theme/default/images/no-photo-small.jpg" alt="no image" title="no image found" />
+										<?php } ?>
+									</a>
+								</div>
+								<div class="right_modul_mic">
+									<div class="titlu_modul_mic">
+										<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+									</div>
+									<div class="comentarii_vizualizari">
+										<ul>
+											<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+											<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li>
+										</ul>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div><!--subtabs-1-->
+				<div id="subtabs-2">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('visits', 'gallery', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+							<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+							<div class="modul_mic">
+								<?php $product = new J_Product(); ?>
+								<?php $product->Product($key, array('category', 'image', 'commentsNo')); ?>
+								<div class="left_modul_mic">
+									<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');?>
+									<a href="<?php echo $link;?>" title="<?php echo $product->getName();?>">
+										<?php if($product->getBigImage()){ ?>
+											<img height="100" src="<?php echo $product->getSmallImage(); ?>" alt="<?php echo $product->getName();?>" title="<?php echo $product->getName(); ?>" />
+										<?php }else {?>
+											<img height="100" src="/theme/default/images/no-photo-small.jpg" alt="no image" title="no image found" />
+										<?php } ?>
+									</a>
+								</div>
+								<div class="right_modul_mic">
+									<div class="titlu_modul_mic">
+										<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+									</div>
+									<div class="comentarii_vizualizari">
+										<ul>
+											<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+											<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li>
+										</ul>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div><!--subtabs-2-->
+				<div id="subtabs-3">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php //$tsProducts = new TS_Products();?>
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('comments', 'gallery', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+							<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+							<div class="modul_mic">
+								<?php $product = new J_Product(); ?>
+								<?php $product->Product($key, array('category', 'image', 'commentsNo')); ?>
+								<div class="left_modul_mic">
+									<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');?>
+									<a href="<?php echo $link;?>" title="<?php echo $product->getName();?>">
+										<?php if($product->getBigImage()){ ?>
+											<img height="100" src="<?php echo $product->getSmallImage(); ?>" alt="<?php echo $product->getName();?>" title="<?php echo $product->getName(); ?>" />
+										<?php }else {?>
+											<img height="100" src="/theme/default/images/no-photo-small.jpg" alt="no image" title="no image found" />
+										<?php } ?>
+									</a>
+								</div>
+								<div class="right_modul_mic">
+									<div class="titlu_modul_mic">
+										<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+									</div>
+									<div class="comentarii_vizualizari">
+										<ul>
+											<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+											<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li>
+										</ul>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div><!--subtabs-3-->
+			</div>
+		</div>
+		<div id="tabs-2"><!-- Videos Tab -->
+			<div id="subtabs">
+				<div class="sortare1">
+					<ul>
+						<li>Cele mai:</li>
+						<li><a href="#subtabs-1" class="link3_selected">Tari</a></li>
+						<li>I</li>
+						<li><a href="#subtabs-2" class="link3">Vizionate</a></li>
+						<li>I</li>
+						<li><a href="#subtabs-3" class="link3">Comentate</a></li>
+					</ul>
+				</div>
+				<div id="subtabs-1">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('rating', 'video', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+								<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+								<div class="modul_mic">
+									<?php
+										$product = new J_Product();
+										$product->Product($key, array('category', 'image', 'commentsNo'));
+										$link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');
+									?>
+									<div class="left_modul_mic">
+										<?php TS_Catalog::displayVideoThumbMenuLeft($product->getId(), $product->getName(), $product->getType(), $link);?>
+									</div>
+									<div class="right_modul_mic">
+										<div class="titlu_modul_mic">
+											<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+										</div>
+										<div class="comentarii_vizualizari">
+											<ul>
+												<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+												<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li></ul>
+										</div>
+									</div>
+									<div class="clear"></div>
+								</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div>
+				<div id="subtabs-2">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('visits', 'video', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+							<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+							<div class="modul_mic">
+								<?php
+									$product = new J_Product();
+									$product->Product($key, array('category', 'image', 'commentsNo'));
+									$link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');
+								?>
+								<div class="left_modul_mic">
+									<?php TS_Catalog::displayVideoThumbMenuLeft($product->getId(), $product->getName(), $product->getType(), $link);?>
+								</div>
+								<div class="right_modul_mic">
+									<div class="titlu_modul_mic">
+										<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+									</div>
+									<div class="comentarii_vizualizari">
+										<ul>
+											<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+											<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li></ul>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div>
+				<div id="subtabs-3">
+					<div id="tritabs">
+						<div class="footer_modul_mic tritabsDeclCont">
+							<ul class="tritabsDecl">
+								<li><a class="bullet" href="#tritabs-1"></a></li>
+								<li><a class="bullet" href="#tritabs-2"></a></li>
+								<li><a class="bullet" href="#tritabs-3"></a></li>
+								<li><a class="bullet" href="#tritabs-4"></a></li>
+							</ul>
+						</div>
+						<div id="tritabs-1">
+							<?php $topRategPhoto = $tsProducts->getTopGalleries('comments', 'video', 20);?>
+							<?php $i=0;$j=2;foreach($topRategPhoto as $key=>$value){?>
+							<?php if($i%5==0 && $i != 0){echo "</div><div id='tritabs-$j'>";$j++;}?>
+							<div class="modul_mic">
+								<?php
+									$product = new J_Product();
+									$product->Product($key, array('category', 'image', 'commentsNo'));
+									$link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');
+								?>
+								<div class="left_modul_mic">
+									<?php TS_Catalog::displayVideoThumbMenuLeft($product->getId(), $product->getName(), $product->getType(), $link);?>
+								</div>
+								<div class="right_modul_mic">
+									<div class="titlu_modul_mic">
+										<h2><a href="<?php echo $link;?>" title="<?php echo $product->getName();?>"><?php echo $tsStatistics->prodDescSummary($product->getName(), 30);?></a></h2>
+									</div>
+									<div class="comentarii_vizualizari">
+										<ul>
+											<li><p><span>Comentari:</span> <?php echo $tsStatistics->getCommentsNumberByGalleryId($product->getId());?></p></li>
+											<li><p><span>Vizualizari:</span> <?php echo $tsStatistics->calculateVisits($product->getId());?></p></li>
+										</ul>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<?php $i++;}?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php $cache->end();}?>
+<?php }?>
+
+<?php if(FACEBOOK_STATUS):?>
+<iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fsexypitipoanca.ro&amp;width=300&amp;height=260&amp;colorscheme=light&amp;show_faces=true&amp;border_color&amp;stream=false&amp;header=false" style="overflow:hidden; background-color:#fff; width:300px; height:260px;margin-top: 10px;"></iframe>
+<?php endif;?>
+
+<?php
+$affiliateAdd = TS_Marketing::customCommercial(true);
+echo $affiliateAdd?"<div class='empty10'></div>".$affiliateAdd:"";
+?>
+
+<?php
+$frontendOptions = array('lifetime' => CACHE_MENU_BOTOM_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_MENU_BOTOM);
+$backendOptions = array('cache_dir' => './data/cache/');
+$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+if(!$cache->start('menu_left_bottom')) {
+?>
+<?php $latestComments = $tsStatistics->getLastComments(28);?>
+<?php if($latestComments != null){?>
+<div id="ctabs" class="mod">
+	<h2 class="tit">
+		Ultimele comentarii
+	</h2>
+	<div id="ctabs-1">
+		<?php $i=0;$j=2;foreach($latestComments as $value){?>
+		<?php if($i%7 == 0 && $i != 0){echo "</div><div id='ctabs-".$j."'>";$j++;}?>
+		<div class="cnt">
+			<?php
+			$tsComment = new TS_Comments();
+			$avatar = $tsComment->getAvatarByUserId($value->getUserId());
+			$product = new J_Product();
+			$product->Product($value->getProduct_id(), array('category', 'image'));
+			$link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');
+			if($avatar){
+			?>
+			<img width="44" height="44" src="/media/avatar/small/<?php echo $avatar;?>" alt="<?php echo $value->getName();?>" />
+			<?php }else{?>
+			<img width="44" height="44" src="/theme/default/images/user.gif" alt="avatar" />
+			<?php }?>
+
+			<a href="<?php echo ($value->getUserId())?"/user/".$value->getName():"javascript: void(0)"?>" class="usr">
+				<?php echo $value->getName();?>
+			</a>
+			<em><?php echo $value->getComment();?></em>
+			<a class="lnk" href="<?php echo $link;?>">Vezi tot comentariul</a>
+		</div>
+		<?php $i++;}?>
+	</div>
+	<div id="tabsComments" class="footer_modul_mic">
+		<ul>
+			<li><a class="bullet" href="#ctabs-1"></a></li>
+			<li><a class="bullet" href="#ctabs-2"></a></li>
+			<li><a class="bullet" href="#ctabs-3"></a></li>
+			<li><a class="bullet" href="#ctabs-4"></a></li>
+		</ul>
+	</div>
+</div>
+<?php }?>
+<?php $cache->end();}?>

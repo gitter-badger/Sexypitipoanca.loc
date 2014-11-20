@@ -1,0 +1,48 @@
+<?php
+$frontendOptions = array('lifetime' => CACHE_TAGCLOUD_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_TAGCLOUD);
+$backendOptions = array('cache_dir' => './data/cache/');
+$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+if(!$cache->start('tagcloud')) {
+?>
+
+<style type="text/css">
+	.tagcloud h3.alpha{float: left;width: 30px;text-align: center;font-size: 26px;line-height: 1;color: #333;text-shadow: 0 1px 0 white;}
+	.tagcloud ol.tags li em{float: right;padding: .4em 12px 0 0;font-style: normal;color: #BBB;z-index: 3;}
+	.tagcloud ol.main li{margin: 0 0 4px 0;}
+	.tagcloud ol.main{margin: 0 0 15px 0;padding: 0 0 15px 50px;border-bottom: 1px solid #DDD;}
+	.tagcloud ol{display: block;list-style-type: decimal;-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;-webkit-padding-start: 40px;}
+	.tagcloud ol.main li{margin: 0 0 4px 0!important;}
+	.tagcloud ol.tags li{margin: 0 0 0 6px;position: relative;display: block;font-size: .85em;overflow: hidden;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;z-index: 1;}
+	.tagcloud ol.main li a{padding: 3px 6px;color: #666;}
+	.tagcloud ol.tags li a{display: block;position: relative;padding: 3px 6px;font-weight: normal;text-decoration: none;z-index: 2;color: #999;}
+	.tagcloud ol.tags li a strong{font-weight: normal;}
+	.tagcloud ol.tags li span.perc{position: absolute;top: 0;left: 0;min-width: 12%;height: 100%;text-indent: -9999px;display: block;background: rgba(0, 0, 0, .07) url('/theme/default/images/glass-light.png') repeat-x 0 50%;overflow: hidden;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;-webkit-transition: background .2s ease-in-out;-moz-transition: background .2s ease-in-out;-o-transition: background .2s ease-in-out;transition: background .2s ease-in-out;}
+	.tagcloud ol.tags li:hover {background: rgba(0,0,0,.1);z-index: 1;}
+</style>
+<div class="tagcloud">
+	<?php $tsStatistics = new TS_Statistics();?>
+	<?php $superTag = $tsStatistics->getSuperTag();?>
+	<?php for ($i = 65; $i <= 90; $i++){?>
+		<?php $letter = chr($i);?>
+		<?php $tags = $tsStatistics->getTagsByLetter($letter); ?>
+		<?php if(null != $tags) { ?>
+		<h3 class="alpha"><span><?php echo $letter; ?></span></h3>
+		<ol class="tags main">
+			<?php foreach($tags as $value){?>
+				<?php $thisTagIsUsedNr = $tsStatistics->getTagsNumbersInProductsById($value->getId());?>
+				<?php $tagWeight = $tsStatistics->tagWeight($thisTagIsUsedNr, $superTag->getTag_id());?>
+				<li class="tag">
+					<em><?php echo $thisTagIsUsedNr;?></em>
+					<?php $link = $this->url(array('tag' => $value->getName()), 'tag');?>
+					<a href="<?php echo $link; ?>" title="<?php echo $value->getName(); ?>" rel="tag">
+						<strong><?php echo $value->getName();?></strong>
+					</a>
+					<span class="perc" style="width: <?php echo $tagWeight; ?>%;"><?php echo $tagWeight; ?>%</span>
+				</li>
+			<?php }?>
+		</ol>
+		<?php }?>
+	<?php }?>
+</div>
+
+<?php $cache->end();}?>

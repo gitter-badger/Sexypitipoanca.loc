@@ -1,0 +1,102 @@
+<style type="text/css">
+ul#sortable{}
+li.sortable{width: 160px; margin: 0 10px 10px 0; border: 1px solid #a00; float: left; text-align: center; background: #fff; border-radius: 5px;}
+li.sortable .item{ height: 80px; padding: 5px 0 0 0;}
+li.sortable .item .image{
+	width: 150px;
+	margin: 0 5px;
+	overflow: hidden;
+}
+li.sortable .item .image a img{
+	height: 150px;
+}
+li.sortable .item .name{
+	height: 36px;
+	font-variant: small-caps;
+	font-size: 13px;
+	border-bottom: 1px dashed #a00;
+	overflow: hidden;
+}
+li.sortable .item .actions{
+	width: 150px;
+	height: 40px;
+	padding: 10px 0;
+}
+li.sortable .item .actions .status{float: left; width: 50px; text-align: center;}
+li.sortable .item .actions .status a img{width: 16px;}
+li.sortable .item .actions .edit{float: left; width: 50px; text-align: center;}
+li.sortable .item .actions .edit a img{width: 16px;}
+li.sortable .item .actions .delete{float: left; width: 50px; margin: 0 0 10px 0; text-align: center;}
+li.sortable .item .actions .delete a img{width: 16px;}
+</style>
+
+<a class="button1" href="/admin/catalog/categories-add">adauga categorie</a>
+
+<?php if($this->result) : ?>
+<div class="empty10"></div>
+<ul id="sortable">
+	<?php
+	if($this->result){
+	$i=1; foreach($this->result as $value) :
+	?>
+	<li class="sortable">
+		<div class="item">
+			<div class="name handle" id="<?php echo $value->getId(); ?>">
+				<?php echo $value->getName(); ?>
+			</div>
+			<div class="clear"></div>
+			<div class="actions">
+				<div class="status">
+					<a href="/admin/catalog/categories-status/id/<?php echo $value->getId(); ?>" title="change status">
+						<?php if($value->getStatus() == 1){?>
+						<img src="/theme/admin/icons/activt.png" alt="activ" title="active" />
+						<?php }else{?>
+						<img src="/theme/admin/icons/inactiv.png" alt="inactiv" title="inactive" />
+						<?php }?>
+					</a>
+				</div>
+				<div class="edit">
+					<a href="/admin/catalog/categories-edit/id/<?php echo $value->getId(); ?>" title="edit">
+						<img src="/theme/admin/icons/edit.png" alt="edit" />
+					</a>
+				</div>
+				<div class="delete">
+					<a href="/admin/catalog/categories-delete/id/<?php echo $value->getId(); ?>" title="delete">
+						<img src="/theme/admin/icons/delete.png" alt="delete" title="delete" />
+					</a>
+				</div>
+			</div>
+		</div>
+	</li>
+	<?php
+	$i++; endforeach;
+	}
+	?>
+</ul>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#sortable").sortable({
+		handle : '.handle',
+		update : function () {
+
+			// BEGIN: PUT DATA IN ARRAY
+			var nrMaxAttr = $('.handle').length;
+			var sir = [];
+			var i=0; while(i < nrMaxAttr) {
+				sir[i] = $('.handle').eq(i).attr('id');
+			i++; }
+			// BEGIN: PUT DATA IN ARRAY
+
+			$.get('/admin/ajax/catalog-categories-sortable', {'listItems': sir}, function(data) {
+				if(data) {
+					try { var items = eval('(' + data + ')'); }  catch (e) {}
+					if(items) {
+						window.location.href = '/admin/catalog/categories';
+					}
+				}
+			});
+		}
+	});
+});
+</script>
+<?php endif; ?>

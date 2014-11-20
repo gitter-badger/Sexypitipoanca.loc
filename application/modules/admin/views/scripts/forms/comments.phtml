@@ -1,0 +1,45 @@
+<form method="<?php echo $this->element->getMethod();?>" action="<?php echo $this->element->getAction();?>" id="<?php echo $this->element->getAttrib('id');?>" class="<?php echo $this->element->getAttrib('class');?>" enctype="<?php echo $this->element->getEncType();?>">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0" class="tableAdmin box-tbl-info">
+		<col width="200" />
+		<col width="" />
+		<tr>
+			<th align="left" valign="middle">
+				<?php
+				$attribs = array();
+				if ($this->element->comment->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->comment->getName(), $this->element->comment->getLabel(), $attribs);
+				?>
+			</th>
+			<td>
+				<?php
+					echo $this->{$this->element->comment->helper}(
+								$this->element->comment->getName(),
+								$this->element->comment->getValue(),
+								$this->element->comment->getAttribs()
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->comment->getMessages())){ echo  $this->formErrors($this->element->comment->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->comment->getDescription(); ?></div>
+			</td>
+		</tr>
+		<tr>
+			<th>&nbsp;</th>
+			<td>
+				<?php echo $this->{$this->element->submit->helper}(
+						$this->element->submit->getName(),
+						$this->element->submit->getValue(),
+						$this->element->submit->getAttribs()
+					);
+				?>
+			</td>
+		</tr>
+	</table>
+</form>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#<?php echo $this->element->getAttrib('id'); ?>").validationEngine();
+});
+</script>

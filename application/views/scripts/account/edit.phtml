@@ -1,0 +1,14 @@
+<div class="header_user">
+	<h2>Informatii generale</h2>
+</div>
+<?php if(!empty($this->message)) : ?>
+	<?php foreach($this->message as $value) : ?>
+		<?php echo $value; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+<?php echo $this->form;?>
+
+<div class="header_user" style="padding-top: 20px;">
+	<h2>Optiuni securitate</h2>
+</div>
+<?php echo $this->formPassword; ?>

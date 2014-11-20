@@ -1,0 +1,81 @@
+<?php if(!empty($this->message)) : ?>
+	<?php foreach($this->message as $value) : ?>
+		<?php echo $value; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+
+<div class="empty10"></div>
+<a class="button1" href="/admin/cms/add">adauga</a>
+<div class="empty10"></div>
+
+<?php if($this->result) : ?>
+	<table class="tableListingsAll">
+		<col width="40" />
+		<col width="" />
+		<col width="60" />
+		<col width="120" />
+		<col width="120" />
+		<col width="200" />
+		<tr>
+			<th>pozitia</th>
+			<th>titlu</th>
+			<th>status</th>
+			<th>creata</th>
+			<th>modificata</th>
+			<th>actiuni</th>
+		</tr>
+		<?php foreach($this->result as $value) : ?>
+		<tr>
+			<td class="center"><?php echo $value->getPosition(); ?></td>
+			<td class="left"><?php echo $value->getTitle(); ?></td>
+			<td class="center"><?php echo $value->getStatus()?'activ':'inactiv'; ?></td>
+			<td class="center"><?php echo date('d-m-Y', $value->getCreated()); ?></td>
+			<td class="center"><?php echo date('d-m-Y', $value->getCreated()); ?></td>
+			<td class="center">
+				<a href="/admin/cms/edit/id/<?php echo $value->getId(); ?>">modifica</a>
+				|
+				<a href="/admin/cms/delete/id/<?php echo $value->getId(); ?>" class="confirmDelete">sterge</a>
+				<div id="confirmDelete" title="confirmati stergerea" style="display:none;">Sunteti sigur ca doriti sa stergeti pagina: <?php echo $value->getTitle(); ?></div>
+			</td>
+		</tr>
+		<?php endforeach; ?>
+	</table>
+
+	<!-- BEGIN: Paginare -->
+	<div class="wrap-paginare">
+		<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+			<ul class="paginare fL">
+				<li>Pagina: </li>
+				<?php echo $this->result; ?>
+			</ul>
+		<?php } ?>
+	</div>
+	<!-- END: Paginare -->
+
+<?php else : ?>
+	<div>nu aveti nicio pagina creata</div>
+<?php endif; ?>
+
+<?php $this->headScript()->captureStart(); ?>
+	$(document).ready(function() {
+		$('.confirmDelete').click(function() {
+			var link = $(this);
+			$("#confirmDelete").dialog({
+				bgiframe: true,
+				height: 150,
+				width: 400,
+				modal: true,
+				buttons: {
+					'da': function() {
+						$(this).dialog('close').dialog('destroy');
+						window.location.href = link.attr('href');
+					},
+					'nu': function() {
+						$(this).dialog('close').dialog('destroy');
+					}
+				}
+			});
+			return false;
+		});
+	});
+<?php $this->headScript()->captureEnd(); ?>

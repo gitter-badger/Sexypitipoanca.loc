@@ -1,0 +1,32 @@
+
+<div class="userSearch">
+	<form method="<?php echo $this->element->getMethod();?>" action="<?php echo $this->element->getAction();?>" id="<?php echo $this->element->getAttrib('id');?>" class="<?php echo $this->element->getAttrib('class');?>"  enctype="<?php echo $this->element->getEncType();?>">
+		<div class="search_friend">
+			<?php echo $this->{$this->element->txtHeaderSearch->helper}(
+				$this->element->txtHeaderSearch->getName(),
+				$this->element->txtHeaderSearch->getValue(),
+				$this->element->txtHeaderSearch->getAttribs()
+			);?>
+		</div>	
+		<div class="search_lupa">
+			<?php echo $this->{$this->element->submit->helper}(
+				$this->element->submit->getName(),
+				$this->element->submit->getValue(),
+				$this->element->submit->getAttribs()
+			);?>
+		</div>
+		<!--<div class="search_drop_down">
+		<?php echo $this->{$this->element->search_type->helper}(
+				$this->element->search_type->getName(),
+				$this->element->search_type->getValue(),
+				$this->element->search_type->getAttribs(),
+				$this->element->search_type->getMultioptions()
+			);?>
+		</div>
+		--><div class="clear"></div>
+		<?php if('<ul class="errors"><li></li></ul>' != ($this->element->txtHeaderSearch->getMessages())) { echo $this->formErrors($this->element->txtHeaderSearch->getMessages()); } ?>
+		<div class="hint"><?php echo $this->element->txtHeaderSearch->getDescription(); ?></div>		
+	</form>
+</div>
+<div class="clear"></div>
+

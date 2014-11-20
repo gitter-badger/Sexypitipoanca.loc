@@ -1,0 +1,8 @@
+<?php if(!empty($this->message)) : ?>
+	<?php foreach($this->message as $value) : ?>
+		<?php echo $value; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+
+<!--<h1 class="title"><?php echo Zend_Registry::get('translate')->_('user_login'); ?></h1>-->
+<?php echo $this->formAuth; ?>

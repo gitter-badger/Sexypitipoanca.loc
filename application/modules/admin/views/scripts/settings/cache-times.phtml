@@ -1,0 +1,40 @@
+<style>
+	.c-comp{width: 300px;padding-bottom: 10px;border: 1px solid #BE0000;border-radius: 5px;}
+	.c-comp .c-title{text-shadow: 1px 1px #333;font-size: 18px;line-height: 30px;text-indent: 10px;color: #ffc813;background: #BE0000;}
+	.c-comp .c-status{padding: 5px 0;text-indent: 10px;}
+	.c-comp .c-status span{font-weight: bold;}
+	.c-comp .c-status a{margin-right: 10px;float: right;}
+	.c-comp .c-expire{padding: 5px 0;text-indent: 10px;}
+	.c-comp .c-expire label{font-weight: bold;}
+	.c-comp .c-expire input{float: right;}
+	.c-comp .c-expire span{margin: 0 10px 0 0;float: right;}
+	.c-comp .slider{margin: 10px;}
+</style>
+
+<div class="c-comp">
+	<div class="c-title"><?php echo str_replace("_", " ", $this->cacheComponent);?></div>
+	<div class="c-status">
+		<span>Status</span>
+			<input type="text" id="amount" name="option[]" value="<?php echo 0==1?"active":"inactive";?>" readonly="readonly" />
+	</div>
+	<div class="c-expire">
+		<label for="amount">Expires</label>
+		<span>sec</span>
+		<input type="text" id="amount" name="option[]" value="3600" readonly="readonly" />
+	</div>
+	<div class="slider"></div>
+</div>
+
+<script>
+$(function(){
+	$(".slider").slider({
+		value:	3600,
+		min:	60,
+		max:	86400,
+		step:	60,
+		slide:	function( event, ui ) {
+			$("#amount" ).val(ui.value);
+		}
+	});
+});
+</script>

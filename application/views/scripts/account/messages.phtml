@@ -1,0 +1,43 @@
+<div class="header_user">
+	<h2>Mesajele mele</h2>
+</div>
+<?php if(NULL != $this->messages){?>
+	<?php foreach($this->messages as $value){?>
+		<?php $userData = TS_SocialNetwork::userDataById($value->getFrom());?>
+		<div class="socMess">
+			<div class="smContainer">
+				<div class="sm_avatar">
+					<a href="/account/pm/uid/<?php echo $userData->getId();?>">
+						<?php if(NULL != $userData->getAvatar()){?>
+							<img src="/media/avatar/big/<?php echo $userData->getAvatar();?>" alt="<?php echo $userData->getUsername();?>" title="<?php echo $userData->getUsername();?>" />
+						<?php }else{?>
+							<img src="/theme/default/images/user.gif" alt="avatar" alt="<?php echo $userData->getUsername();?>" title="<?php echo $userData->getUsername();?>" />
+						<?php }?>
+					</a>
+				</div>
+				
+				<div class="smFooter">
+					<a class="smfUsername" href="/account/pm/uid/<?php echo $userData->getId();?>">
+						<?php echo $userData->getUsername();?>
+					</a>
+					I
+					<em>in <?php echo date('d M, Y \l\a H:i:s', $value->getCreated());?></em>
+					<p><a href="/account/pm/uid/<?php echo $userData->getId();?>">
+					<?php echo (strlen($value->getContent()) > 160)?substr($value->getContent(), 0, 160)." ... ":$value->getContent();?>
+					</a></p>
+				</div>
+				<div class="sm_action">
+					<a href="/account/delete-bulk-messages/uid/<?php echo $userData->getId();?>" title="Sterge mesaj">
+						<img src="/theme/default/images/icon_delete.gif" alt="sterge mesaj" title="sterge mesaj" />
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	<?php }?>
+<?php }else{?>
+	<div class="favorite1">
+		<p>Nu aveti mesaje</p>
+	</div>
+	<div class="hr"></div>
+<?php }?>

@@ -1,0 +1,28 @@
+<form method="<?php echo $this->element->getMethod(); ?>" action="<?php echo $this->element->getAction(); ?>" id="<?php echo $this->element->getId('id'); ?>" class="<?php echo $this->element->getId('class'); ?>" enctype="<?php echo $this->element->getEncType(); ?>">
+	<?php echo $this->{
+	$this->element->control->helper}(
+		$this->element->control->getName(),
+		$this->element->control->getValue(),
+		$this->element->control->getAttribs()
+	);?>
+	
+	<p><?php $attribs = array(); if($this->element->message->isRequired()) { $attribs['class'] = 'required'; }
+	echo $this->formLabel($this->element->message->getName(), $this->element->message->getLabel(), $attribs);?></p>
+	
+	<?php echo $this->{
+	$this->element->message->helper}(
+		$this->element->message->getName(),
+		$this->element->message->getValue(),
+		$this->element->message->getAttribs()
+	);?>
+	
+	<?php if('<ul class="errors"><li></li></ul>' != ($this->element->message->getMessages())) { echo $this->formErrors($this->element->message->getMessages()); } ?>
+	<small class="description"><?php echo $this->element->message->getDescription(); ?></small>
+	
+	<?php echo $this->{
+	$this->element->submit->helper}(
+		$this->element->submit->getName(),
+		$this->element->submit->getLabel(),
+		$this->element->submit->getAttribs()
+	);?>
+</form>

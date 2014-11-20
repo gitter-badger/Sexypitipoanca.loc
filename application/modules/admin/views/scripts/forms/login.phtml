@@ -1,0 +1,61 @@
+<form method="<?php echo $this->element->getMethod();?>" action="<?php echo $this->element->getAction();?>" id="<?php echo $this->element->getId();?>" enctype="<?php echo $this->element->getEncType();?>">
+	<ul>
+		<li>
+			<p>
+				<?php
+				$attribs = array();
+				if ($this->element->tbUser->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->tbUser->getName(), $this->element->tbUser->getLabel(), $attribs);?>
+			</p>
+		</li>
+		<li>
+			<div class="bg_input">
+				<?php
+					echo $this->{$this->element->tbUser->helper}(
+								$this->element->tbUser->getName(),
+								$this->element->tbUser->getValue(),
+								$this->element->tbUser->getAttribs()
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->tbUser->getMessages())){ echo  $this->formErrors($this->element->tbUser->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->tbUser->getDescription(); ?></div>
+		   </div>
+		</li>
+		<li>
+			<p>
+				<?php
+				$attribs = array();
+				if ($this->element->tbPass->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->tbPass->getName(), $this->element->tbPass->getLabel(), $attribs);?>
+			</p>
+		</li>
+		<li>
+			<div class="bg_input">
+				<?php
+					echo $this->{$this->element->tbPass->helper}(
+								$this->element->tbPass->getName(),
+								$this->element->tbPass->getValue(),
+								$this->element->tbPass->getAttribs()
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->tbPass->getMessages())){ echo  $this->formErrors($this->element->tbPass->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->tbPass->getDescription(); ?></div>
+			</div>
+		</li>
+	</ul>
+	<?php echo $this->{$this->element->submit->helper}(
+		$this->element->submit->getName(),
+		$this->element->submit->getValue(),
+		$this->element->submit->getAttribs()
+	);?>
+</form>
+
+<?php $this->headScript()->captureStart() ?>
+	$(document).ready(function() {
+		$("#<?php echo $this->element->getId();?>").validationEngine();
+	});
+<?php $this->headScript()->captureEnd() ?>

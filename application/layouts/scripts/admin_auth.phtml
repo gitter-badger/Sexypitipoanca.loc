@@ -1,0 +1,51 @@
+<?php echo $this->doctype() ?>
+<html>
+<head>
+    <?php echo $this->headTitle() ?>
+    <?php echo $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+    ?>
+    <?php echo $this->headLink() ?>
+    <?php echo $this->headStyle() ?>
+    <?php echo $this->headScript() ?>
+	<style type="text/css">
+		#backtoblog{
+			position:absolute;
+			top:0;
+			left:0;
+			border-bottom:#c6c6c6 1px solid;
+			background:#d9d9d9;
+			background:-moz-linear-gradient(bottom,#d7d7d7,#e4e4e4);
+			background:-webkit-gradient(linear,left bottom,left top,from(#d7d7d7),to(#e4e4e4));
+			height:30px;width:100%;
+		}
+		#backtoblog a{text-decoration:none;display:block;padding:8px 0 0 15px;}
+	</style>
+</head>
+<body>
+<div class="container">
+	<div class="header">
+		<a href="#"><img src="/theme/admin/images/sageata.gif" alt="sageata" /></a>
+		<p><a href="/">Inapoi pe Homepage</a></p>
+	</div>
+	<?php echo $this->layout()->content;?>
+	<?php echo $this->inlineScript();?>
+</div>
+<?php if(1 == 2){?>
+	<div class="wraper">
+		<div class="wraper980">
+			<p id="backtoblog">
+				<a title="Te-ai pierdut?" href="/">&larr; Inapoi pe Homepage</a>
+			</p>
+			<div class="content">
+				<?php echo $this->layout()->content ?>
+			</div>
+			<div class="push"></div>
+		</div>
+<!--		<div class="footer">-->
+			<?php //echo $this->partial('footer.phtml') ?>
+<!--		</div>-->
+		<?php echo $this->inlineScript() ?>
+	</div>
+<?php }?>
+</body>
+</html>

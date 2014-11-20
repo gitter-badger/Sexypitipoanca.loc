@@ -1,0 +1,22 @@
+<script type="text/javascript" src="/library/Needs/uploadify/swfobject.js"></script>
+<script type="text/javascript" src="/library/Needs/uploadify/jquery.uploadify.v2.1.4.min.js"></script>
+<link href="/theme/default/css/uploadify.css" media="screen" rel="stylesheet" type="text/css" >
+<input id="file_upload" type="file" name="file_upload" />
+
+<script type="text/javascript">
+// <![CDATA[
+$(document).ready(function() {
+	$('#file_upload').uploadify({
+	  'uploader'  : '/library/Needs/uploadify/uploadify.swf',
+	  'script'    : '/ajax/upload',
+	  'cancelImg' : '/theme/default/images/cancel.png',
+	  'folder'    : '/media/catalog/test/',
+	  'auto'      : true,
+	  'multi'     : true,
+	  'displayData' : 'speed',
+	  'queueSizeLimit' : 20,
+	  'sizeLimit'   : 2048
+	});
+});
+// ]]>
+</script>

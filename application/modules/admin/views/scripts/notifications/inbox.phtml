@@ -1,0 +1,32 @@
+<?php $messages = $this->result; ?>
+<?php if(NULL != $messages){?>
+	<?php
+	$model = 'Notifications';
+	$result = TS_Base::paginatorToModel($model, $messages);
+	?>
+	<?php foreach($result as $value){?>
+	<div class="socMess">
+		<div class="smContainer">			
+			<div class="smFooter1">				
+				<p><?php
+						//select users
+						$user = TS_SocialNetwork::userDataById($value->getFrom());											
+					?>
+					<?php if($user){ ?>
+					<a href="/admin/notifications/details/userId/<?php echo $value->getFrom(); ?>">
+						<?php echo $user->getUsername(); ?>	
+					</a>											
+					<?php } ?>
+				</p>				
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>	
+	<div class="clear"></div>
+	<?php } ?>	
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+<?php }else{?>
+	Nu exista mesaje!
+<?php }?>

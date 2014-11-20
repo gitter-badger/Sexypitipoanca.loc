@@ -1,0 +1,66 @@
+<?php if($this->result){?>
+	<?php if($this->result->getType() == 'gallery'){?>
+		<link rel="stylesheet" type="text/css" href="/theme/default/js/prettyPhoto/css/prettyPhoto.css" />
+		<script type="text/javascript" src="/theme/default/js/prettyPhoto/js/jquery.prettyPhoto.js"></script>
+		<style type="text/css">
+		li.sortable{width: 160px; margin: 0 10px 10px 0; border: 1px solid #a00; float: left; text-align: center; background: #fff; border-radius: 5px; overflow: hidden;}
+		li.sortable img{ height: 150px;}
+		</style>
+		<?php if($this->images) { ?>
+			<div>
+				<ul id="sortable">
+				<?php
+					foreach($this->images as $value){
+						$tsImage = new TS_Image();
+						$image = $tsImage->bigImageHrefLocation($value->getName(), $this->result->getName(), $this->result->getUser_id());
+				?>
+					<li class="sortable">
+						<a rel="prettyPhoto[gallery]" href="<?php echo $image;?>">
+							<img src="<?php echo $image; ?>" alt="" title="" class="handle" id="<?php echo $value->getId(); ?>" />
+						</a>
+					</li>
+				<?php
+					}
+				?>
+				</ul>
+			</div>
+
+		<script type="text/javascript">
+		$(document).ready(function() {
+			$("a[rel^='prettyPhoto']").prettyPhoto({
+				social_tools: false
+			});
+
+			var productId = '<?php echo $this->id; ?>'
+			$("#sortable").sortable({
+				handle : '.handle',
+				update : function () {
+
+					// BEGIN: PUT DATA IN ARRAY
+					var nrMaxAttr = $('.handle').length;
+					var sir = [];
+					var i=0; while(i < nrMaxAttr) {
+						sir[i] = $('.handle').eq(i).attr('id');
+					i++; }
+					// BEGIN: PUT DATA IN ARRAY
+
+					$.get('/admin/ajax/catalog-products-images-sortable', {'listItems': sir}, function(data) {
+						if(data) {
+							try { var items = eval('(' + data + ')'); }  catch (e) {}
+							if(items) {
+								window.location.href = '/admin/catalog/products-details/id/'+productId;
+							}
+						}
+					});
+				}
+			});
+		});
+		</script>
+		<?php }
+	}elseif($this->result->getType() == 'video'){
+		TS_ToHtml::article($this->result);
+	}elseif($this->result->getType() == 'embed'){
+		TS_ToHtml::videoPlayer($this->result->getId(), PLAYER_WIDTH, PLAYER_HEIGHT);
+		TS_ToHtml::videoThumb($this->result->getId(), $this->result->getName());
+	}
+}?>

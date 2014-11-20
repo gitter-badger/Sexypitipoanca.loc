@@ -1,0 +1,32 @@
+<?php $messages = $this->result; ?>
+<?php if(NULL != $messages){?>
+	<?php
+	$model = 'Notifications';
+	$result = TS_Base::paginatorToModel($model, $messages);
+	?>
+	<?php foreach($result as $value){?>
+	<div class="socMess">
+		<div class="smContainer">
+			<div class="smSentTo">
+				Sent From:
+				<?php if($value->getFrom() == null){ ?>
+					Admin
+				<?php }else{ ?>
+					Me
+				<?php } ?>
+			</div>
+			<div class="smFooter1">				
+				<p><?php echo $value->getContent();?></p>
+				<span class='dateTime'><?php echo date('Y-m-d H:i:s',$value->getCreated());?></span>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>	
+	<div class="clear"></div>
+	<?php } ?>	
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+<?php }else{?>
+	Nu exista mesaje!
+<?php }?>

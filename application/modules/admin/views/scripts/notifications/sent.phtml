@@ -1,0 +1,67 @@
+<?php $messages = $this->result; ?>
+<?php if($this->totalItemCount > 0){?>
+	<?php
+	$model = 'Notifications';
+	$result = TS_Base::paginatorToModel($model, $messages);
+	?>
+	<?php foreach($result as $value){?>
+	<div class="socMess">
+		<div class="smContainer">
+			<div class="smSentTo">
+				Sent To:
+				<?php if($value->getToAll() == 1){ ?>
+					All
+				<?php }else{ ?>
+					<?php
+						//select users
+						echo TS_Message::getUsersByNotificationId($value->getId());
+					?>
+				<?php } ?>
+			</div>
+			<div class="right-mess">
+				<a  class="confirmDelete"  href="/admin/notifications/delete/id/<?php echo $value->getId();?>" title="Sterge">
+					<img src="/theme/default/images/icon_delete.gif" alt="sterge prieten">
+				</a>
+			</div>
+			<div class="smFooter1">				
+				<p><?php echo $value->getContent();?></p>
+				<span class='dateTime'><?php echo date('Y-m-d H:i:s',$value->getCreated());?></span>				
+			</div>			
+			<div class="clear"></div>
+		</div>
+	</div>	
+	<div class="clear"></div>
+	<?php } ?>	
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+	<div id="confirmDelete" title="Mesaj de confirmare" style="display:none;">
+		Sunteţi sigur că doriţi să ştergeţi aceast mesaj?
+	</div>
+	
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.confirmDelete').click(function(){
+		var link = $(this);
+		$("#confirmDelete").dialog({
+			bgiframe: true,
+			height: 140,
+			width: 400,
+			modal: true,
+			buttons:{
+				'DA': function(){
+					$(this).dialog('close').dialog('destroy');
+					window.location.href = link.attr('href');
+				},
+				'NU': function(){
+					$(this).dialog('close').dialog('destroy');
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>	
+<?php }else{?>
+	Nu exista mesaje!
+<?php }?>

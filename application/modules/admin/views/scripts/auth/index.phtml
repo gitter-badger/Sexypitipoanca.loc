@@ -1,0 +1,8 @@
+<h2>Login</h2>
+<?php if(!empty($this->message)) : ?>
+	<?php foreach($this->message as $value) : ?>
+		<center><?php echo $value; ?></center>
+	<?php endforeach; ?>
+<?php endif; ?>
+<?php echo $this->formAuth ?>
+

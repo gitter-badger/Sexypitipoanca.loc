@@ -1,0 +1,98 @@
+<?php if(0){?><div class="headerAlertContainer">
+	<div class="headerAlert">
+		Site-ul se afla in lucrari de mentenanta. Ne cerem scuze pentru eventualele neplaceri.
+	</div>
+</div><?php }?>
+<div class="hdr">
+	<div class="top">
+		<a id="log" href="/"></a>
+		<ul>
+			<?php if(!$this->account){//Guest?>
+			<li>
+				<a class="nac<?php if($this->controller == 'account' && $this->action == 'new'){echo " sel";}?>" href="/account/new" title="Cont nou">
+					<span>Cont nou</span>
+				</a>
+			</li>
+			<li>
+				<a class="fancybox ath<?php if($this->controller == 'auth' && $this->action == 'index'){echo " sel";}?>" href="/iframe/login">
+					<span>Autentificare</span>
+				</a>
+			</li>
+			<?php }?>
+			<li class="lst">
+				<a href="/" class="<?php if($this->controller == 'index' && $this->action == 'index'){echo "sel";}?>">Acasa</a>
+				<a href="/account/terms" class="<?php if($this->controller == 'account' && $this->action == 'terms'){echo "sel";}?>">Termeni si conditii</a>
+				<a href="/contact" class="<?php if($this->controller == 'contact' && $this->action == 'index'){echo "sel";}?>">Contact</a>
+			</li>
+		</ul>
+	</div>
+	<div class="mid">
+		<div class="w96">
+			<ul>
+				<?php if($this->catalogCategories){?>
+					<?php $i=-1;foreach($this->catalogCategories as $value){$i++;?>
+					<li class="<?php echo $i==0?"fst":"";?>">
+						<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($value->getName())), 'id' => $value->getId()), 'category');?>
+						<a class="<?php if($this->controller == 'catalog' && $this->action == 'categories' && $this->seoId == $value->getId()){echo "link_selected";}else{echo "link";}?>" href="<?php echo $link;?>" title="<?php echo $value->getName();?>"><?php echo $value->getName();?></a>
+					</li>
+					<?php }?>
+				<?php }?>
+			</ul>
+			<div class="frm">
+				<?php echo $this->formSearch; ?>
+			</div>
+		</div>
+	</div>
+	<?php if($this->account){//User?>
+	<div class="usr">
+		<div class="w96">
+			<a href="<?php echo "/user/".$this->account->getUsername();?>">
+				<?php if(null != $this->account->getAvatar()){?>
+					<img class="ava" src="/media/avatar/big/<?php echo $this->account->getAvatar();?>" alt="avatar" />
+				<?php }else{?>
+					<img class="ava" src="/theme/default/images/user.gif" alt="avatar" />
+				<?php }?>
+			</a>
+			<div class="nam">
+				<a href="<?php echo "/user/".$this->account->getUsername();?>">
+					<?php echo $this->account->getUsername();?>
+				</a>
+			</div>
+			<div class="usc">
+				<a id="ust" href="javascript: void(0)"></a>
+				<div id="usm">
+					<div class="top"></div>
+					<div class="mdl">
+						<a href="/user/<?php echo $this->account->getUsername();?>" title="Perete">Perete</a>
+						<a href="/account" title="Setari">Setari</a>
+						<a href="/auth/log-out" title="Deconectare">Deconectare</a>
+					</div>
+					<div class="bot"></div>
+				</div>
+			</div>
+			<div class="socialNotifications">
+				<?php $nrMessageAlert = TS_Message::getMessageNumber($this->account->getId());?>
+				<a class="messages<?php if(($this->controller == 'account' && $this->action == 'messages') || $nrMessageAlert){echo " sel";}?>" href="/account/messages">
+					<?php if(NULL != $nrMessageAlert){?>
+						<span class="nr-message-alert"><?php echo $nrMessageAlert;?></span>
+					<?php } ?>
+				</a>
+				
+				<?php $nrSystemAlert = TS_Message::getNotificationsNumber($this->account->getId());?>
+				<a class="system<?php if(($this->controller == 'account' && $this->action == 'system') || $nrMessageAlert){echo " sel";}?>" href="/account/system">
+					<?php if($nrSystemAlert){?>
+						<span class="nr-message-alert"><?php echo $nrSystemAlert;?></span>
+					<?php } ?>
+				</a>
+				
+				<?php $nrNotifAlert = TS_Message::getUserRequestsNumber($this->account->getId());?>
+				<a class="notifications<?php if(($this->controller == 'account' && $this->action == 'user-requests') || $nrNotifAlert){echo " sel";}?>" href="/account/user-requests">
+					<?php if(NULL != $nrNotifAlert){?>
+						<span class="nr-message-alert"><?php echo $nrNotifAlert;?></span>
+					<?php }?>
+				</a>
+			</div>
+		</div>
+	</div>
+	<?php }?>
+</div>

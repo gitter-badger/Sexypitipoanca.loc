@@ -1,0 +1,75 @@
+<?php echo $this->doctype('HTML5'); ?>
+<html lang="ro">
+<head>
+    <?php echo $this->headTitle()?>
+    <link rel="icon" href="/theme/default/images/default/favicon.ico" type="image/x-icon" />
+	<?php echo $this->headMeta();?><?php echo (NULL != $this->canonical)?$this->canonical:"";?>
+	<?php
+		echo $this->minifyHeadLink()
+		->prependStylesheet('/theme/default/css/tsGlobal.css')
+		->appendStylesheet('/theme/default/js/jquery-ui/css/blitzer/jquery-ui-1.8.19.custom.css')
+		->appendStylesheet('/theme/default/js/jquery.fancybox/fancybox/jquery.fancybox-1.3.4.css')
+		->appendStylesheet('/theme/default/js/jquery_ui/css/jquery.ui.selectmenu.css');
+		
+		echo $this->minifyHeadScript()
+		->prependFile('/theme/default/js/jquery.fancybox/fancybox/jquery.mousewheel-3.0.4.pack.js')
+		->prependFile('/theme/default/js/jquery.fancybox/fancybox/jquery.fancybox-1.3.4.pack.js')
+		->prependFile('/theme/mediaplayer-5.9/jwplayer.min.js')
+		->prependFile('/theme/default/js/validationEngine/ro.js')
+		->prependFile('/theme/default/js/validationEngine/validationEngine.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.tabs.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.selectmenu.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.menu.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.autocomplete.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.position.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.widget.js')
+		->prependFile('/theme/default/js/jquery_ui/ui/jquery.ui.core.js')
+		->prependFile('/theme/default/js/jquery-1.7.2.js')
+		->appendScript("
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-11778944-4']);
+			_gaq.push(['_trackPageview']);
+	
+			(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+			$(document).ready(function(){
+				$('.menu li:last-child').css('background', 'none');
+				$('#ust').click(function(){
+					$(this).next('#usm').slideToggle();
+					$(this).toggleClass('active');
+				})
+				$('a.fancybox').fancybox({
+					'width'				: 490,
+					'height'			: 230,
+					'autoScale'			: false,
+					'transitionIn'		: 'none',
+					'transitionOut'		: 'none',
+					'type'				: 'iframe',
+					'onClosed': function(){
+						parent.location.reload(true);
+					}
+				});
+				$(function(){
+					$('#tabs, #ctabs, #subtabs, #rsubtabs, #tritabs, #l2tritabs, #l3tritabs, #r1tritabs, #r2tritabs, #r3tritabs').tabs();
+				});
+			});
+		");
+	?>
+	
+    <?php //echo $this->headLink();?>
+    <?php echo $this->headStyle();?>
+    <?php //echo $this->headScript();?>
+</head>
+<body>
+		<?php echo $this->render('header.phtml'); ?>
+		<div class="container">
+			<div class="left_col"><?php echo $this->render('menu_left.phtml'); ?></div>
+			<div class="right_col"><?php echo $this->layout()->content; ?></div>
+			<div style="clear:both; height:10px; width:960px;"></div>
+		</div>
+		<div class="footer"><?php echo $this->render('footer.phtml'); ?></div>
+</body>
+</html>

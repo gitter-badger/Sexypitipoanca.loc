@@ -1,0 +1,126 @@
+<!--  BEGIN: User details -->
+<?php if($this->user != null){?>
+<style type="text/css">
+	.white-box{
+		width:480px;
+		padding:5px;
+		background:#fff;
+		border:1px solid #A00;
+		border-radius:5px;
+	}
+	.white-box .avatar{width:235px; float: left;}
+	.white-box .details{ width: 235px; float: right;}
+	.white-box .details .title{float: left;font-size:14px; font-weight:bold; color:#797D92; margin-bottom: 5px;}
+	.white-box .details .value{float: left; font-size: 14px; line-height: 18px; text-indent: 10px; color: #666; margin-bottom: 5px;}
+</style>
+<div class="white-box">
+	<div class="avatar">
+		<?php if(null != $this->user->getAvatar()){?>
+			<img src="/media/avatar/big/<?php echo $this->user->getAvatar();?>" alt="user" />
+		<?php }else{?>
+			<img src="/theme/default/images/user.gif" alt="user" />
+		<?php }?>
+	</div>
+	<div class="details">
+		<div class="title">Username:</div>
+		<div class="value"><?php echo $this->user->getUsername();?></div>
+		<div class="clear"></div>
+
+		<div class="title">Date of Birth:</div>
+		<div class="value"><?php echo date("d M Y", $this->user->getBirth_day());?></div>
+		<div class="clear"></div>
+		
+		<div class="title">Gender:</div>
+		<div class="value"><?php echo $this->user->getGender() == "0"?"male":"female";?></div>
+		<div class="clear"></div>
+		
+		<div class="title">Email:</div>
+		<div class="value"><?php echo $this->user->getEmail();?></div>
+		<div class="clear"></div>
+		
+		<div class="title">Posts:</div>
+		<div class="value"><?php echo TS_AdminUsers::fetchNumberOfPosts($this->user->getId());?></div>
+		<div class="clear"></div>
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="empty10"></div>
+<?php }?>
+<!--  END: User details -->
+
+<!-- BEGIN: User comments -->
+<?php if($this->comments){?>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+		<tr>
+			<th colspan="2" align="left">Comments</th>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<th>Date</th>
+		</tr>
+		<?php foreach($this->comments as $value){?>
+		<tr>
+			<td><?php echo $value->getComment();?></td>
+			<td><?php echo date("d M, Y", $value->getAdded());?></td>
+		</tr>
+		<?php }?>
+	</table>
+	<div class="empty10"></div>
+<?php }?>
+<!-- END: User comments -->
+
+<!--  BEGIN: User favorites -->
+<?php if($this->favorite){?>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+		<colgroup>
+			<col />
+			<col width="200" />
+		</colgroup>
+		<tr>
+			<th colspan="2" align="left">Favorite articles</th>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<th>Date</th>
+		</tr>
+		<?php foreach($this->favorite as $value){?>
+		<tr>
+			<td><?php echo $value->getName();?></td>
+			<td><?php echo date("d M, Y", $value->getAdded());?></td>
+		</tr>
+		<?php }?>
+	</table>
+	<div class="empty10"></div>
+<?php }?>
+<!--  END: User favorites -->
+
+<!-- BEGIN: User friends -->
+<?php if($this->friends){?>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+		<colgroup>
+			<col />
+			<col width="200" />
+		</colgroup>
+		<tr>
+			<th>Name</th>
+			<th>Since</th>
+		</tr>
+		<?php
+		foreach($this->friends as $value){
+			$userModel = new Default_Model_AccountUsers();
+			if($value->getInitiatorUserId() == $this->user->getId()) $friendId = $value->getReceiverUserId();
+			else $friendId = $value->getInitiatorUserId();
+			
+			if($userModel->find($friendId))
+			{
+				$name = $userModel->getUsername();
+			}
+		?>
+		<tr>
+			<td><?php echo $name?></td>
+			<td><?php echo date("d M, Y", $value->getCreated());?></td>
+		</tr>
+		<?php }?>
+	</table>
+<?php }?>
+<!-- END: User friends -->

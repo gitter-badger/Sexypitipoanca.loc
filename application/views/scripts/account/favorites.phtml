@@ -1,0 +1,49 @@
+<style type="text/css">
+.modul_galerie{position: relative;}
+.link_delete{position: absolute; top: -5px; right: -5px;}
+</style>
+<div class="header_user">
+	<h2>Galeriile favorite</h2>
+</div>
+<?php if($this->result) { ?>
+	<?php foreach($this->result as $value) { ?>
+		<?php $product = new J_Product(); ?>
+		<?php $tsStatistics = new TS_Statistics(); ?>
+		<?php $product->Product($value->getId(), array('name', 'category', 'image')); ?>
+		<div class="modul_galerie fl">
+			<a class="link_delete" href="/account/deletefavorites/id/<?php echo $value->getId(); ?>" title="Sterge de la favorite">
+				<img src="/theme/default/images/icon-delete.png" alt="sterge" title="Sterge de la favorite" />
+			</a>
+			<div class="imagine">
+				<a href="/catalog/product-details/id/<?php echo $value->getId(); ?>" title="<?php echo $value->getName(); ?>">
+					<?php if($product->getType() == 'gallery'){?>
+						<img src="<?php echo $product->getSmallImage(); ?>" alt="<?php echo $product->getName(); ?>" title="<?php echo $product->getName();?>" />
+					<?php }elseif($product->getType() == 'embed'){?>
+						<img width="100" alt="" src="<?php echo TS_ToHtml::videoThumb($value->getId(), NULL, 1)?>">
+					<?php }else{?>
+						<?php TS_ToHtml::imageForVideo($value->getId());?>
+					<?php }?>
+				</a>
+			</div>
+			<div class="titlu">
+				<h1>
+					<a style="font-size: 14px;height: 48px;overflow: hidden; display: block;" href="/catalog/product-details/id/<?php echo $value->getId(); ?>" title="<?php echo $value->getName(); ?>">
+						<?php echo $product->getName(); ?>
+					</a>
+				</h1>
+			</div>
+			<div class="vizite1">
+				<p class="vizite">Vizitatori: <span><?php echo $tsStatistics->calculateVisits($value->getId()); ?></span></p>
+				<p class="categorie">Din: <a href="/catalog/categories/id/<?php echo $product->getCategoryId(); ?>"><?php echo $product->getCategory();?></a></p>
+			</div>
+		</div>
+	<?php }?>
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result; ?>
+	<?php } ?>
+<?php }else{?>
+	<div class="favorite1">
+    	<p>Nu exista galerii favorite</p>
+    </div>
+<?php }?>
+<div class="hr"></div>

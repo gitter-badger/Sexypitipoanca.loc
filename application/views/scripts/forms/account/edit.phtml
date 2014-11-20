@@ -1,0 +1,136 @@
+<form method="<?php echo $this->element->getMethod(); ?>" action="<?php echo $this->element->getAction(); ?>" id="<?php echo $this->element->getAttrib('id'); ?>" class="<?php echo $this->element->getAttrib('class'); ?>" enctype="<?php echo $this->element->getEncType(); ?>">
+	<?php echo $this->{$this->element->control->helper}(
+		$this->element->control->getName(),
+		$this->element->control->getValue(),
+		$this->element->control->getAttribs()
+	);?>
+	
+	<table width="385" align="center" cellpadding="0" cellspacing="0" border="0">
+		<colgroup>
+			<col width="160"/>
+			<col width=""/>
+		</colgroup>
+		<tr>
+			<td>
+				<p>
+					<?php
+						$attribs = array(); if($this->element->username->isRequired()) { $attribs['class'] = 'required'; }
+						echo $this->formLabel($this->element->username->getName(), $this->element->username->getLabel(), $attribs);
+					?>
+				</p>
+			</td>
+			<td>
+				<div class="input">
+					<?php
+						echo $this->{$this->element->username->helper}
+								(
+									$this->element->username->getName(),
+									$this->element->username->getValue(),
+									$this->element->username->getAttribs()
+								);
+					?>
+					<?php if('<ul class="errors"><li></li></ul>' != ($this->element->username->getMessages())) { echo $this->formErrors($this->element->username->getMessages()); } ?>
+					<small class="description"><?php echo $this->element->username->getDescription(); ?></small>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p>
+					<?php
+						$attribs = array(); if($this->element->image->isRequired()) { $attribs['class'] = 'required'; }
+						echo $this->formLabel($this->element->image->getName(), $this->element->image->getLabel(), $attribs);
+					?>
+					<span>*</span>
+				</p>
+			</td>
+			<td>
+				<div class="input">
+					<?php
+						echo $this->{$this->element->image->helper}
+								(
+									$this->element->image->getName(),
+									$this->element->image->getValue(),
+									$this->element->image->getAttribs()
+								);
+					?>
+					<?php if('<ul class="errors"><li></li></ul>' != ($this->element->image->getMessages())) { echo $this->formErrors($this->element->image->getMessages()); } ?>
+					<small class="description"><?php echo $this->element->image->getDescription(); ?></small>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p>Data nasteri</p>
+			</td>
+			<td>
+					<?php
+						echo $this->{$this->element->birth_day->helper}
+								(
+									$this->element->birth_day->getName(),
+									$this->element->birth_day->getValue(),
+									$this->element->birth_day->getAttribs(),
+									$this->element->birth_day->getMultioptions()
+								);
+					?>
+					<?php
+						echo $this->{$this->element->birth_month->helper}
+								(
+									$this->element->birth_month->getName(),
+									$this->element->birth_month->getValue(),
+									$this->element->birth_month->getAttribs(),
+									$this->element->birth_month->getMultioptions()
+								);
+					?>
+					<?php
+						echo $this->{$this->element->birth_year->helper}
+								(
+									$this->element->birth_year->getName(),
+									$this->element->birth_year->getValue(),
+									$this->element->birth_year->getAttribs(),
+									$this->element->birth_year->getMultioptions()
+								);
+					?>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p>
+					<?php
+						$attribs = array(); if($this->element->gender->isRequired()) { $attribs['class'] = 'required'; }
+						echo $this->formLabel($this->element->gender->getName(), $this->element->gender->getLabel(), $attribs);
+					?>
+				</p>
+			</td>
+			<td>
+				<?php
+					echo $this->{$this->element->gender->helper}
+						(
+							$this->element->gender->getName(),
+							$this->element->gender->getValue(),
+							$this->element->gender->getAttribs(),
+							$this->element->gender->getMultioptions(),
+							'&nbsp;&nbsp;&nbsp;'
+						);
+				?>
+			</td>
+		</tr>		
+		<tr>
+			<td colspan="2" align="right">
+				<?php echo $this->{$this->element->submit->helper}(
+					$this->element->submit->getName(),
+					$this->element->submit->getValue(),
+					$this->element->submit->getAttribs()
+				);?>
+			</td>
+		</tr>
+	</table>
+</form>
+<script type="text/javascript">
+$(function(){
+	$('.selectmenu').selectmenu();
+});
+$(document).ready(function() {
+	$("#<?php echo $this->element->getId();?>").validationEngine();
+});
+</script>

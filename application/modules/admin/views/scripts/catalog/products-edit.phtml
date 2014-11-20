@@ -1,0 +1,84 @@
+<style type="text/css">
+li.sortable{
+	width: 160px;
+	margin: 0 10px 10px 0;
+	border: 1px solid #a00;
+	float: left;
+	text-align: center;
+	background: #fff;
+	border-radius: 5px;
+	overflow: hidden;
+}
+li.sortable .item .image img{ height: 150px;}
+</style>
+<script type="text/javascript">
+$(function() {
+	$( "#tabs" ).tabs();
+});
+</script>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">Informatii generale</a></li>
+		<li><a href="#tabs-2">Etichete</a></li>
+		<li><a href="#tabs-3">Imagini</a></li>
+	</ul>
+	<div id="tabs-1">
+		<p>
+			<?php echo $this->form;?>
+		</p>
+		<div class="clear"></div>
+	</div>
+	<div id="tabs-2">
+		<ul>
+			<?php if($this->tags){?>
+			<?php $tsStatistics = new TS_Statistics(); ?>	
+				<?php foreach($this->tags as $value) { ?>
+					<li class="sortable">
+						<div class="item" style="height: 40px;">
+							<div style="font-size: 13px; padding: 5px 0 10px; font-variant: small-caps; border-bottom: 1px dashed #dfdfdf;">
+								<?php $tags  = $tsStatistics->getTagNameById($value->getTag_id()); ?>
+								<?php echo $tags;?>
+							</div>
+							<div class="actions">
+								<div class="delete">
+									<a href="/admin/catalog/products-delete-tags/id/<?php echo $value->getId();?>/productid/<?php echo $this->productId;?>">
+										<img src="/theme/admin/icons/delete.png" alt="edit" />
+									</a>
+								</div>
+							</div>
+						</div>
+					</li>
+				<?php } ?>
+			<?php } ?>
+		</ul>
+		<div class="clear"></div>
+	</div>
+	<?php if(null != $this->imagini){?>
+	<div id="tabs-3">
+		<ul>
+			<?php foreach($this->imagini as $value){
+				$allowed = "/[^a-z0-9\\-\\_]+/i";
+				$name = preg_replace($allowed,"-", strtolower($value->getProduct()->getName()));
+				$smallImagesPath = '/media/catalog/products/'.$value->getProduct()->getUser_id().'/'.$name.'/small/'.$value->getName();
+			?>
+			<li class="sortable">
+				<div class="item">
+					<div class="image">
+						<img src="<?php echo $smallImagesPath;?>" alt="image" />
+					</div>
+					<div class="clear"></div>
+					<div class="actions">
+						<div class="delete">
+							<a href="/admin/catalog/products-delete-images/id/<?php echo $value->getId(); ?>/productid/<?php echo $this->productId; ?>">
+								<img src="/theme/admin/icons/delete.png" alt="edit" />
+							</a>
+						</div>
+					</div>
+				</div>
+			</li>
+			<?php } ?>
+		</ul>
+		<div class="clear"></div>
+	</div>
+	<?php } ?>
+</div>

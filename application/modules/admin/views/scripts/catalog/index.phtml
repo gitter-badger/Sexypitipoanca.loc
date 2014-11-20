@@ -1,0 +1,137 @@
+<a class="button1" href="/admin/catalog/products-add"><small>adauga galerie</small></a>
+<a class="button1" href="/admin/catalog/products-add-video"><small>adauga video</small></a>
+<?php if(null != $this->categories){?>
+<div class="fR">
+	<?php foreach($this->categories as $value){
+		$class = "";
+		if(isset($_SESSION['catalogFilter'])){
+			if($_SESSION['catalogFilter'] == $value->getId()){
+				$class = "btn-red";
+			}
+		}?>
+		<a class="button1 <?php echo $class;?>" href="/admin/catalog/filter/id/<?php echo $value->getId();?>">
+			<small><?php echo $value->getName();?></small>
+		</a>
+	<?php }?>
+</div>
+<div class="clear"></div>
+<?php }?>
+<div class="empty10"></div>
+
+<?php if($this->result){?>
+<?php
+	$model = 'CatalogProducts';
+	$result = TS_Base::paginatorToModel($model, $this->result);
+	?>
+<ul id="sortableCatalog">
+	<?php foreach($result as $value){?>
+	<li class="sortable">
+		<div class="item">
+			<div class="image">
+				<a rel="<?php echo $value->getType();?>" class="ajaxReplace" style="height: 150px; width: 150px;" id="<?php echo $value->getId();?>" href="/admin/catalog/products-details/id/<?php echo $value->getId();?>">
+					<?php if($value->getType() == 'gallery'){?>
+						<img src="/theme/admin/icons/no-pic-150.gif" alt="no image" />
+					<?php }else{?>
+						<img src="/theme/admin/icons/icon-video.png" alt="no video" />
+					<?php }?>
+				</a>
+			</div>
+			<div class="name handle" id="<?php echo $value->getId(); ?>">
+				<a href="/admin/catalog/products-details/id/<?php echo $value->getId(); ?>">
+					<?php echo $value->getName(); ?>
+				</a>
+			</div>
+			<div class="clear"></div>
+			<div class="actions">
+				<div class="status">
+					<a href="/admin/catalog/products-status/id/<?php echo $value->getId(); ?>">
+						<?php if($value->getStatus() == 1){?>
+							<img src="/theme/admin/icons/activt.png" alt="activ" />
+						<?php }else{?>
+							<img src="/theme/admin/icons/inactiv.png" alt="inactiv" />
+						<?php }?>
+					</a>
+				</div>
+				<div class="edit">
+					<?php if($value->getType() == 'gallery'){?>
+						<a href="/admin/catalog/products-edit/id/<?php echo $value->getId(); ?>">
+							<img src="/theme/admin/icons/edit.png" alt="edit" />
+						</a>
+					<?php }else{?>
+						<a href="/admin/catalog/products-edit-video/id/<?php echo $value->getId(); ?>">
+							<img src="/theme/admin/icons/edit.png" alt="edit" />
+						</a>
+					<?php }?>
+				</div>
+				<div class="delete">
+					<a href="/admin/catalog/products-delete/id/<?php echo $value->getId();?>/pagina/<?php echo $this->pagina;?>">
+						<img src="/theme/admin/icons/delete.png" alt="delete" />
+					</a>
+				</div>
+				<div class="activate">
+					<a href="/admin/catalog/activate/id/<?php echo $value->getId();?>/pagina/<?php echo $this->pagina;?>">
+						<img src="/theme/default/images/default/icon-activate.png" alt="activate" />
+					</a>
+				</div>
+				<div class="info">
+					<a href="/admin/catalog/info/id/<?php echo $value->getId();?>/pagina/<?php echo $this->pagina;?>">
+						<img src="/theme/admin/icons/info.png" alt="info" />
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</li>
+	<?php }?>
+</ul>
+
+<?php if($this->itemCountPerPage < $this->totalItemCount){?>
+	<?php echo $this->result;?>
+<?php }?>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.ajaxReplace').hover(function(){
+		var thisId = $(this).attr('id');
+		var thisType = $(this).attr('rel');
+		var replaceElement = $(this);
+		if(thisId){
+			$.get('/admin/ajax/first-image/id/'+thisId+'/type/'+thisType, function(data) {
+				if(data) {
+					try {
+						var items = eval('(' + data + ')');
+					} catch (e) {}
+					if(items) {
+						replaceElement.html('<img height="150" src="'+items+'" alt="small image" />');
+						replaceElement.attr('id', '');
+					}
+				}
+			});
+		}
+	});
+
+	$("#sortableCatalog").sortable({
+		handle : '.handle',
+		update : function () {
+
+			// BEGIN: PUT DATA IN ARRAY
+			var nrMaxAttr = $('.handle').length;
+			var sir = [];
+			var i=0; while(i < nrMaxAttr) {
+				sir[i] = $('.handle').eq(i).attr('id');
+			i++; }
+			// BEGIN: PUT DATA IN ARRAY
+
+			$.get('/admin/ajax/catalog-products-sortable', {'listItems': sir}, function(data) {
+				if(data) {
+					try { var items = eval('(' + data + ')'); }  catch (e) {}
+					if(items) {
+						window.location.href = '/admin/catalog';
+					}
+				}
+			});
+		}
+	});
+});
+</script>
+<?php }?>

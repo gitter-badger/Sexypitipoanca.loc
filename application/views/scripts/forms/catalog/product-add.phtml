@@ -1,0 +1,173 @@
+<form
+	method="<?php echo $this->element->getMethod(); ?>"
+	action="<?php echo $this->element->getAction(); ?>"
+	id="<?php echo $this->element->getId('id'); ?>"
+	class="<?php echo $this->element->getId('class'); ?>"
+	enctype="<?php echo $this->element->getEncType(); ?>"
+>
+	<?php
+		echo $this->{$this->element->control->helper}
+				(
+					$this->element->control->getName(),
+					$this->element->control->getValue(),
+					$this->element->control->getAttribs()
+				);
+	?>
+	<ul class="contact fl">
+		<li>
+			<p>
+				<?php
+					$attribs = array(); if($this->element->category->isRequired()) { $attribs['class'] = 'required'; }
+					echo $this->formLabel($this->element->category->getName(), $this->element->category->getLabel(), $attribs);
+				?>
+			</p>
+		</li>
+		<li>
+			<?php
+				echo $this->{$this->element->category->helper}
+						(
+							$this->element->category->getName(),
+							$this->element->category->getValue(),
+							$this->element->category->getAttribs(),
+							$this->element->category->getMultioptions()
+						);
+			?>
+			<?php if('<ul class="errors"><li></li></ul>' != ($this->element->category->getMessages())) { echo $this->formErrors($this->element->category->getMessages()); } ?>
+			<small class="description"><?php echo $this->element->category->getDescription(); ?></small>
+		</li>
+		<li>
+			<p>
+				<?php
+					$attribs = array(); if($this->element->name->isRequired()) { $attribs['class'] = 'required'; }
+					echo $this->formLabel($this->element->name->getName(), $this->element->name->getLabel(), $attribs);
+				?>
+			</p>
+		</li>
+		<li>
+			<?php
+				echo $this->{$this->element->name->helper}
+						(
+							$this->element->name->getName(),
+							$this->element->name->getValue(),
+							$this->element->name->getAttribs()
+						);
+			?>
+			<?php if('<ul class="errors"><li></li></ul>' != ($this->element->name->getMessages())) { echo $this->formErrors($this->element->name->getMessages()); } ?>
+			<small class="description"><?php echo $this->element->name->getDescription(); ?></small>
+		</li>
+		<li>
+			<p>
+				<?php
+					$attribs = array(); if($this->element->image->isRequired()) { $attribs['class'] = 'required'; }
+					echo $this->formLabel($this->element->image->getName(), $this->element->image->getLabel(), $attribs);
+				?>
+			</p>
+		</li>
+		<li>
+			<?php
+				echo $this->{$this->element->image->helper}
+						(
+							$this->element->image->getName(),
+							$this->element->image->getValue(),
+							$this->element->image->getAttribs()
+						);
+			?>
+			<?php if('<ul class="errors"><li></li></ul>' != ($this->element->image->getMessages())) { echo $this->formErrors($this->element->image->getMessages()); } ?>
+			<small class="description"><?php echo $this->element->image->getDescription(); ?></small>
+		</li>
+	</ul>
+	<ul class="contact fr">
+		<li>
+			<p>
+				<?php
+					$attribs = array(); if($this->element->tags->isRequired()) { $attribs['class'] = 'required'; }
+					echo $this->formLabel($this->element->tags->getName(), $this->element->tags->getLabel(), $attribs);
+				?>
+			</p>
+		</li>
+		<li>
+			<?php
+				echo $this->{$this->element->tags->helper}
+						(
+							$this->element->tags->getName(),
+							$this->element->tags->getValue(),
+							$this->element->tags->getAttribs()
+						);
+			?>
+			<?php if('<ul class="errors"><li></li></ul>' != ($this->element->tags->getMessages())) { echo $this->formErrors($this->element->tags->getMessages()); } ?>
+			<small class="description"><?php echo $this->element->tags->getDescription(); ?></small>
+		</li>
+	</ul>
+	<div class="informatii">
+		<h5>Informatii suplimentare</h5>
+		<p>Poti adauga maxim 100 de poze intr-o galerie</p>
+		<p>Marimea maxima a acestora este de 25 de mega</p>
+		<p>Taguri trebe sa fie separate prin virgula intre ele</p>
+	</div>
+	<?php
+		echo $this->{$this->element->submit->helper}
+				(
+					$this->element->submit->getName(),
+					$this->element->submit->getLabel(),
+					$this->element->submit->getAttribs()
+				);
+	?>
+</form>
+<!--BEGIN:SWF UPLOAD-->
+<link href="js/swfupload/css/default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?php echo THEME_PATH; ?>/js/swfupload/js/swfupload.js"></script>
+<script type="text/javascript" src="<?php echo THEME_PATH; ?>/js/swfupload/js/swfupload.queue.js"></script>
+<script type="text/javascript" src="<?php echo THEME_PATH; ?>/js/swfupload/js/fileprogress.js"></script>
+<script type="text/javascript" src="<?php echo THEME_PATH; ?>/js/swfupload/js/handlers.js"></script>
+<script type="text/javascript">
+	var swfu;
+	$(document).ready(function() {
+		var settings = {
+		flash_url : "<?php echo THEME_PATH; ?>/js/swfupload/js/swfupload.swf",
+		flash9_url : "<?php echo THEME_PATH; ?>/js/swfupload/js/swfupload_fp9.swf",
+		upload_url: "upload.php",
+		post_params: {"PHPSESSID" : "<?php echo session_id();?>"},
+		file_size_limit : "100 MB",
+		file_types : "*.*",
+		file_types_description : "All Files",
+		file_upload_limit : 100,
+		file_queue_limit : 0,
+		custom_settings : {
+			progressTarget : "fsUploadProgress",
+			cancelButtonId : "btnCancel"
+		},
+		debug: false,
+
+		button_image_url: "<?php echo THEME_PATH; ?>/js/swfupload/images/TestImageNoText_65x29.png",
+		button_width: "65",
+		button_height: "29",
+		button_placeholder_id: "spanButtonPlaceHolder",
+		button_text: '<span class="theFont">Browse</span>',
+		button_text_style: ".theFont {font-size: 16;}",
+		button_text_left_padding: 6,
+		button_text_top_padding: 3,
+
+		swfupload_preload_handler : preLoad,
+		swfupload_load_failed_handler : loadFailed,
+		file_queued_handler : fileQueued,
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,
+		upload_complete_handler : uploadComplete,
+		queue_complete_handler : queueComplete
+	};
+
+	swfu = new SWFUpload(settings);
+
+	});
+</script>
+<!--END:SWF UPLOAD-->
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#image').attr('multiple, true');
+
+	});
+</script>

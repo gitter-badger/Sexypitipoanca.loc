@@ -1,0 +1,12 @@
+<?php if($this->result){?>
+	<?php foreach($this->result as $value) : ?>
+		<?php TS_ToHtml::article($value, true);?>
+	<?php endforeach; ?>
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+<?php }else{?>
+<div class="cauta1">
+	<h1>Nu exista rezultate pentru <span>"<?php echo (null != $this->cautare)?$this->cautare:"";?>"</span></h1>
+</div>
+<?php } ?>

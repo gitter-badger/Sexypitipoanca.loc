@@ -1,0 +1,73 @@
+<!--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css" type="text/css" />-->
+<link rel="stylesheet" href="<?php echo "/theme/default/js/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css";?>" type="text/css" />
+
+<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
+
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.gears.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.silverlight.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.flash.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.browserplus.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/js/plupload.html4.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/plupload.html5.js";?>"></script>
+<script type="text/javascript" src="<?php echo "/theme/default/js/plupload/js/jquery.ui.plupload/jquery.ui.plupload.js";?>"></script>
+
+<style type="text/css">
+.plupload_header_content{display: none;}
+#uploader{border: 1px solid #cecece;border-radius: 5px;}
+.plupload_filelist{border-bottom: 1px solid #cecece;background: #ddd;}
+.plupload_filelist_footer{border-top: 1px solid #cecece;background: #ddd;}
+.plupload_file{border-bottom: 1px solid #cecece;}
+.plupload_button{border: 1px solid #aaa;border-radius: 3px;}
+</style>
+
+<form method="post" action="dump.php">
+	<div id="uploader">
+		<p>You browser doesn't have Flash, Silverlight, Gears, BrowserPlus or HTML5 support.</p>
+	</div>
+</form>
+<script type="text/javascript">
+$(function() {
+	$("#uploader").plupload({
+		runtimes : 'flash,html5,browserplus,silverlight,gears,html4',
+		url : '<?php echo "/upload";?>',
+		max_file_size : '1000mb',
+		max_file_count: 20,
+		chunk_size : '1mb',
+		unique_names : true,
+		multiple_queues : true,
+
+		resize : {width : 320, height : 240, quality : 90},
+		rename: true,
+		
+		sortable: true,
+
+		filters : [
+			{title : "Image files", extensions : "jpg,gif,png"},
+			{title : "Zip files", extensions : "zip,avi"}
+		],
+
+		flash_swf_url : '<?php echo "/theme/default/js/plupload/js/plupload.flash.swf";?>',
+		silverlight_xap_url : '<?php echo "/theme/default/js/plupload/js/plupload.silverlight.xap";?>'
+	});
+
+	$('form').submit(function(e) {
+        var uploader = $('#uploader').plupload('getUploader');
+
+        if (uploader.files.length > 0) {
+            uploader.bind('StateChanged', function() {
+                if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
+                    $('form')[0].submit();
+                }
+            });
+                
+            uploader.start();
+        } else
+            alert('You must at least upload one file.');
+
+        return false;
+    });
+});
+</script>

@@ -1,0 +1,40 @@
+<?php if(!empty($this->message)){?>
+	<?php foreach($this->message as $value){?>
+		<?php echo $value;?>
+	<?php }?>
+<?php }?>
+
+<style>
+	.c-item{width: 250px;height: 16px;padding: 2px 0;border-bottom: 1px solid #cdcdcd;}
+	.c-item span{width: 150px;display: block;float: left;}
+	.c-item a{width: 50px;display: block;float: right;}
+</style>
+
+<div class="c-item">
+	<span>Index</span>
+	<a href="/admin/settings/cache-times/com/index/act/clear">Clear</a>
+	<a href="/admin/settings/cache-times/com/index/act/modify">Modify</a>
+</div>
+
+<div class="c-item">
+	<span>Menu Left Top</span>
+	<a href="/admin/settings/cache-times/com/menu_left_top/act/clear">Clear</a>
+	<a href="/admin/settings/cache-times/com/menu_left_top/action/modify">Modify</a>
+</div>
+
+<div class="c-item">
+	<span>Menu Left Bottom</span>
+	<a href="/admin/settings/cache-times/com/menu_left_top/act/clear">Clear</a>
+	<a href="/admin/settings/cache-times/com/menu_left_top/act/modify">Modify</a>
+</div>
+
+<div class="c-item">
+	<span>Footer</span>
+	<a href="/admin/settings/cache-times/com/footer/act/clear">Clear</a>
+	<a href="/admin/settings/cache-times/com/footer/act/modify">Modify</a>
+</div>
+<div class="c-item">
+	<span>Tagcloud</span>
+	<a href="/admin/settings/cache-times/com/tagcloud/act/clear">Clear</a>
+	<a href="/admin/settings/cache-times/com/tagcloud/act/clear">Modify</a>
+</div>

@@ -1,0 +1,89 @@
+<form	method="<?php echo $this->element->getMethod(); ?>"	action="<?php echo $this->element->getAction(); ?>"	id="<?php echo $this->element->getId('id'); ?>"	class="<?php echo $this->element->getId('class'); ?>"	enctype="<?php echo $this->element->getEncType(); ?>">	
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="tableAdmin box-tbl-info">
+		<col width="200" />
+		<col width="" />
+		<tr>
+			<th align="left" valign="middle">
+				<?php
+				$attribs = array();
+				if ($this->element->all->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->all->getName(), $this->element->all->getLabel(), $attribs);
+				?>
+			</th>
+			<td>
+				<?php
+					echo $this->{$this->element->all->helper}(
+								$this->element->all->getName(),
+								$this->element->all->getCheckedValue(),
+								$this->element->all->getAttribs()							
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->all->getMessages())){ echo  $this->formErrors($this->element->all->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->all->getDescription(); ?></div>
+			</td>
+		</tr>
+		<tr>
+			<th align="left" valign="middle">
+				<?php
+				$attribs = array();
+				if ($this->element->user->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->user->getName(), $this->element->user->getLabel(), $attribs);
+				?>
+			</th>
+			<td>
+				<?php
+					echo $this->{$this->element->user->helper}(
+								$this->element->user->getName(),
+								$this->element->user->getValue(),
+								$this->element->user->getAttribs(),
+								$this->element->user->getMultiOptions(),
+								'&nbsp;&nbsp;&nbsp;'
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->user->getMessages())){ echo  $this->formErrors($this->element->user->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->user->getDescription(); ?></div>
+			</td>
+		</tr>		
+		<tr>
+			<th align="left" valign="middle">
+				<?php
+				$attribs = array();
+				if ($this->element->message->isRequired()) {
+					$attribs['class'] = 'required';
+				}
+				echo $this->formLabel($this->element->message->getName(), $this->element->message->getLabel(), $attribs);?>
+			</th>
+			<td>
+				<?php
+					echo $this->{$this->element->message->helper}(
+								$this->element->message->getName(),
+								$this->element->message->getValue(),
+								$this->element->message->getAttribs()
+							);
+				?>
+				<?php if('<ul class="errors"><li></li></ul>'!=($this->element->message->getMessages())){ echo  $this->formErrors($this->element->message->getMessages());} ?>
+				<div class="hint"><?php echo $this->element->message->getDescription(); ?></div>
+			</td>
+		</tr>
+		<tr>
+			<th>&nbsp;</th>
+			<td>
+				<?php echo $this->{$this->element->submit->helper}(
+						$this->element->submit->getName(),
+						$this->element->submit->getValue(),
+						$this->element->submit->getAttribs()
+					);
+				?>
+			</td>
+		</tr>
+	</table>
+</form>
+<script type="text/javascript">	
+	$(document).ready(function() {	
+		$('#image').attr('multiple, true');	
+	});
+</script>

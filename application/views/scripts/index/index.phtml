@@ -1,0 +1,20 @@
+<?php
+$frontendOptions = array('lifetime' => CACHE_INDEX_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_INDEX);
+$backendOptions = array('cache_dir' => './data/cache/');
+$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+if(!$cache->start('index'.$this->curentPage)){
+?>
+
+<?php if($this->result){?>
+	<?php
+	$model = 'CatalogProducts';
+	$result = TS_Base::paginatorToModel($model, $this->result);
+	?>
+	<?php foreach($result as $value){?>
+		<?php TS_ToHtml::article($value, true, true);?>
+	<?php }?>
+	<?php if($this->itemCountPerPage < $this->totalItemCount)?>
+		<?php echo $this->result; ?>
+<?php }?>
+
+<?php $cache->end();}?>

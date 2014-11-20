@@ -1,0 +1,43 @@
+<?php echo $this->doctype('HTML5'); ?>
+<html>
+<head>
+    <?php echo $this->headTitle(); ?>
+	<?php echo $this->headMeta()->appendName('keywords', 'framework, PHP, productivity'); ?>
+	<?php echo $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
+								->appendHttpEquiv('Content-Language', 'en-US')
+								->appendHttpEquiv('expires', 'Wed, 26 Feb 2013 08:21:57 GMT')
+								->appendHttpEquiv('pragma', 'no-cache')
+								->appendHttpEquiv('Cache-Control', 'no-cache'); ?>
+	<?php echo $this->headLink(); ?>
+    <?php echo $this->headStyle(); ?>
+    <?php echo $this->headScript(); ?>
+</head>
+<body>
+<div class="wrapper">
+	<div class="content">
+		<?php echo $this->render('header.phtml') ?>
+		<?php if($this->message){?>
+			<?php foreach($this->message as $value){?>
+				<?php echo $value; ?>
+				<div class="empty10"></div>
+			<?php }?>
+		<?php }?>
+		<div class="main_context">
+			<?php echo $this->navigation()->menu();?>
+		</div>
+		<div class="main_content">
+			<h2 class="title">
+				<?php echo $this->navigation()->breadcrumbs()->setMinDepth(0)->setRenderInvisible(true)->setSeparator(' &raquo; '); ?>
+			</h2>
+			<div class="table-width">
+				<?php echo $this->layout()->content ?>
+			</div>
+		</div>
+		<div class="clear"></div>
+	</div>
+	<div class="push"></div>
+</div>
+<?php echo $this->render('footer.phtml');?>
+<?php echo $this->inlineScript();?>
+</body>
+</html>

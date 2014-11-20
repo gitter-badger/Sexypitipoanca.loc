@@ -1,0 +1,11 @@
+<div class="header_user">
+	<h2>Contact</h2>
+</div>
+<?php if(!empty($this->message)) : ?>
+	<?php foreach($this->message as $value) : ?>
+		<?php echo $value; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+<ul class="contact">
+	<?php echo $this->form; ?>
+</ul>

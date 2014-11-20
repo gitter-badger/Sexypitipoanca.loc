@@ -1,0 +1,69 @@
+<form
+	method="<?php echo $this->element->getMethod(); ?>"
+	action="<?php echo $this->element->getAction(); ?>"
+	id="<?php echo $this->element->getId('id'); ?>"
+	class="<?php echo $this->element->getId('class'); ?>"
+	enctype="<?php echo $this->element->getEncType(); ?>"
+>
+	<?php
+		echo $this->{$this->element->control->helper}
+		(
+			$this->element->control->getName(),
+			$this->element->control->getValue(),
+			$this->element->control->getAttribs()
+		);
+	?>
+
+		<div class="subscribeMessages">
+			&nbsp;
+		</div>
+
+		<div class="bg_input">
+			<?php
+				echo $this->{$this->element->email->helper}
+					(
+						$this->element->email->getName(),
+						$this->element->email->getValue(),
+						$this->element->email->getAttribs()
+					);
+			?>
+			<?php if('<ul class="errors"><li></li></ul>' != ($this->element->email->getMessages())) { echo $this->formErrors($this->element->email->getMessages()); } ?>
+			<small class="description"><?php echo $this->element->email->getDescription(); ?></small>
+		</div>
+
+		<?php
+			echo $this->{$this->element->submit->helper}
+					(
+						$this->element->submit->getName(),
+						$this->element->submit->getLabel(),
+						$this->element->submit->getAttribs()
+					);
+		?>
+		<div class="clearSubscribe"></div>
+
+</form>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$('#<?php echo $this->element->getId('id'); ?>').submit(function() 	{
+		var email = $('#email').val();
+		$.get('/ajax/subscribe/email/'+email, function(data) 
+		{
+			if(data) 
+			{				
+				try
+				{
+					var items = eval('(' + data + ')');
+				}
+				catch (e) {}
+				if(items)
+				{
+					console.log(items);
+						$("div.subscribeMessages").html(items);
+				}
+			}
+		});
+		return false;
+	});
+});
+</script>

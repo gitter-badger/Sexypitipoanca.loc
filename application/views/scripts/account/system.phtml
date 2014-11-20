@@ -1,0 +1,43 @@
+<?php
+?>
+<div class="header_user">
+	<h2>Notificari</h2>
+</div>
+<?php $messages = $this->result; ?>
+<?php if($this->totalItemCount > 0){ ?>
+	<?php
+	$model = 'Notifications';
+	$result = TS_Base::paginatorToModel($model, $messages);
+	?>
+	<?php foreach($result as $value){?>
+	<?php
+	//mark all notification as read with update
+	$newClass= false;
+	if($value->getRead() == 0)
+	{
+		$newClass = true;
+		TS_Message::markNotificationRead($value->getId(), Zend_Registry::get('authUser')->getId()); 
+	}
+	?>
+	<div class="notificationMess <?php echo ($newClass)?'newMessage':'' ?>">
+		<div class="smContainer">			
+			<div class="smContent">	
+				<span class='dateTime'>
+					Trimis <em>in <?php echo date('d M, Y \l\a H:i:s', $value->getCreated());?></em>				
+				</span>				
+				<p><?php echo nl2br($value->getContent());?></p>
+				
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>	
+	<div class="clear"></div>
+	<?php } ?>	
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+<?php }else{?>
+	<div class="favorite1">
+		<p>Nu aveti notificari</p>
+	</div>
+<?php }?>

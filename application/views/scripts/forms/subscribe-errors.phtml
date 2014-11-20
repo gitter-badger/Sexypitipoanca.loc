@@ -1,0 +1,24 @@
+<form
+	method="<?php echo $this->element->getMethod(); ?>"
+	action="<?php echo $this->element->getAction(); ?>"
+	id="<?php echo $this->element->getId('id'); ?>"
+	class="<?php echo $this->element->getId('class'); ?>"
+	enctype="<?php echo $this->element->getEncType(); ?>"
+>
+	<?php
+		echo $this->{$this->element->control->helper}
+				(
+					$this->element->control->getName(),
+					$this->element->control->getValue(),
+					$this->element->control->getAttribs()
+				);
+	?>
+	<li>
+		<?php if('<ul class="errors"><li></li></ul>' != ($this->element->name->getMessages())) { echo $this->formErrors($this->element->name->getMessages()); } ?>
+		<small class="description"><?php echo $this->element->name->getDescription(); ?></small>
+	</li>
+	<li>
+		<?php if('<ul class="errors"><li></li></ul>' != ($this->element->email->getMessages())) { echo $this->formErrors($this->element->email->getMessages()); } ?>
+		<small class="description"><?php echo $this->element->email->getDescription(); ?></small>
+	</li>
+</form>

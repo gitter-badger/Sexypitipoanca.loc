@@ -1,0 +1,32 @@
+<form method="<?php echo $this->element->getMethod(); ?>" action="<?php echo $this->element->getAction(); ?>" id="<?php echo $this->element->getId('id'); ?>" class="<?php echo $this->element->getId('class'); ?>" enctype="<?php echo $this->element->getEncType(); ?>">
+	<?php echo $this->{$this->element->control->helper}($this->element->control->getName(),$this->element->control->getValue(),$this->element->control->getAttribs());?>
+
+	<?php echo $this->formLabel($this->element->username->getName(), $this->element->username->getLabel()) ?>
+	<?php echo $this->{$this->element->username->helper}(
+		$this->element->username->getName(),
+		$this->element->username->getValue(),
+		$this->element->username->getAttribs()
+	);?>
+	<?php if(NULL != $this->element->username->getMessages()){echo $this->formErrors($this->element->username->getMessages());}?>
+
+	<?php echo $this->formLabel($this->element->password->getName(), $this->element->password->getLabel()) ?>
+	<?php echo $this->{$this->element->password->helper}(
+		$this->element->password->getName(),
+		$this->element->password->getValue(),
+		$this->element->password->getAttribs()
+	);?>
+	<?php if(NULL != ($this->element->password->getMessages())) { echo $this->formErrors($this->element->password->getMessages()); } ?>
+		<?php echo $this->{$this->element->submit->helper}(
+			$this->element->submit->getName(),
+			$this->element->submit->getLabel(),
+			$this->element->submit->getAttribs()
+		);?>
+	<a class="lnk" href="/auth/forgot-password" title="Parola pierduta">Ti-ai pierdut parola?</a>
+	<a class="lnk" href="/account/new" title="Cont nou">Cont nou</a>
+</form>
+
+<?php $this->headScript()->captureStart() ?>
+$(document).ready(function(){
+	$("#<?php echo $this->element->getId();?>").validationEngine();
+});
+<?php $this->headScript()->captureEnd() ?>

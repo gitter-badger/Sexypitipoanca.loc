@@ -1,0 +1,152 @@
+<?php //echo "<pre>".print_r($_SESSION, 1)."</pre>";
+//unset($_SESSION['userGender']);
+?>
+<div class="fR">
+	<form id="jsFormFilter" method="post" action="/admin/user/filter/interval">
+		<?php $filterUserStatus = ""; if(isset($_SESSION['userFilter'])) $filterUserStatus = $_SESSION['userFilter'];?>
+		<select class="selFilter" name="status">
+			<option <?php if($filterUserStatus == ''){echo "selected='selected'";}?> value="">all statuses</option>
+			<option <?php if($filterUserStatus == 'active'){echo "selected='selected'";}?> value="active">active</option>
+			<option <?php if($filterUserStatus == 'inactive'){echo "selected='selected'";}?> value="inactive">inactive</option>
+		</select>
+	
+		<?php $filterUserGender = ""; if(isset($_SESSION['userGender'])) $filterUserGender = $_SESSION['userGender'];?>
+		<select class="selFilter" name="gender">
+			<option <?php if($filterUserGender == ''){echo "selected='selected'";}?> value="">all gender</option>
+			<option <?php if($filterUserGender == 'male'){echo "selected='selected'";}?> value="male">male</option>
+			<option <?php if($filterUserGender == 'female'){echo "selected='selected'";}?> value="female">female</option>
+		</select>
+		
+		<?php $filterUserCreated = ""; if(isset($_SESSION['filterUserCreated'])) $filterUserCreated = $_SESSION['filterUserCreated'];?>
+		<select class="selFilter" name="interval">
+			<option <?php if($filterUserCreated == ''){echo "selected='selected'";}?> value="">all time</option>
+			<option <?php if($filterUserCreated == 'today'){echo "selected='selected'";}?> value="today">today</option>
+			<option <?php if($filterUserCreated == 'yestarday'){echo "selected='selected'";}?> value="yestarday">yestarday</option>
+			<option <?php if($filterUserCreated == 'this week'){echo "selected='selected'";}?> value="this week">this week</option>
+			<option <?php if($filterUserCreated == 'last week'){echo "selected='selected'";}?> value="last week">last week</option>
+			<option <?php if($filterUserCreated == 'this month'){echo "selected='selected'";}?> value="this month">this month</option>
+			<option <?php if($filterUserCreated == 'last month'){echo "selected='selected'";}?> value="last month">last month</option>
+			<option <?php if($filterUserCreated == 'this year'){echo "selected='selected'";}?> value="this year">this year</option>
+			<option <?php if($filterUserCreated == 'last year'){echo "selected='selected'";}?> value="last year">last year</option>
+		</select>
+		<input type="submit" value="Filter" class="button1" />
+	</form>
+</div>
+<?php echo $this->searchForm; ?>
+<div class="clear"></div>
+<div class="empty10"></div>
+
+<?php if(null != $this->customers){?>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+		<colgroup>
+			<col width="" />
+			<col width="" />
+			<col width="100" />
+			<col width="100" />
+			<col width="100" />
+			<col width="100" />
+		</colgroup>
+		<tr>
+			<th>Username</th>
+			<th>Email</th>
+			<th>Gender</th>
+			<th>Status</th>
+			<th>Created</th>
+			<th>Actions</th>
+		</tr>
+		<?php
+		$model = 'AccountUsers';
+		$result = TS_Base::paginatorToModel($model, $this->customers);
+		?>
+		<?php foreach($result as $value){?>
+		<tr>
+			<td>
+				<?php if(null != $value->getAvatar()){?>
+					<img src="/media/avatar/small/<?php echo $value->getAvatar();?>" alt="user" />
+				<?php }else{?>
+					<img width="44" height="44" src="/theme/default/images/user.gif" alt="user" />
+				<?php }?>
+				<?php echo $value->getUsername();?>
+			</td>
+			<td><?php echo $value->getEmail();?></td>
+			<td align="center"><?php echo $value->getGender() == "0"?"Male":"Female";?></td>
+			<td align="center">
+				<a href="/admin/user/status/id/<?php echo $value->getId();?>" title="Change Status">
+					<?php echo $value->getStatus()==1?"active":"inactive";?>
+				</a>
+			</td>
+			<td align="center"><?php echo $value->getCreated()?date("d M , Y",$value->getCreated()):"-";?></td>
+			<td align="center">
+				<a href="/admin/user/details/id/<?php echo $value->getId();?>" title="View details">
+					<img src="/theme/admin/icons/icon-details.png" alt="View details" />
+				</a>
+				<a href="/admin/user/message/uid/<?php echo $value->getId();?>" title="Send message">
+					<img src="/theme/admin/icons/icon-message.png" alt="Send message" />
+				</a>
+				<a href="/admin/user/delete/uid/<?php echo $value->getId();?>" title="Delete user">
+					<img src="/theme/admin/icons/user-delete.png" width="24" height="24" alt="Delete user" />
+				</a>
+			</td>
+		</tr>
+		<?php }?>
+	</table>
+	<?php if($this->itemCountPerPage < $this->totalItemCount){?>
+		<?php echo $this->customers;?>
+	<?php }?>
+<?php }else{?>
+	<div>No users were found in the database!</div>
+<?php } ?>
+
+<script>
+	$(function(){
+        //attach autocomplete  
+        $("#txtHeaderSearch").autocomplete({  
+			minLength: 3,
+            //define callback to format results  
+            source: function(req, add){  
+  
+                //pass request to server  
+                $.get("/admin/ajax/user-autocomplete/", req, function(data) {  
+						
+                    //create array for response objects  
+                    var suggestions = [];  
+  
+                    //process response 
+					if(data) {
+						try { var items = eval('(' + data + ')'); }  catch (e) {}
+						if(items) {
+							$.each(items, function(i, val){  
+								suggestions.push(val.name);  
+							});  
+   
+						}
+					}					
+                //pass array to callback  
+                add(suggestions);  
+            });  
+        },  
+  
+        //define select handler  
+        select: function(e, ui) {  
+  
+            //create formatted friend  
+            var friend = ui.item.value,  
+                span = $("<span>").text(friend),  
+                a = $("<a>").addClass("remove").attr({  
+                    href: "javascript:",  
+                    title: "Remove " + friend  
+                }).text("x").appendTo(span);  
+  
+                //add friend to friend div  
+                span.insertBefore("#to");  
+            },  
+  
+            //define select handler  
+            change: function() {  
+  
+                //prevent 'to' field being updated and correct position  
+                $("#to").val("").css("top", 2);  
+            }  
+        });  
+    }); 
+</script>

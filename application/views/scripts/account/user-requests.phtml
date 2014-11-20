@@ -1,0 +1,11 @@
+<div class="header_user">
+	<h2>Alerte prienteni</h2>
+</div>
+
+<?php if(NULL != $this->result){?>
+	<?php foreach($this->result as $value){?>
+		<?php TS_ToHtml::userRequest($value);?>
+	<?php } ?>
+<?php }else{?>
+	Nu aveti cereri de prietenie!
+<?php }?>

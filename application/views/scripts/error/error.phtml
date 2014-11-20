@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Zend Framework Default Application</title>
+</head>
+<body>
+	<?php if($this->message == 'Page not found'): ?>
+		<div style="font-family:Arial, Helvetica, sans-serif; text-align:center; padding:20px 0;">
+			<h1 style="font-size:40px; font-weight:bold; color:#797d92;">Eroare 404! </h1>
+			<div class="box" style="padding:0 0 20px 0;">
+				<p style="font-size:19px; color:#ba0000;">Aceasta pagina nu exista</p>
+			</div>
+        	<a href="/" style="background-image:url(/theme/default/images/bt_index.gif); color:#fff; text-decoration:none; padding:8px 11px 9px 10px ; font-size:13px; font-weight:bold; background-repeat:no-repeat;">Mergi pe prima pagina</a>  
+        </div>
+	<?php endif; ?>
+
+	<?php if ('development' == APPLICATION_ENV && 0): ?>
+    	<div class="a404">
+			<div class="empty10"></div>
+			<h1>Informatii eroare</h1>
+			<div class="box">
+				<p><strong>Mesaj:</strong>&nbsp;<?php echo $this->exception->getMessage(); ?></p>
+			</div>
+
+			<div class="empty10"></div>
+			<h1>Date despre stiva:</h1>
+			<div class="box">
+				<p><?php echo nl2br($this->exception->getTraceAsString()); ?></p>
+			</div>
+
+			<div class="empty10"></div>
+			<h1>Parametrii solicitati:</h1>
+			<div class="box">
+				<pre><?php echo var_export($this->request->getParams(), true); ?></pre>
+			</div>
+  		</div>
+  <?php endif?>
+</body>
+</html>

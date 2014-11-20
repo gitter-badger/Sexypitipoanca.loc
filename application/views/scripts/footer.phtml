@@ -1,0 +1,59 @@
+<div class="midle_footer">
+	<div class="top">
+		<?php
+		// BEGIN: Start cache > footer (one day caching)
+		$frontendOptions = array('lifetime' => CACHE_FOOTER_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_FOOTER);
+		$backendOptions = array('cache_dir' => './data/cache/');
+		$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+		if(!$cache->start('footer')){
+		// END: Start cache > footer
+		?>
+		<div class="categorii">
+			<h2>Categorii:</h2>
+			<ul>
+				<?php if($this->catalogCategories){?>
+					<?php foreach($this->catalogCategories as $value){?>
+						<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($value->getName())), 'id' => $value->getId()), 'category');?>
+					<li>
+						<a rel="nofollow" class="<?php if($this->controller == 'catalog' && $this->action == 'categories' && $this->seoId == $value->getId()){echo "link_selected";}else{echo "link";}?>" href="<?php echo $link;?>" title="<?php echo $value->getName();?>"><?php echo $value->getName();?></a>
+					</li>
+					<?php }?>
+				<?php }?>
+			</ul>
+		</div>
+		<div class="info">
+			<h2>Info:</h2>
+			<ul>
+				<li>
+					<a rel="nofollow" href="/contact">Contact</a>
+				</li>
+				<li>
+					<a rel="nofollow" href="/account/terms">Termeni si conditii</a>
+				</li>
+			</ul>
+		</div>
+		<div class="taguri">
+			<h2>Etichete:</h2>
+			<h3 class="pr">
+			<?php $tsStatistics = new TS_Statistics(); ?>
+			<?php $tags = $tsStatistics->getTags(); ?>
+			<?php foreach($tags as $value) { ?>
+				<?php $link = $this->url(array('tag' => $value->getName()), 'tag');?>
+				<a rel="nofollow" class="link" href="<?php echo $link;?>" title="<?php echo $value->getName();?>">
+					<?php echo $value->getName();?>
+				</a>
+			<?php } ?>
+			<a rel="nofollow" class="tagcloud-footer" href="/catalog/tagcloud" title="etichete">
+				<img src="/theme/default/images/cloud.png" alt="cloud" />
+			</a>
+			</h3>
+		</div>
+		<?php $cache->end();}?>
+		
+		<div class="newsletter">
+			<h2>Newsletter</h2>
+			<?php echo $this->formNewsletter; ?>
+		</div>
+	</div>
+	<div class="bottom"><p>&copy;<?php echo " ".date('Y')." ".FOOTER_TEXT;?></p></div>
+</div>

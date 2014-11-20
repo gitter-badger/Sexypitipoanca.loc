@@ -1,0 +1,12 @@
+<?php if($this->result){?>
+	<?php
+	$model = 'CatalogProducts';
+	$result = TS_Base::paginatorToModel($model, $this->result);
+	?>
+	<?php foreach($result as $value){?>
+		<?php TS_ToHtml::article($value, true);?>
+	<?php } ?>
+	<?php if($this->itemCountPerPage < $this->totalItemCount) { ?>
+		<?php echo $this->result;?>
+	<?php } ?>
+<?php }?>

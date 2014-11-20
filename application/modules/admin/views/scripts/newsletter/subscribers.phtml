@@ -1,0 +1,32 @@
+<?php if(null != $this->subscribers){?>
+	<table class="tableListingsAll" width="100%" cellpadding="0" cellspacing="0" border="0">
+		<colgroup>
+			<col width="" />
+			<col width="200" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th>Email</th>
+				<th>Adaugat</th>
+				<th>Actiuni</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach($this->subscribers as $value){?>
+			<tr>
+				<td><?php echo $value->getEmail();?></td>
+				<td align="center"><?php echo date('d M, Y', $value->getAdded());?></td>
+				<td align="center">
+					<a href="#">Sterge</a>
+				</td>
+			</tr>
+			<?php }?>
+		</tbody>
+	</table>
+	<?php if($this->itemCountPerPage < $this->totalItemCount){?>
+		<?php echo $this->subscribers;?>
+	<?php }?>
+<?php }else{?>
+	<div class="empty10"></div>
+	<div class="mess-false">Nu exista subscriberi.</div>
+<?php }?>

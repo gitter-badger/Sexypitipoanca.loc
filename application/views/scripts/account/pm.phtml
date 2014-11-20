@@ -1,0 +1,50 @@
+<?php if($this->result){?>
+<div class="header_user">
+	<h2>
+		<?php $link = $this->url(array('username' => $this->result->getUsername()), 'wall');?>
+		<a href="<?php echo $link;?>">
+			<?php echo $this->result->getUsername();?>
+		</a>
+	</h2>
+</div>
+	<?php $messages = $this->messages; ?>
+	<?php if(NULL != $messages){?>
+		<?php foreach($messages as $value){?>
+			<?php $userData = TS_SocialNetwork::userDataById($value->getFrom());?>	
+			<?php
+				$newClass= false;
+				if(Zend_Registry::get('authUser')->getId() == $value->getSentTo() && $value->getRead() == 0)
+				{
+					$newClass = true;
+					TS_Message::markMessagesRead($value->getId()); 
+				}
+			?>
+			<div class="socMess <?php echo ($newClass)?'newMessage':'' ?>">
+				<div class="smContainer">
+					<div class="sm_avatar">
+						<a href="/account/pm/uid/<?php echo $userData->getId();?>">
+							<?php if(NULL != $userData->getAvatar()){?>
+								<img src="/media/avatar/big/<?php echo $userData->getAvatar();?>" alt="<?php echo $userData->getUsername();?>" title="<?php echo $userData->getUsername();?>" />
+							<?php }else{?>
+								<img src="/theme/default/images/user.gif" alt="avatar" alt="<?php echo $userData->getUsername();?>" title="<?php echo $userData->getUsername();?>" />
+							<?php }?>
+						</a>
+					</div>
+
+					<div class="smFooter1">
+						<a class="smfUsername" href="/account/pm/uid/<?php echo $userData->getId();?>">
+							<?php echo $userData->getUsername();?>
+						</a>
+						I
+						<em>in <?php echo date('d M, Y \l\a H:i:s', $value->getCreated());?></em>
+						<p><?php echo $value->getContent();?></p>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>			
+		<?php }?>
+	<?php }?>
+	<?php echo $this->form;?>
+<?php }else{?>
+	Nu exista acest utilizator!
+<?php }?>

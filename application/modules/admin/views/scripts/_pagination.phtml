@@ -1,0 +1,54 @@
+<?php
+$result = Zend_View_Helper_PaginationControl::getDefaultViewPartial();
+if(is_array($result)) {
+	if(!empty($result[1])) {
+		$allParams = $result[1];
+	} else {
+		$allParams = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+	}
+} else {
+	$allParams = array();
+}
+if($this->pageCount){?>
+<div class="paginare">
+	<ul>
+		<!-- First page link -->
+		<?php if(isset($this->previous)){?>
+			<li><a class="link2" href="<?php echo $this->url(array_merge($allParams, array('page' => $this->first))); ?>"> Prima </a></li>
+		<?php }else{?>
+			<li><a class="link2" href="javascript:void(0)"> Prima </a></li>
+		<?php }?>
+
+		<!-- Previous page link -->
+		<?php if(isset($this->previous)){?>
+			<li><a class="link2" href="<?php echo $this->url(array_merge($allParams, array('page' => $this->previous))); ?>"> Precedenta </a></li>
+		<?php }else{?>
+			<li><a class="link2" href="javascript:void(0)"> Precedenta </a></li>
+		<?php }?>
+
+		<!-- Numbered page links -->
+		<li>Pagina:</li>
+		<?php foreach($this->pagesInRange as $page) : ?>
+			<?php if($page != $this->current) : ?>
+				<li><a class="link2" href="<?php echo $this->url(array_merge($allParams, array('page' => $page))); ?>"><?php echo $page; ?></a></li>
+			<?php else : ?>
+				<li><a class="link2_selected" href="javascript:void(0)"><?php echo $page; ?></a></li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+
+		<!-- Next page link -->
+		<?php if(isset($this->next)) : ?>
+			<li><a class="link2" href="<?php echo $this->url(array_merge($allParams, array('page' => $this->next))); ?>"> Urmatoarea </a></li>
+		<?php else : ?>
+			<li><a class="link2" href="javascript:void(0)"> Urmatoarea </a></li>
+		<?php endif; ?>
+			
+		<!-- Last page link -->
+		<?php if(isset($this->next)){?>
+			<li><a class="link2" href="<?php echo $this->url(array_merge($allParams, array('page' => $this->last))); ?>"> Ultima </a></li>
+		<?php }else{?>
+			<li><a class="link2" href="javascript:void(0)"> Ultima </a></li>
+		<?php }?>
+	</ul>
+</div>
+<?php }?>

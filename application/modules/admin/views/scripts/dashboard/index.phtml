@@ -1,0 +1,45 @@
+<?php if(NULL != $this->activeGalleries && NULL != $this->inactiveGalleries){?>
+<table class="tableListingsAll fL" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<th>&nbsp;</th>
+		<th>Galerii Active</th>
+		<th>Galerii Inactive</th>
+	</tr>
+	<?php foreach($this->activeGalleries as $key => $value){?>
+	<tr>
+		<th><?php echo $key;?></th>
+		<td><?php echo $value;?></td>
+		<td><?php echo $this->inactiveGalleries[$key];?></td>
+	</tr>
+	<?php }?>
+	<tr>
+		<th>All Galleries</th>
+		<td align="center" colspan="2"><?php echo $this->allGalleries;?></td>
+	</tr>
+</table>
+<?php }?>
+
+<?php if(NULL != $this->activeUsers && NULL != $this->inactiveUsers){?>
+<table style="margin: 0 0 0 10px;" class="tableListingsAll fL" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<th></th>
+		<th>Useri Activi</th>
+		<th>Useri Inactivi</th>
+	</tr>
+	<tr>
+		<th>Male</th>
+		<td><?php echo $this->activeMaleUsersNr;?></td>
+		<td>-</td>
+	</tr>
+	<tr>
+		<th>Female</th>
+		<td><?php echo $this->activeFemaleUsersNr;?></td>
+		<td>-</td>
+	</tr>
+	<tr>
+		<th>Total</th>
+		<td><?php echo $this->activeUsers;?></td>
+		<td><?php echo $this->inactiveUsers;?></td>
+	</tr>
+</table>
+<?php }?>

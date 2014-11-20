@@ -1,0 +1,21 @@
+<form method="<?php echo $this->element->getMethod(); ?>" action="<?php echo $this->element->getAction(); ?>" id="<?php echo $this->element->getId('id'); ?>" class="<?php echo $this->element->getId('class'); ?>" enctype="<?php echo $this->element->getEncType(); ?>">
+	<?php echo $this->{$this->element->control->helper}($this->element->control->getName(),$this->element->control->getValue(),$this->element->control->getAttribs());?>
+
+	<?php echo $this->{$this->element->search->helper}(
+		$this->element->search->getName(),
+		$this->element->search->getValue(),
+		$this->element->search->getAttribs()
+	);?>
+	<?php if(NULL != $this->element->search->getMessages()){echo $this->formErrors($this->element->search->getMessages());}?>
+
+	<?php echo $this->{$this->element->submit->helper}(
+		$this->element->submit->getName(),
+		$this->element->submit->getLabel(),
+		$this->element->submit->getAttribs()
+	);?>
+</form>
+<?php $this->headScript()->captureStart();?>
+$(document).ready(function(){
+	$("#<?php echo $this->element->getId();?>").validationEngine();
+});
+<?php $this->headScript()->captureEnd();?>

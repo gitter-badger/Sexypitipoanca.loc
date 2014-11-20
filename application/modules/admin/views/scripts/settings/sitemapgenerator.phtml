@@ -1,0 +1,242 @@
+<style>
+ol.sitemap{padding: 5px;border: 1px solid #dfdfdf;border-radius: 5px;}
+ol.sitemap li{margin-left: 20px;}
+ol.sitemap li.green{color: #338833;}
+</style>
+<ol class="sitemap">
+	<li class='js_sm-writeHeader'>Write header</li>
+	<li class='js_sm-writeContentStatic'>Write static pages</li>
+	<li class='js_sm-writeContentCategories'>Write category pages</li>
+	<li class='js_sm-writeContentTags'>Write tag pages</li>
+	<li class='js_sm-writeContentPosts'>Write gallery pages</li>
+	<li class='js_sm-writeFooter'>Write footer</li>
+</ol>
+<a class="button1 js_sitemapGenerator" href="#">Create sitemap</a>
+<script>
+function sitemapGenerator(sitemapGeneratorArray, iterator)
+{
+	iterator++;
+	var type = sitemapGeneratorArray[iterator];
+	if(typeof type != 'undefined')
+	{
+		$.get('/admin/ajax/sitemap-generator/type/'+type, function(data) {
+			if(data) {
+				try
+				{
+					var items = eval('(' + data + ')');
+				}
+				catch(e)
+				{
+					alert(e.message)
+				}
+				if(items)
+				{
+					if(type == 'writeContentCategories')
+					{
+						var totalNrCateg = <?php echo TS_SeoSerp::itemsCount('categories');?>;
+						sitemapGeneratorItem(type, totalNrCateg, 0, sitemapGeneratorArray, iterator);
+					}
+					else if(type == 'writeContentTags')
+					{
+						var totalNrTags = <?php echo TS_SeoSerp::itemsCount('tags');?>;
+						sitemapGeneratorItem(type, totalNrTags, 0, sitemapGeneratorArray, iterator);					
+					}
+					else if(type == 'writeContentPosts')
+					{
+						var totalNrPosts = <?php echo TS_SeoSerp::itemsCount('posts');?>;
+						sitemapGeneratorItem(type, totalNrPosts, 0, sitemapGeneratorArray, iterator);	
+					}
+					else
+					{
+						$('.js_sm-'+type).addClass('green');
+						sitemapGenerator(sitemapGeneratorArray, iterator);
+					}
+				}
+			}
+		});
+	}
+}
+
+function sitemapGeneratorItem(type, totalItems, iterator, sitemapGeneratorArray, parentIterator)
+{
+	$.get('/admin/ajax/sitemap-generator-item/type/'+type+'/iterator/'+iterator, function(data) {
+		if(data) {
+			try {
+				var items = eval('(' + data + ')');
+			} catch (e) {}
+			if(items)
+			{
+				if(iterator+1 < totalItems)
+				{
+					iterator++;
+					sitemapGeneratorItem(type, totalItems, iterator, sitemapGeneratorArray, parentIterator);
+				}
+				else
+				{
+					$('.js_sm-'+type).addClass('green');
+					sitemapGenerator(sitemapGeneratorArray, parentIterator);
+				}
+			}
+		}
+	});
+}
+
+var sitemapGeneratorArray = new Array();
+sitemapGeneratorArray[1] = 'writeHeader';
+sitemapGeneratorArray[2] = 'writeContentStatic';
+sitemapGeneratorArray[3] = 'writeContentCategories';
+sitemapGeneratorArray[4] = 'writeContentTags';
+sitemapGeneratorArray[5] = 'writeContentPosts';
+sitemapGeneratorArray[6] = 'writeFooter';
+
+$(".js_sitemapGenerator").click(function(){
+	var iterator = 0;
+	sitemapGenerator(sitemapGeneratorArray, iterator);
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php if(0){?>
+<div class="empty10"></div>
+<?php
+if(null != $this->msg){
+	echo $this->msg;
+}else{
+//	$base_http = "http://".$_SERVER['SERVER_NAME'];
+	$base_http = "http://sexypitipoanca.ro";
+	$handle = fopen(APPLICATION_PUBLIC_PATH.'/sitemap.xml', 'w+');
+	$now = date("Y-m-d", time());
+
+	$sitemapHead = "<?xml version='1.0' encoding='utf-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9' xmlns:image='http://www.google.com/schemas/sitemap-image/1.1'>\n";
+	$sitemapContent = "<url>".set($base_http."/", $now, 'daily', 1)."</url>\n";
+	$sitemapContent .= "<url>".set($base_http."/account/new", $now, 'daily', 0.9)."</url>\n";
+	$sitemapContent .= "<url>".set($base_http."/account/terms", $now, 'daily', 0.9)."</url>\n";
+	$sitemapContent .= "<url>".set($base_http."/contact", $now, 'daily', 0.9)."</url>\n";
+	$count = 3; // 3 static pages
+
+	// BEGIN: CATALOG CATEGORIES
+	if($this->categories){
+		foreach($this->categories as $value){
+			$sitemapContent .= "<url>";
+			$modified = time();
+			$sitemapContent .= set(
+				$base_http.$this->url(array(
+					'categoryName' => preg_replace('/\s+/','-', strtolower($value->getName())),
+					'id' => $value->getId()),
+					'category')
+				,date ("Y-m-d", $modified)
+				,'daily'
+				,0.9
+			);
+			$sitemapContent .= "</url>";
+			$count++;
+		}
+	}
+	// END: CATALOG CATEGORIES
+
+	// BEGIN: CATALOG TAG CLOUD
+	if($this->tags){
+		foreach($this->tags as $value){
+			$modified = time();
+			$sitemapContent .= "<url>";
+			$sitemapContent .= set(
+				$base_http.$this->url(array(
+				'tag' => $value->getName()
+				),'cloudtag')
+				,date ("Y-m-d", $modified)
+				,'daily'
+				,0.9
+			);
+			$sitemapContent .= "</url>";
+			$count++;
+		}
+	}
+	// END: CATALOG TAG CLOUD
+
+	// BEGIN: CATALOG TAGS
+	if($this->tags){
+		foreach($this->tags as $value){
+			$modified = time();
+			$sitemapContent .= "<url>";
+			$sitemapContent .= set(
+				$base_http.$this->url(array(
+				'tag' => $value->getName()
+				),'tag')
+				,date ("Y-m-d", $modified)
+				,'daily'
+				,0.9
+			);
+			$sitemapContent .= "</url>";
+			$count++;
+		}
+	}
+	// END: CATALOG TAGS
+
+	// BEGIN: CATALOG PRODUCTS
+	if($this->catalog){
+		foreach($this->catalog as $value){
+			$images = TS_SeoSerp::fetchGalleryImages($value->getId());
+			$categoryName = TS_SeoSerp::getCategoryNameByGalleryId($value->getId());
+			
+			$modified = time();
+			$sitemapContent .= "<url>\n";
+			$sitemapContent .= set(
+				$base_http.$this->url(array(
+				'categoryName' => preg_replace('/[^a-zA-Z0-9]+/','-', strtolower($categoryName)),
+				'productName' => preg_replace('/[^a-zA-Z0-9]+/','-', strtolower($value->getName())),
+				'id' => $value->getId()
+				),'product')
+				,date ("Y-m-d", $modified)
+				,'daily'
+				,0.8
+			);
+			foreach($images as $image){
+				$authorId = TS_SeoSerp::getAuthorIdByGalleryId($image->getProduct_id());
+				$imageLocation = TS_SeoSerp::bigImageHrefLocation($image->getName(), $value->getName(), $authorId);
+				$sitemapContent .= setImage($base_http.$imageLocation, $value->getName());
+			}
+			$sitemapContent .= "</url>\n";
+			$count++;
+		}
+	}
+	// END: CATALOG PRODUCTS
+
+	$sitemapFoot = '</urlset>';
+
+	if(fwrite($handle, $sitemapHead.$sitemapContent.$sitemapFoot)) {
+	?>
+	<script type="text/javascript">
+		window.location = "/admin/settings/sitemapgenerator/msg/true/nr/<?php echo $count;?>";
+	</script>
+	<?php } else { ?>
+	<script type="text/javascript">
+		window.location = "/admin/settings/sitemapgenerator/msg/false/nr/<?php echo $count;?>";
+	</script>
+	<?php
+	}
+	fclose($handle);
+}
+?>
+<?php }?>

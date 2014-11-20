@@ -1,0 +1,47 @@
+<?php if(null != $this->result){?>
+	<?php
+	$model = 'CatalogProductComments';
+	$comments = TS_Base::paginatorToModel($model, $this->result);
+	?>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+		<colgroup>
+			<col width="" />
+			<col width="200" />
+			<col width="200" />
+			<col width="200" />
+		</colgroup>
+		<tr>
+			<th>Name</th>
+			<th>Comment</th>
+			<th>Gallery</th>
+			<th>Created</th>
+			<th>Actions</th>
+		</tr>
+		<?php foreach($comments as $value){?>
+		<tr>
+			<td><?php echo $value->getName();?></td>
+			<td><?php echo $value->getComment();?></td>
+			<?php $product = new J_Product(); ?>
+			<?php $product->Product($value->getProduct_id(), array('category', 'image'));?>
+			<?php $link = $this->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');?>
+			<td>
+				<a target="_blank" href="<?php echo $link;?>"><?php echo $product->getName();?></a>
+			</td>
+			<td><?php echo $value->getAdded()?date("d M , Y",$value->getAdded()):"-";?></td>
+			<td>
+				<a href="/admin/comments/edit/id/<?php echo $value->getId(); ?>">
+					Moderate
+				</a>
+				<a href="/admin/comments/delete/id/<?php echo $value->getId(); ?>">
+					Delete
+				</a>
+			</td>
+		</tr>
+		<?php }?>
+	</table>
+	<?php if($this->itemCountPerPage < $this->totalItemCount){?>
+		<?php echo $this->result;?>
+	<?php }?>
+<?php }else{?>
+	<div>No comments were found in the database!</div>
+<?php } ?>

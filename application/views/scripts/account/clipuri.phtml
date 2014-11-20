@@ -1,0 +1,136 @@
+<?php
+	$currentUser = $this->display_user;
+	$userActivity = TS_SocialNetwork::userAddedVideo($currentUser->getId());
+?>
+<?php if($userActivity){?>
+	<?php foreach($userActivity as $value){?>
+		<?php
+		$product = new J_Product();
+		$product->Product($value->getId(), array('category', 'image', 'commentsNo'));
+		$zendView = new Zend_View;
+		$link = $zendView->url(array('categoryName' => preg_replace('/\s+/','-', strtolower($product->getCategory())), 'productName' => preg_replace('/\s+/','-', strtolower($product->getName())), 'id' => $product->getId()), 'product');
+		?>
+		<div class="activity-item">
+			<div class="activity_header">
+				<div class="activity_avatar">
+					<?php if(NULL != $currentUser->getAvatar()){?>
+						<img width="80" src="/media/avatar/big/<?php echo $currentUser->getAvatar();?>" alt="<?php echo $currentUser->getUsername();?>" title="<?php echo $currentUser->getUsername();?>" />
+					<?php }else{?>
+						<img width="80" src="/theme/default/images/user.gif" alt="avatar" alt="<?php echo $currentUser->getUsername();?>" title="<?php echo $currentUser->getUsername();?>" />
+					<?php }?>
+				</div>
+				<ul>
+					<li>
+						<p class="activity_username">
+							<span><?php echo $currentUser->getUsername();?></span>
+							I
+							<em>in <?php echo date('d M, Y \l\a H:i:s', $value->getAdded());?></em>
+						</p>
+					</li>
+					<li>
+						<p class="activity_category">
+							A adaugat in categoria: <span><?php TS_SocialNetwork::categoryNameByCategoryId($value->getCategory_id())?></span>
+							I
+							<span class="activity_imagenr"><?php TS_SocialNetwork::countNumberOfPhotos($value->getid());?> poze</span>
+						</p>	
+					</li>
+					<li>
+						<h1 class="activity_name">
+							<a href="<?php echo $link;?>"><?php echo $value->getName();?></a>
+						</h1>
+					</li>
+				</ul>
+				<div class="clear"></div>
+			</div>
+			<div class="activity_image">
+				<?php
+				if($value->getType() == 'gallery')
+				{
+					echo "<a href='".$link."' title='".$product->getName()."'>";
+						if($product->getBigImage())
+						{
+							echo "<img width='533' src='".$product->getBigImage()."' alt='".$product->getName()."' title='".$product->getName()."' />";
+						}
+						else
+						{
+							echo "<img width='533' src='/theme/default/images/no-pic.jpg' alt='no image' title='no image found' />";
+						}
+					echo "</a>";
+				}
+				elseif($value->getType() == 'video')
+				{
+					$videoImage = TS_Products::getVideo($product->getId())->getImage();
+					if(NULL != $videoImage)
+					{
+						echo "<a href='".$link."' title='".$product->getName()."'>";
+							echo "<img src='/media/catalog/video/big/".$videoImage."' alt='".$product->getName()."' title='".$product->getName()."' />";
+						echo "</a>";
+					}
+					else
+					{
+						echo "<a href='".$link."' title='".$product->getName()."'>";
+							echo "<img src='/theme/default/images/no-video.jpg' alt='".$product->getName()."' title='".$product->getName()."' />";
+						echo "</a>";
+					}
+				}
+				elseif($value->getType() == 'embed')
+				{
+						echo "<a href='".$link."' title='".$product->getName()."'>";
+							echo TS_ToHtml::videoThumb($product->getId());
+						echo "</a>";
+				}
+				elseif($value->getType() == 'embed')
+				{
+					TS_ToHtml::videoPlayer($product->getId(), PLAYER_WIDTH, PLAYER_HEIGHT);
+				}
+				else
+				{
+					echo TS_Products::getVideo($value->getId())->getEmbed();
+				}
+				?>
+				<?php if($value->getDescription()){?>
+				<div class="activity-description">
+					<p><?php echo $value->getDescription();?></p>
+				</div>
+				<?php }?>
+				<div class="activity-comments">
+					<div class="activity-comments-head"></div>
+					<div class="activity-comments-content">
+						<?php $firstComments = TS_Comments::getAllCommentsById($value->getId());?>
+						<?php if(null != $firstComments){ ?>
+							<div id="comentariuContainer">
+							<?php foreach($firstComments as $comment){ ?>
+								<?php $customer = TS_Statistics::customerModelById($comment->getUserId(), array('id'=>'id', 'username'=>'username', 'avatar'=>'avatar')); ?>
+
+									<div class="modul_comentariu">
+										<div class="left_comentariu2">
+											<?php if($customer !== null && null != $customer->getAvatar()) { ?>
+												<img width="44" height="44" src="/media/avatar/small/<?php echo $customer->getAvatar() ?>" alt="user" />
+											<?php }else{ ?>
+												<img width="44" height="44" src="/theme/default/images/user.gif" alt="user" />
+											<?php } ?>							
+										</div>
+										<div class="right_comentariu2">
+											<p class="nume">
+												<a href="#"><?php echo $comment->getName() ?></a> l <span><?php echo date('d/m/Y H:i', $comment->getAdded()) ?></span>
+											</p>
+											<p class="descriere"><?php echo $comment->getComment(); ?></p>
+											<div class="footer_comentariu2">
+												<div class="left_footer_comentariu"></div>
+											</div>
+										</div>
+										<div style="clear:both; width:1px"></div>
+									</div>
+							<?php } ?>
+							</div>	
+						<?php }else{?>
+						<div id="comentariuContainer"></div>
+						<?php }?>	
+					</div>
+					<div class="activity-comments-action">				
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php }?>
+<?php }?>

@@ -1,0 +1,233 @@
+<?php echo $this->searchForm;?>
+
+
+<?php if($this->type == 'friends'){ ?>
+<div class="header_user">
+	<h2>Prietenii lui <?php echo $this->display_user->getUsername();?></h2>
+</div>
+	<?php if(NULL != $this->result){?>
+		<?php foreach($this->result as $value){?>
+	
+	<?php
+	$userModel = new Default_Model_AccountUsers();
+	if($value->getInitiatorUserId() == $this->display_user->getId()) $friendId = $value->getReceiverUserId();
+	else $friendId = $value->getInitiatorUserId();
+	
+	if($userModel->find($friendId))
+	{
+		if($userModel->getAvatar()){
+			$userAvatar = "<img src=\"/media/avatar/big/{$userModel->getAvatar()}\" alt=\"{$userModel->getUsername()}\" />";
+		}else{
+			$userAvatar = "<img src=\"/theme/default/images/user.gif\" alt=\"avatar\" />";
+		}
+	?>
+	<div class="friend">
+		<div class="left-friend">
+			<a class="f-avatar" href="/user/<?php echo $userModel->getUsername();?>" title="<?php echo $userModel->getUsername();?>">
+				<?php echo $userAvatar;?>
+			</a>
+			<ul>
+				<li>
+					<h5>
+						<a class="f-name" href="/user/<?php echo $userModel->getUsername();?>">
+							<?php echo $userModel->getUsername();?>
+						</a>
+					</h5>
+				</li>
+<!--				<li>-->
+<!--					<img src="/theme/default/images/icon_studiu.gif" alt="studio" />-->
+<!--					<p>-->
+<!--						<span>A studiat: </span>Colegiul National Vasile Lucaciu-->
+<!--					</p>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<img src="/theme/default/images/icon_localitate.gif" alt="localitate" />-->
+<!--					<p>-->
+<!--						<span>Locuieste in: </span>Baia Mare-->
+<!--					</p>-->
+<!--				</li>-->
+			</ul>
+		</div>
+		<?php if(Zend_Registry::get('isAuthUser')){?>
+		<div class="right-friend">
+			<?php
+			$isFriend = TS_SocialNetwork::checkIfFriends(Zend_Registry::get('authUser')->getId(), $userModel->getId());
+			$isYou = false;
+			if(Zend_Registry::get('authUser')->getId() == $userModel->getId())
+			{
+				$isYou = true;
+			}
+			if(!$isYou)
+			{
+				if(!$isFriend){?>
+					<a href="/account/befriend/uid/<?php echo $userModel->getId();?>" title="Adauga prieten">
+						<img src="/theme/default/images/adauga_prieten.gif" alt="adauga prieten" />
+					</a>
+					<?php }elseif(Zend_Registry::get('authUser')->getId() == $this->display_user->getId()){?>
+					<a href="/account/unfriend/uid/<?php echo $userModel->getId();?>" title="Sterge prieten">
+						<img src="/theme/default/images/icon_delete.gif" alt="sterge prieten" />
+					</a>
+					<?php }else{ ?>
+						<img src="/theme/default/images/prieten.gif" alt="prieten.gif" />
+				<?php }?>
+			<?php }?>
+		</div>
+		<?php }?>
+	</div>
+		<?php } ?>
+	<?php } ?>
+	<?php }?>
+<?php }else{ ?>
+	<?php if($this->totalItemCount > 0){ ?>
+		<?php if(null != $this->customers){ ?>
+		<?php
+		$model = 'AccountUsers';
+		$result = TS_Base::paginatorToModel($model, $this->customers);
+		?>
+		<?php foreach($result as $value){
+				if($value->getAvatar()){
+					$userAvatar = "<img src=\"/media/avatar/big/{$value->getAvatar()}\" alt=\"{$value->getUsername()}\" />";
+				}else{
+					$userAvatar = "<img src=\"/theme/default/images/user.gif\" alt=\"avatar\" />";
+				}
+			?>
+			<div class="friend">
+				<div class="left-friend">
+					<a class="f-avatar" href="/user/<?php echo $value->getUsername();?>" title="<?php echo $value->getUsername();?>">
+						<?php echo $userAvatar;?>
+					</a>
+					<ul>
+						<li>
+							<h5>
+								<a class="f-name" href="/user/<?php echo $value->getUsername();?>">
+									<?php echo $value->getUsername();?>
+								</a>
+							</h5>
+						</li>
+<!--						<li>-->
+<!--							<img src="/theme/default/images/icon_studiu.gif" alt="studio" />-->
+<!--							<p>-->
+<!--								<span>A studiat: </span>Colegiul National Vasile Lucaciu-->
+<!--							</p>-->
+<!--						</li>-->
+<!--						<li>-->
+<!--							<img src="/theme/default/images/icon_localitate.gif" alt="localitate" />-->
+<!--							<p>-->
+<!--								<span>Locuieste in: </span>Baia Mare-->
+<!--							</p>-->
+						</li>
+					</ul>
+				</div>
+				<?php if(Zend_Registry::get('isAuthUser')){?>
+				<div class="right-friend">
+					<?php
+					$isFriend = TS_SocialNetwork::checkIfFriends(Zend_Registry::get('authUser')->getId(), $value->getId());
+					$isYou = false;
+					if(Zend_Registry::get('authUser')->getId() == $value->getId())
+					{
+						$isYou = true;
+					}
+					if(!$isYou)
+					{
+						if(!$isFriend){?>
+							<a href="/account/befriend/uid/<?php echo $value->getId();?>" title="Adauga prieten">
+								<img src="/theme/default/images/adauga_prieten.gif" alt="adauga prieten" />
+							</a>
+							<?php }elseif(Zend_Registry::get('authUser')->getId() == $this->display_user->getId()){?>
+							<a href="/account/unfriend/uid/<?php echo $value->getId();?>" title="Sterge prieten">
+								<img src="/theme/default/images/icon_delete.gif" alt="sterge prieten" />
+							</a>
+							<?php }else{ ?>
+								<img src="/theme/default/images/prieten.gif" alt="prieten.gif" />
+						<?php }?>
+					<?php }?>
+				</div>
+				<?php }?>
+			</div>
+		<?php }?>
+		<?php if($this->itemCountPerPage < $this->totalItemCount){?>
+			<?php echo $this->customers;?>
+		<?php }?>	
+		<?php }?>
+		
+	<?php }else{ ?>
+	Nu au fost gasiti utilizatori.
+	<?php  } ?>
+<?php }?>
+
+<script>
+	$(function(){  
+		$('.selectmenu').selectmenu();		
+        //attach autocomplete
+		<?php //if(0){?>
+        $("#txtHeaderSearch").autocomplete({  
+			minLength: 1,
+            //define callback to format results  
+            source: function(req, add){  
+				if($('#search_type').val() == 'user'){
+					//pass request to server  
+					$.get("/ajax/user-autocomplete/", req, function(data) { 
+						//create array for response objects  
+						var suggestions = [];  
+
+						//process response 
+						if(data) {
+							try { var items = eval('(' + data + ')'); }  catch (e) {}
+							if(items) {
+								$.each(items, function(i, val){  
+									suggestions.push(val.name);  
+								});  
+
+							}
+						}					
+						//pass array to callback  
+						add(suggestions);  
+					});  
+				}else{
+					//pass request to server  
+					$.get("/ajax/user-autocomplete/friends/<?php echo $this->display_user->getId(); ?>", req, function(data) { 
+						//create array for response objects  
+						var suggestions = [];  
+
+						//process response 
+						if(data) {
+							try { var items = eval('(' + data + ')'); }  catch (e) {}
+							if(items) {
+								$.each(items, function(i, val){  
+									suggestions.push(val.name);  
+								});  
+
+							}
+						}					
+						//pass array to callback  
+						add(suggestions);  
+					});  
+				}
+				
+        },  
+  
+        //define select handler  
+        select: function(e, ui) {  
+  
+            //create formatted friend  
+            var friend = ui.item.value,  
+                span = $("<span>").text(friend),  
+                a = $("<a>").addClass("remove").attr({  
+                    href: "javascript:",  
+                    title: "Remove " + friend  
+                }).text("x").appendTo(span);  
+  
+                //add friend to friend div  
+                span.insertBefore("#to");  
+            },  
+  
+            //define select handler  
+            change: function() {  
+  
+                //prevent 'to' field being updated and correct position  
+                $("#to").val("").css("top", 2);  
+            }  
+        });
+		<?php //}?>
+    }); 
+</script>

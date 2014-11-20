@@ -1,0 +1,25 @@
+<?php if($this->commercial){?>
+<table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+	<tr>
+		<th>Code</th>
+		<th>Status</th>
+		<th>Created</th>
+		<th>Actions</th>
+	</tr>
+	<?php foreach($this->commercial as $value){?>
+	<tr>
+		<td><?php echo $value->getCode();?></td>
+		<td><?php echo $value->getStatus()?"active":"inactive";?></td>
+		<td><?php echo date("d M, Y H:i:s", $value->getCreated());?></td>
+		<td>-</td>
+	</tr>
+	<?php }?>
+</table>
+<?php }else{?>
+	No commercial in database!
+<?php }?>
+
+<form id="frmCreateCommercial" method="post" action="">
+	<textarea name="code"></textarea><br />
+	<input type="submit" value="create" />
+</form>

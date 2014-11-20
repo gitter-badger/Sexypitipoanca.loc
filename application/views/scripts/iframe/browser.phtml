@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html>
+<head>
+    <title>Magazin online de echipamente IT - Cuvi.loc</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
+	<link href="/css/admin/jquery/validationEngine.css" media="screen" rel="stylesheet" type="text/css" >
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/fancybox/jquery.fancybox-1.3.1.js"></script>
+	<script type="text/javascript" src="/js/jquery.validationEngine.js"></script>
+	<script type="text/javascript" src="/js/validationEngine/ro.js"></script>
+	<style type="text/css">
+		body{
+			font:normal 14px Georgia,sans-serif;
+			cursor: default;
+			color:#344249;
+		}
+		.fL {
+			float: left;
+		}
+		.fR {
+			float:right;
+		}
+		.clear {
+			clear: both;
+		}
+		.strong{
+			font-weight: bold;
+		}
+		ul {
+			list-style: none;
+		}
+		.empty5{
+			padding-top: 5px;
+		}
+		.empty15{
+			padding-top: 15px;
+		}
+		.popup-container{
+			width: 640px;
+			height: 320px;
+			margin: 0px auto;
+			border: 10px solid #ff524a;
+			background-color: #ffefef;
+			padding: 10px;
+		}
+		.popup-container .image{
+			width: 150px;
+			height: 150px;
+			margin-right: 10px;
+		}
+		.popup-container .browsers{
+			width: 100px;
+			height: 100px;
+			margin: 0 10px;
+			border: none;
+		}
+		.popup-container .title{
+			font-weight: bold;
+			margin-top: 40px;
+			height: 25px;
+			text-align: center;
+		}
+		.popup-container .subtitle{
+			margin: 10px 0;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="popup-container">
+		<img class="image fL" src="/images/alert.png" alt="" />
+		<div class="title">Ne cerem scuze dar nu avem suport pentru browserul dvs.</div>
+		<div class="subtitle">Folositi browserul: <strong><?php echo $this->browserName;?></strong> versiunea <strong><?php echo $this->browserVersion;?></strong> pe sistemul de operare <strong><?php echo $this->browserPlatform; ?></strong></div>
+		<div> Pentru a face update la browserul dvs. folositi adresa de mai jos:</div>
+		<div class="empty5"></div>
+		<div><a target="_blank" href="http://www.microsoft.com/downloads/en/details.aspx?FamilyId=9AE91EBE-3385-447C-8A30-081805B2F90B&displaylang=en">Windows Internet Explorer 7 pentru Windows XP</a></div>
+		<div class="clear"></div>
+		<div class="empty15"></div>
+		<p>Pentru a descarca un alt browser faceti click pe imaginile urmatoare:</p>
+		<div class="empty5"></div>
+		<div class="fL">
+			<a target="_blanc" href="http://www.mozilla.com/en-US/products/download.html" title="Firefox download">
+				<img class="browsers" src="/images/firefox_logo.png" alt="Firefox download" />
+			</a>
+		</div>
+		<div class="fL">
+			<a target="_blanc" href="http://www.google.com/chrome/" title="Chrome download">
+				<img class="browsers" src="/images/chrome_logo.png" alt="Chrome download" />
+			</a>
+		</div>
+		<div class="fL">
+			<a target="_blanc" href="http://www.apple.com/safari/download/" title="Safari download">
+				<img class="browsers" src="/images/safari_logo.png" alt="Safari download" />
+			</a>
+		</div>
+		<div class="fL">
+			<a target="_blanc" href="http://www.opera.com/download/" title="Opera download">
+				<img class="browsers" src="/images/opera_logo.png" alt="Opera download" />
+			</a>
+		</div>
+	</div>
+</body>
+</html>

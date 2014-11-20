@@ -1,0 +1,15 @@
+<?php
+// BEGIN: Youtube
+$postId = 1;
+$width = 560;
+$height = 315;
+TS_ToHtml::videoPlayer($postId, $width, $height);
+TS_ToHtml::videoThumb($postId, "lorem ipsum");
+// END: Youtube
+
+//$imgid = 6271487;
+//$url = "http://vimeo.com/".$imgid;
+//TS_ToHtml::videoPlayer($url, $width, $height);
+//$hash = unserialize(file_get_contents("http://vimeo.com/api/v2/video/$imgid.php"));
+//echo "<img src='".$hash[0]['thumbnail_large']." />";
+?>
