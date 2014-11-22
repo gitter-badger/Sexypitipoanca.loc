@@ -1,0 +1,17 @@
+html{background: #fff; }
+a{font-size: 13px;color: #a2a2a2;text-decoration: none;font-family:Arial, Helvetica, sans-serif;}
+a:hover{color: #000;text-decoration: underline;}
+.fL{float: left;}
+.fR{float: right;}
+.clear{clear: both;}
+/*==================================*/
+.log{padding: 0 5px;}
+.log .tit{padding-bottom: 5px;margin-bottom: 10px;font-size: 20px;font-weight: bold;border-bottom: 1px solid #ababab; font-family:Arial, Helvetica, sans-serif;}
+.log form{float: left;}
+.log form label{margin-bottom: 8px;display: block;color: #8f8f8f;font-size: 14px;font-weight: bold; font-family:Arial, Helvetica, sans-serif;}
+.log form input[type='text'], .log input[type='password']{width: 248px;height: 23px;border: 1px solid #ababab; margin-top:5px;}
+.log form input[type='submit']{margin-top: 10px;padding: 3px 6px;background: #cc0909;border: 1px solid #750000;font-weight: bold;color: #fff;cursor: pointer;border-radius: 6px; font-family:Arial, Helvetica, sans-serif;}
+.log .mes{width: 150px;float: right;}
+.log .mes span{margin-bottom: 10px;display: block;color: #c70909; font-family:Arial, Helvetica, sans-serif;}
+.log .mes span.t{margin-bottom: 5px;font-weight: bold; font-family:Arial, Helvetica, sans-serif;}
+.log .mes span em{color: #A2A2A2; font-family:Arial, Helvetica, sans-serif;}
