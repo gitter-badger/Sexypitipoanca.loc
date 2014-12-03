@@ -21,7 +21,7 @@ if(Zend_Registry::isRegistered('currentUser'))
 		<div class="empty10"></div>
 		<form name="frmNuffSaid" method="post" action="">
 			<input type="hidden" name="action" value="status" />
-			<textarea id="updateStatus" name="updateStatus" rows="" cols="" style='width: 500px;height: 24px;line-height: 24px;text-indent: 10px;border: 1px solid #ababab; color: #636363;' placeholder="La ce te gandesti"></textarea>
+			<textarea id="updateStatus" name="updateStatus" rows="" cols="" style='width: 500px;height: 24px;line-height: 24px;text-indent: 10px;border: 1px solid #ababab; color: #636363;' placeholder="La ce te gandesti" required="required"></textarea>
 			<input style='width: 65px;height: 26px;position: relative;top: -4px;left: -4px;color: #000;font-weight: bold;font-size: 13px;border: 1px solid #ababab;border-left: none;' value='Trimite' type="submit" />
 		</form>
 	</div>
@@ -30,14 +30,14 @@ if(Zend_Registry::isRegistered('currentUser'))
 		<form id="frmUploadGallery" method="post" action="">
 			<input type="hidden" name="action" value="gallery" />
 			<div class="photo_title">
-				<input id="photo_title" name="photo_title" type="text" placeholder="Titlu galerie" value="" />
+				<input id="photo_title" name="photo_title" type="text" placeholder="Titlu galerie" value="" required="required">
 			</div>
 			<div class="photo_categ">
 				<?php $categs = TS_Catalog::getCategories();
 				if($categs){
 					$i =0 ;
 					foreach($categs as $value){?>
-					<input name="photo_categ" id="photo_categ_<?php echo $value->getId();?>" <?php if($i == 0){echo "checked='checked'";} ?> type="radio" value="<?php echo $value->getId();?>" />
+					<input name="photo_categ" id="photo_categ_<?php echo $value->getId();?>" type="radio" value="<?php echo $value->getId();?>" required="required" />
 					<label for="photo_categ_<?php echo $value->getId();?>"><?php echo $value->getName();?></label>
 				<?php
 					$i++;
@@ -46,10 +46,10 @@ if(Zend_Registry::isRegistered('currentUser'))
 				?>
 			</div>
 			<div class="photo_description">
-				<textarea id="photo_description" name="photo_description" placeholder="Descriere"></textarea>
+				<textarea id="photo_description" name="photo_description" placeholder="Descriere" required="required"></textarea>
 			</div>
 			<div class="photo_tags">
-				<input id="photo_tags" name="photo_tags" type="text" placeholder="Adauga tag-uri separe prin virgula" value="">
+				<input id="photo_tags" name="photo_tags" type="text" placeholder="Adauga tag-uri separe prin virgula" value="" required="required">
 			</div>
 			<?php TS_Catalog::multipleUploaderJqueryUI('frmUploadGallery');?>
 			<div class="empty10"></div>
@@ -61,17 +61,17 @@ if(Zend_Registry::isRegistered('currentUser'))
 		<form id="frm_post_video" method="post" action="">
 			<input type="hidden" name="action" value="video" />
 			<div class="video_title">
-				<input id="video_title" name="video_title" type="text" placeholder="Titlu clip" value="" />
+				<input id="video_title" name="video_title" type="text" placeholder="Titlu clip" value="" required="required">
 			</div>
 			<div class="video_url">
-				<input id="video_url" name="video_url" type="text" placeholder="URL clip (youtube)" value="">
+				<input id="video_url" name="video_url" type="text" placeholder="URL clip (youtube)" value="" required="required">
 			</div>
 			<div class="video_categ">
 				<?php $categs = TS_Catalog::getCategories();
 				if($categs){
 					$i = 0;
 					foreach($categs as $value){?>
-					<input name="video_categ" id="video_categ_<?php echo $value->getId();?>" type="radio" <?php if($i==0){echo "checked='checked'";} ?> value="<?php echo $value->getId();?>" />
+					<input name="video_categ" id="video_categ_<?php echo $value->getId();?>" type="radio" value="<?php echo $value->getId();?>" required="required" />
 					<label for="video_categ_<?php echo $value->getId();?>"><?php echo $value->getName();?></label>
 				<?php
 					$i++;
@@ -80,10 +80,10 @@ if(Zend_Registry::isRegistered('currentUser'))
 				?>
 			</div>
 			<div class="video_description">
-				<textarea id="video_description" name="video_description" placeholder="Descriere"></textarea>
+				<textarea id="video_description" name="video_description" placeholder="Descriere" required="required"></textarea>
 			</div>
 			<div class="video_tags">
-				<input id="video_tags" name="video_tags" type="text" placeholder="Adauga tag-uri separe prin virgula" value="">
+				<input id="video_tags" name="video_tags" type="text" placeholder="Adauga tag-uri separe prin virgula" value="" required="required">
 			</div>
 			<input class="uplBtn video_submit" type="submit" value="Trimite" />
 		</form>
