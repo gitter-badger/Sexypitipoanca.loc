@@ -362,9 +362,10 @@ class Admin_CatalogController extends Zend_Controller_Action
 				$this->view->images = $eImages;
 			}
 
-			if($this->getRequest()->isPost()) {
-				if($form->isValid($this->getRequest()->getPost())) {
-					
+			if($this->getRequest()->isPost()) // post info available
+            {
+				if($form->isValid($this->getRequest()->getPost()))
+                {
 					$oldname = '';
 					//daca difera numele categoriei de numele vechi a ctegoriei
 					if($model->getName() != $form->getValue('name')) {
@@ -379,12 +380,11 @@ class Admin_CatalogController extends Zend_Controller_Action
 						$nameC = TS_Products::formatName($form->getValue('name'));
 						$model->setName($nameC);
 					}
-
-					$model->setCategory_id($form->getValue('category'));					
+					$model->setCategory_id($form->getValue('category'));
 					$model->setStatus($form->getValue('status'));
 					$model->setDescription($form->getValue('description'));
 					if($model->save()) {
-						$this->_flashMessenger->addMessage('<div class="mess-true">Modifcarile au fost efectuate cu succes!</div>');
+						$this->_flashMessenger->addMessage('<div class="mess-true">Modificarile au fost efectuate cu succes!</div>');
 						if($form->getValue('tags')) {
 							$tags = explode(',', trim($form->getValue('tags')));
 							foreach($tags as $tag) {
@@ -421,23 +421,29 @@ class Admin_CatalogController extends Zend_Controller_Action
 									}
 								}
 							}
-						}						
-						
+						}
+
+                        $userId = $form->getValue('user');
+                        if(!$form->getValue('user'))
+                        {
+                            $userId = $model->getUser_id();
+                        }
+
 						if(!empty($oldname))
 						{
 							//daca a fost modificat user-ul si user-ul nou nu are inca folder creat
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user') . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user'), 0777, true);
+							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
+								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
 							}
 
 							//cream folderele cu numele galerie noua
 							$allowed = "/[^a-z0-9\\-\\_]+/i";  
 							$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));	
 							$folderName = trim($folderName,'-');
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user') . '/' . $folderName . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user') . '/' . $folderName . '/', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user') . '/' . $folderName . '/big', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $form->getValue('user') . '/' . $folderName . '/small', 0777, true);
+							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
+								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
+								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
+								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
 							}
 							
 							//copiem pozele din folderul vechi
@@ -459,16 +465,16 @@ class Admin_CatalogController extends Zend_Controller_Action
 								$model2->setName($pozaNume);
 								if($model2->save()) {	
 									//mutam pozele vechi
-									copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
-									copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
+									copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
+									copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
 									
-									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/big/'.$oldPozaNume);
-									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/small/'.$oldPozaNume);
+									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume);
+									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume);
 								}
 							}
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/big');
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2.'/small');
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName2);
+							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big');
+							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small');
+							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2);
 
 						}
 						
@@ -481,7 +487,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 					
 						$upload = new Zend_File_Transfer_Adapter_Http();
 						$upload->addValidator('Size', false, 2000000, 'image');
-						$upload->setDestination('media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/'.$folderName.'/');
+						$upload->setDestination('media/catalog/products/'.$userId.'/'.$folderName.'/');
 						$files = $upload->getFileInfo();
 						$i = 1;
 						$rand = '';
@@ -499,15 +505,15 @@ class Admin_CatalogController extends Zend_Controller_Action
 										$model2->setName($pozaNume);
 										if($model2->save()) {
 											require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-											$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/'.$info['name']);
+											$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
 											$thumb->resize(600, 600)
 												  ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
-												  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
-											$thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
-											@unlink('media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/'.$info['name']);
+												  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/big/'.$pozaNume);
+											$thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
+											@unlink('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
 										}
 									}else{
-										$this->_flashMessenger->addMessage('<div class="mess-info">Eraore upload!</div>');
+										$this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
 										$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
 									}								
 								}
