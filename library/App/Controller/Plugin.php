@@ -245,6 +245,14 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 											),
 										),
 							),
+							array(
+								'label'			=> 'Import',
+								'title'			=> 'Import',
+								'module'		=> 'admin',
+								'controller'	=> 'catalog',
+								'action'		=> 'import',
+								'visible'		=> true,
+							),
 						),
 					),
 					///////END: GALLERY///////
@@ -473,8 +481,8 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 									),
 								),
 							),
-							
-						),	
+
+						),
 					),
 					///////END: NOTIFICATIONS///////
 					//
