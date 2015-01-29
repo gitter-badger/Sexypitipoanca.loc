@@ -23,7 +23,7 @@ class TS_Statistics
 		$model = new Default_Model_Statistics();
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$useragent = $_SERVER['HTTP_USER_AGENT'];
-		$referer = $_SERVER['HTTP_REFERER']?$_SERVER['HTTP_REFERER']:"direct";
+		$referer = isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:"direct";
 
 		if($model->notduplicate($ip) == true){
 			$model->setIp($ip);
@@ -377,7 +377,7 @@ class TS_Statistics
 		if(null != $id){
 			$model = new Default_Model_AccountUsers();
 			if(null == $options){
-				if($model->find()){
+				if($model->find($id)){
 					return $model;
 				}else{
 					return null;
