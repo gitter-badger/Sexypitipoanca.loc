@@ -253,6 +253,14 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 								'action'		=> 'import',
 								'visible'		=> true,
 							),
+							array(
+								'label'			=> 'Import Movie',
+								'title'			=> 'Import Movie',
+								'module'		=> 'admin',
+								'controller'	=> 'catalog',
+								'action'		=> 'import-movie',
+								'visible'		=> true,
+							),
 						),
 					),
 					///////END: GALLERY///////
