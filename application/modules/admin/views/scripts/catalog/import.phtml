@@ -1,0 +1,20 @@
+<?php
+    // video import 219531 is dinamic
+    // http://37.48.92.208/23-saveas/219531.mp4
+
+    $crawler = new ZG_Crawler;
+    $url = "http://xx69xx.ru/vipusk-".rand(1, 4775).".html";
+    $crawler->setUrl($url);
+    $html = $crawler->fetch();
+
+    //$title = $html->find('.post-title h1')->text;
+    $images = array();
+    foreach($html->find('.entry img') as $element)
+    {
+        $images[] = $element->src;
+    }
+?>
+    <h1><?php //echo $title ?></h1>
+    <?php foreach($images as $value):?>
+        <img src="<?php echo $value ?>">
+    <?php endforeach; ?>
