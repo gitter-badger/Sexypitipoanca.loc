@@ -306,25 +306,12 @@ class AccountController extends Zend_Controller_Action
 	
 	public function acceptRequestAction()
 	{
-		$id = $this->getRequest()->getParam('id');
-		$model = new Default_Model_SocialUserConnections();
-		if($model->find($id))
-		{
-			$model->setIsConfirmed(1);
-			$model->save();
-		}
-		$this->_redirect('/account/user-requests');
+		$this->handleRequest(true);
 	}
 	
 	public function denyRequestAction()
 	{
-		$id = $this->getRequest()->getParam('id');
-		$model = new Default_Model_SocialUserConnections();
-		if($model->find($id))
-		{
-			$model->delete();
-		}
-		$this->_redirect('/account/user-requests');
+        $this->handleRequest(false);
 	}
 	
 	public function messagesAction()
@@ -706,15 +693,12 @@ class AccountController extends Zend_Controller_Action
 	
 	public function favoritesAction()
 	{
-		if(!Zend_Registry::isRegistered('currentUser'))
-		{
+		if (!Zend_Registry::isRegistered('currentUser')) {
 			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
-		else
-		{
+		} else {
 			$userId = Zend_Registry::get('currentUser')->getId();
 				$result = TS_Products::favoriteProducts($userId);
-				if(NULL != $result){
+				if (NULL != $result) {
 					$paginator = Zend_Paginator::factory($result);
 					$paginator->setItemCountPerPage(15);
 					$paginator->setCurrentPageNumber($this->_getParam('page'));
@@ -732,8 +716,8 @@ class AccountController extends Zend_Controller_Action
 	public function deletefavoritesAction(){
 		$auth = Zend_Auth::getInstance();
 		$authAccount = $auth->getStorage()->read();
-		if($authAccount){
-			if($authAccount->getId()) {
+		if ($authAccount) {
+			if ($authAccount->getId()) {
 				$account = new Default_Model_AccountUsers();
 				$account->find($authAccount->getId());
 				$id = (int) $this->getRequest()->getParam('id');
@@ -774,5 +758,25 @@ class AccountController extends Zend_Controller_Action
                 $this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Parola veche eronata!</span>');
             }
         }
+    }
+
+    /**
+     * handle request, used to handle social request between users
+     * @param bool $accept
+     * @throws Exception
+     */
+    protected function handleRequest($accept = true)
+    {
+        $id = $this->getRequest()->getParam('id');
+        $model = new Default_Model_SocialUserConnections();
+        if ($model->find($id)) {
+            if ($accept) {
+                $model->setIsConfirmed(1);
+                $model->save();
+            } else {
+                $model->delete();
+            }
+        }
+        $this->_redirect('/account/user-requests');
     }
 }
