@@ -1,9 +1,5 @@
-<?php
-	$currentUser = $this->display_user;	
-	$userActivity = TS_SocialNetwork::userAddedGalleries($currentUser->getId());
-?>
-<?php if($userActivity){?>
-	<?php foreach($userActivity as $value){?>
+<?php if($this->galleries){?>
+	<?php foreach($this->galleries as $value){?>
 		<?php
 		$product = new J_Product();
 		$product->Product($value->getId(), array('category', 'image', 'commentsNo'));

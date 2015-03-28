@@ -80,10 +80,40 @@ class AccountController extends Zend_Controller_Action
 		}
 			
 	}
-	
+
+    /**
+     * gallerii, show the galleries for the selected user
+     */
 	public function galeriiAction()
 	{
-		
+        // get selected username
+        $username = $this->getRequest()->getParam('username');
+
+        // get user id by username
+        if($username)
+        {
+            $model = new Default_Model_AccountUsers();
+            $select = $model->getMapper()->getDbTable()->select()
+                ->where('username = ?', $username);
+            $result = $model->fetchAll($select);
+            if($result)
+            {
+                $userId = $result[0]->getUserId();
+            }
+        }
+
+        // get galleries by user id
+        if ($userId) {
+            $model = new Default_Model_CatalogProducts();
+            $select = $model->getMapper()->getDbTable()->select()
+                ->where('user_id = ?', $userId)
+                ->where('type = ?', 'gallery')
+                ->order('added DESC');
+            $result = $model->fetchAll($select);
+            if ($result) {
+                $this->view->galleries = $result;
+            }
+        }
 	}
 	
 	public function clipuriAction()
