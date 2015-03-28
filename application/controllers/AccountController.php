@@ -567,7 +567,8 @@ class AccountController extends Zend_Controller_Action
 	{
 		$auth = Zend_Auth::getInstance();
 		$authAccount = $auth->getStorage()->read();
-		if(null != $authAccount) {
+
+		if ($authAccount) {
 			if(null != $authAccount->getId()) {
 				$account = new Default_Model_AccountUsers();
 				if($account->find($authAccount->getId())) {
@@ -583,7 +584,7 @@ class AccountController extends Zend_Controller_Action
 					$this->view->formPassword = $formPassword;
 		
 					if($this->getRequest()->isPost()) {
-						if($this->getRequest()->getPost('control') == 'edit'){				
+						if($this->getRequest()->getPost('control') == 'edit'){
 							if($form->isValid($this->getRequest()->getPost())){								
 								$birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
 								$allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
@@ -623,26 +624,11 @@ class AccountController extends Zend_Controller_Action
 								} else {
 									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute! Trebuie sa aveti peste 18 ani.</span>');
 								}
-								$this->_redirect('/account/edit');
 							}
 						} elseif($this->getRequest()->getPost('control') == 'editPassword') {
-							if($formPassword->isValid($this->getRequest()->getPost())) {
-								$post = $this->getRequest()->getPost();
-								if(md5($post['oldPassword']) == $account->getPassword()) {
-									$account->setPassword(md5($post['password']));									
-									if($account->save()) {										
-										$this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
-										
-									}else{
-										$this->_flashMessenger->addMessage('<span class="mess-true">Eraore! Parola nu a putut fi modificata.</span>');
-									}
-									$this->_redirect('/account/edit');
-								} else{								
-									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Parola veche eronata!</span>');
-									$this->_redirect('/account/edit');
-								}
-							}
+                            $this->changePassword($formPassword, $account);
 						}
+                        $this->_redirect('/account/edit');
 					}
 				}
 			}
@@ -772,4 +758,21 @@ class AccountController extends Zend_Controller_Action
 	{
 		
 	}
+
+    protected function changePassword($formPassword, $account)
+    {
+        if($formPassword->isValid($this->getRequest()->getPost())) {
+            $post = $this->getRequest()->getPost();
+            if (md5($post['oldPassword']) == $account->getPassword()) {
+                $account->setPassword(md5($post['password']));
+                if($account->save()) {
+                    $this->_flashMessenger->addMessage('<span class="mess-true">Modificarile au fost efectuate cu succes</span>');
+                }else{
+                    $this->_flashMessenger->addMessage('<span class="mess-true">Eroare! Parola nu a putut fi modificata.</span>');
+                }
+            } else{
+                $this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Parola veche eronata!</span>');
+            }
+        }
+    }
 }
