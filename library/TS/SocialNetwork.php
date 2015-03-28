@@ -121,7 +121,8 @@ class TS_SocialNetwork
 		}
 		return $return;
 	}
-	
+
+    // ToDo: Remove method
 	public static function usernameToUserModel($username)
 	{
 		$return = NULL;
@@ -168,7 +169,8 @@ class TS_SocialNetwork
 		}
 		return $return;
 	}
-	
+
+    // ToDo: remove this
 	public static function userAddedGalleries($userId)
 	{
 		$return = null;
