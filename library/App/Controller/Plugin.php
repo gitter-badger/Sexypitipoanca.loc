@@ -49,6 +49,7 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 		$acl->add(new Zend_Acl_Resource('admin:index'));
 		$acl->add(new Zend_Acl_Resource('admin:dashboard'));
 		$acl->add(new Zend_Acl_Resource('admin:catalog'));
+		$acl->add(new Zend_Acl_Resource('admin:import'));
 		$acl->add(new Zend_Acl_Resource('admin:user'));
 		$acl->add(new Zend_Acl_Resource('admin:comments'));
 		$acl->add(new Zend_Acl_Resource('admin:newsletter'));
@@ -265,6 +266,19 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 					),
 					///////END: GALLERY///////
 					//
+					///////Begin: Import///////
+					array(
+						'label'			=> 'Import',
+						'title'			=> 'Import',
+						'module'		=> 'admin',
+						'controller'	=> 'import',
+						'resource'		=> 'admin:import',
+						'pages'			=> array(
+
+						),
+					),
+					///////End: Import///////
+
 					///////BEGIN: USERS///////
 					array(
 						'label'			=> 'Users',
