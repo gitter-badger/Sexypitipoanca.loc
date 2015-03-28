@@ -102,6 +102,8 @@ class AccountController extends Zend_Controller_Action
             }
         }
 
+        // ToDo: combine these 2 selects into 1
+
         // get galleries by user id
         if ($userId) {
             $model = new Default_Model_CatalogProducts();
@@ -109,10 +111,18 @@ class AccountController extends Zend_Controller_Action
                 ->where('user_id = ?', $userId)
                 ->where('type = ?', 'gallery')
                 ->order('added DESC');
-            $result = $model->fetchAll($select);
-            if ($result) {
-                $this->view->galleries = $result;
-            }
+
+            // paginate the result
+            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+            $paginator->setItemCountPerPage(10);
+            $paginator->setCurrentPageNumber($this->_getParam('page'));
+            $paginator->setPageRange(5);
+            $this->view->galleries = $paginator;
+            $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+            $this->view->totalItemCount = $paginator->getTotalItemCount();
+
+            Zend_Paginator::setDefaultScrollingStyle('Sliding');
+            Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
         }
 	}
 	
