@@ -1,6 +1,13 @@
 <?php
+
+/**
+ * @property Zend_Controller_Action_Helper_Abstract _flashMessenger
+ */
 class AccountController extends Zend_Controller_Action
 {
+    /**
+     * init, initializes flash messenger
+     */
 	public function init()
 	{
 		$this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
@@ -120,8 +127,7 @@ class AccountController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Todo
-	 * move to AjaxController
+	 * ToDo: move to AjaxController
 	 */
 	public function befriendAction()
 	{
@@ -214,46 +220,7 @@ class AccountController extends Zend_Controller_Action
 			Zend_View_Helper_PaginationControl::setDefaultViewPartial(array('_pagination.phtml', $param));
 			
 		}
-		
-//		$txtSearch = $this->getRequest()->getParam('txtHeaderSearch');
-//		if($txtSearch)
-//		{
-//			if($form->isValid($this->getRequest()->getPost()))
-//			{
-//				$posts = $this->getRequest()->getPost();
-//				Zend_Debug::dump($this->getRequest()->getPost());
-//				$txtSearch = $posts['txtHeaderSearch'];
-////				if($posts['search_type'] == 'user'){
-//					$model = new Default_Model_AccountUsers();
-//					$select = $model->getMapper()->getDbTable()->select();
-//					$select->where("username LIKE '%".$txtSearch."%'");
-//					$result = $model->fetchAll($select);
-//					if(NULL != $result)
-//					{
-//						$type = 'users';
-//						$this->view->userId = $userId;
-//						$this->view->result = $result;
-//					}
-//				}else{					
-//					$userId = $currentUser->getId();
-//					$model = new Default_Model_SocialUserConnections();
-//					$select = $model->getMapper()->getDbTable()->select()
-//							->from(array('uc'=>'social_user_connections'))
-//							->joinLeft(array('u'=>'j_account_users'),'uc.receiverUserId = u.id',array('uid'=>'u.id'))							
-//							->where('uc.receiverUserId = ?', $userId)
-//							->where('u.username LIKE ?', '%'.$txtSearch.'%')
-//							->orwhere('uc.initiatorUserId = ?', $userId)
-//							->where('u.username LIKE ?', '%'.$txtSearch.'%')
-//							->where('uc.isConfirmed IS TRUE');
-//					$result = $model->fetchAll($select);
-//					if(NULL != $result)
-//					{
-//						$this->view->userId = $userId;
-//						$this->view->result = $result;
-//					}
-//				}				
-//			}
-//		}
+
 		// END: Search
 		else
 		{
@@ -523,11 +490,12 @@ class AccountController extends Zend_Controller_Action
 									$subject = $signup->getSubjectro();
 									$message = $signup->getValuero();
 									
-									$message = str_replace('{'.'$'.'username}', $username, $message);									
+									$message = str_replace('{'.'$'.'username}', $username, $message);
+                                    // ToDo: find where email is coming from
 									$message = str_replace('{'.'$'.'email}', $email, $message);
 									$message = str_replace('{'.'$'.'activationlink}', $activationlink, $message);	
 									
-									
+									// ToDo: change hardcoded variables
 									$emailcompany = 'contact@sexypitipoanca.ro';
 									$institution = 'SexyPitipoanca.ro';
 									
