@@ -104,7 +104,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	);
 	$router->addRoute('cloudtag', $article);
 	// END: TAG CLOUD
-	/////////////////////////////////////////////////////////
+
 	// BEGIN: Tags route with pagination
 	$tagsRoute = new Zend_Controller_Router_Route_Regex(
 		'taguri/([^_]*)/pagina-([^-]*)\.html',
@@ -122,7 +122,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	);
 	$router->addRoute('tag', $tagsRoute);
 	// END: Tags route with pagination
-	/////////////////////////////////////////////////////////
+
 	// BEGIN: WALL
 	$wall = new Zend_Controller_Router_Route_Regex(
 	'user/([^_]*)',
@@ -189,24 +189,25 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	);
 	$router->addRoute('clipuri-adaugate', $clipuri_adaugate);
 	// END: Clipuri adaugate
-	/////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////
-	// BEGIN: Galerii adaugate
+
+	// Begin: Galerii adaugate
 	$galerii_adaugate = new Zend_Controller_Router_Route_Regex(
-	'galerii-adaugate/([^_]*)',
-	array(
-			'module' => 'default',
-			'controller' => 'account',
-			'action' => 'galerii'
-	),
-	array(
-			1 => 'username',
-	),
-	'galerii-adaugate/%s'
+    	'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
+        array(
+            'module'        => 'default',
+            'controller'    => 'account',
+            'action'        => 'galerii',
+            'page'          => 1
+        ),
+        array(
+            1 => 'username',
+            2 => 'page'
+        ),
+	    'galerii-adaugate/%s/pagina-%d.html'
 	);
 	$router->addRoute('galerii-adaugate', $galerii_adaugate);
-	// END: Galerii adaugate
-	/////////////////////////////////////////////////////////
+	// End: Galerii adaugate
+
 	/////////////////////////////////////////////////////////
 	// BEGIN: Galerii favorite
 	$favorites_galleries = new Zend_Controller_Router_Route_Regex(

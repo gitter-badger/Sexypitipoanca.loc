@@ -1,7 +1,7 @@
 <?php
 class Admin_Model_DbTable_ImportSource extends Zend_Db_Table_Abstract
 {
-	protected $_name    = 'import_source';
+	protected $_name    = 'import_item';
 	protected $_primary = 'id';
 }
 
@@ -10,13 +10,7 @@ class Admin_Model_ImportSource
 	protected $_id;
 	protected $_title;
 	protected $_description;
-
 	protected $_url;
-
-    /**
-     * @var $schema, used for fetching url from page
-     */
-    protected $_schema;
 	protected $_created;
 	protected $_modified;
 	protected $_mapper;
