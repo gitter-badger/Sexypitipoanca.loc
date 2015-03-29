@@ -425,7 +425,7 @@ class AccountController extends Zend_Controller_Action
 						// END: Save tags
 						$modelVideo = new Default_Model_Video();
 						$modelVideo->setProductId($productId);
-						$modelVideo->setUrl($this->getRequest()->getPost('video_url'));					
+						$modelVideo->setUrl($this->getRequest()->getPost('video_url'));
 						if($modelVideo->save())
 						{
 							$this->_redirect('/user/'.$username);
