@@ -111,6 +111,7 @@ class AccountController extends Zend_Controller_Action
             $select = $model->getMapper()->getDbTable()->select()
                 ->where('user_id = ?', $userId)
                 ->where('type = ?', 'gallery')
+                ->where('status = ?', '1')
                 ->order('added DESC');
 
             // paginate the result
