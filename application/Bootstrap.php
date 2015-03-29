@@ -12,11 +12,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
 		Zend_Loader_Autoloader::getInstance()->registerNamespace('J_');
 		Zend_Loader_Autoloader::getInstance()->registerNamespace('TS_');
-        $autoloader = new Zend_Application_Module_Autoloader(array(
+        $autoLoader = new Zend_Application_Module_Autoloader(array(
             'namespace' => 'Default_',
             'basePath'  => dirname(__FILE__),
         ));
-        return $autoloader;
+        return $autoLoader;
     }
 }
 
@@ -38,7 +38,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	);
 	$router->addRoute('rewriteTags', $rewriteTags);
 	// END: Redirect old to new tags
-	// BEGIN: ARTICLE DETAILS
+
+	// Article details
 	$article = new Zend_Controller_Router_Route_Regex(
 	'([^_]*)/([^_]*)-([^_]*)\.html',
 	array(
@@ -54,7 +55,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	'%s/%s-%d.html'
 	);
 	$router->addRoute('product', $article);
-	// END: ARTICLE DETAILS
+
 	// BEGIN: CATEGORY
 	$article = new Zend_Controller_Router_Route_Regex(
 	'categorii/([^_]*)-([^_]*)\.html',
@@ -189,24 +190,41 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	);
 	$router->addRoute('clipuri-adaugate', $clipuri_adaugate);
 	// END: Clipuri adaugate
+	/////////////////////////////////////////////////////////
 
-	// Begin: Galerii adaugate
+	/////////////////////////////////////////////////////////
+	// BEGIN: Galerii adaugate
 	$galerii_adaugate = new Zend_Controller_Router_Route_Regex(
-    	'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
-        array(
-            'module'        => 'default',
-            'controller'    => 'account',
-            'action'        => 'galerii',
-            'page'          => 1
-        ),
-        array(
-            1 => 'username',
+	'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
+	array(
+			'module' => 'default',
+			'controller' => 'account',
+			'action'    => 'galerii',
+            'page'      => 1
+	),
+	array(
+			1 => 'username',
             2 => 'page'
-        ),
-	    'galerii-adaugate/%s/pagina-%d.html'
+	),
+	'galerii-adaugate/%s/pagina-%d.html'
 	);
 	$router->addRoute('galerii-adaugate', $galerii_adaugate);
-	// End: Galerii adaugate
+	// END: Galerii adaugate
+$tagsRoute = new Zend_Controller_Router_Route_Regex(
+    'taguri/([^_]*)/pagina-([^-]*)\.html',
+    array(
+        'module'=>'default',
+        'controller'=>'catalog',
+        'action'=>'tags',
+        'page'=>'1'
+    ),
+    array(
+        1 => 'tag',
+        2 => 'page'
+    ),
+    'taguri/%s/pagina-%d.html'
+);
+$router->addRoute('tag', $tagsRoute);
 
 	/////////////////////////////////////////////////////////
 	// BEGIN: Galerii favorite

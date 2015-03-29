@@ -790,6 +790,7 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 // END: Set logged in user data
 
 // BEGIN: Check if logged in user or display user
+    // ToDo: move this to account controller
 	if($controller == 'account')
 	{
 		$username = $this->getRequest()->getParam('username');
