@@ -98,7 +98,8 @@ class AccountController extends Zend_Controller_Action
             $result = $model->fetchAll($select);
             if($result)
             {
-                $userId = $result[0]->getUserId();
+                $userId = $result[0]->getId();
+                $this->view->currentUser = $result[0];
             }
         }
 

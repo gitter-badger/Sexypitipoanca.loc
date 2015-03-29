@@ -35,7 +35,7 @@ $tsProducts = new TS_Products();
 							<a <?php if($this->controller == "account" && $this->action == "wall"){echo "class='selected'";}?> href="/user/<?php echo $currentUser->getUsername();?>">Perete</a>
 						</li>
 						<li>
-							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
+							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>/pagina-1.html">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
 						</li>
 						<li>
 							<a <?php if($this->controller == "account" && $this->action == "clipuri-adaugate"){echo "class='selected'";}?> href="/clipuri-adaugate/<?php echo $currentUser->getUsername();?>">Clipuri adaugate (<?php echo TS_SocialNetwork::userMenuEmbedCount($currentUser->getId());?>)</a>
