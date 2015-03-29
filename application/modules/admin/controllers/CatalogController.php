@@ -128,7 +128,9 @@ class Admin_CatalogController extends Zend_Controller_Action
 
 	public function productsEditVideoAction()
 	{
+        // ToDo: remove this
 		$oldAvatar = "nush, nu e definit";
+
 		$id = $this->getRequest()->getParam('id');
 		$model = new Default_Model_CatalogProducts();
 		if($model->find($id))

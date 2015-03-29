@@ -29,7 +29,7 @@ class Admin_Form_Post extends Zend_Form
         $options = array();
 		$model = new Default_Model_CatalogCategories();
 		$select = $model->getMapper()->getDbTable()->select()
-				->where('status = ?', '1')
+				//->where('status = ?', '1') // status not important
 				->order('position ASC');
 		if(($result = $model->fetchAll($select))) {
 			foreach($result as $value) {
