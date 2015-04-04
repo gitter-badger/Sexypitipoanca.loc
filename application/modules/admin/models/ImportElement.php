@@ -127,7 +127,7 @@ class Admin_Model_ImportItem
 	public function getMapper()
 	{
 		if(null === $this->_mapper) {
-			$this->setMapper(new Admin_Model_ImportSourceMapper());
+			$this->setMapper(new Admin_Model_ImportItemMapper());
 		}
 		return $this->_mapper;
 	}
@@ -156,7 +156,7 @@ class Admin_Model_ImportItem
 	}
 }
 
-class Admin_Model_ImportSourceMapper
+class Admin_Model_ImportItemMapper
 {
 	protected $_dbTable;
 
@@ -175,12 +175,12 @@ class Admin_Model_ImportSourceMapper
 	public function getDbTable()
 	{
 		if(null === $this->_dbTable) {
-			$this->setDbTable('Admin_Model_DbTable_ImportSource');
+			$this->setDbTable('Admin_Model_DbTable_ImportItem');
 		}
 		return $this->_dbTable;
 	}
 
-	public function save(Admin_Model_ImportSource $model)
+	public function save(Admin_Model_ImportItem $model)
 	{
 		$data = array(
 			'title'	 	 		 => $model->getTitle(),
@@ -197,7 +197,7 @@ class Admin_Model_ImportSourceMapper
 		return $id;
 	}
 
-	public function find($id, Admin_Model_ImportSource $model)
+	public function find($id, Admin_Model_ImportItem $model)
 	{
 		$result = $this->getDbTable()->find($id);
 		if(0 == count($result)) {
@@ -213,7 +213,7 @@ class Admin_Model_ImportSourceMapper
 		$resultSet = $this->getDbTable()->fetchAll($select);
 		$entries = array();
 		foreach($resultSet as $row) {
-			$model = new Admin_Model_ImportSource();
+			$model = new Admin_Model_ImportItem();
 			$model->setOptions($row->toArray())
 				->setMapper($this);
 			$entries[] = $model;

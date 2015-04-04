@@ -1,1 +1,26 @@
-test
+<?php if($this->sources){?>
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tableListingsAll">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+        <?php foreach($this->sources as $value){?>
+            <tr>
+                <td><?php echo $value->getTitle() ?></td>
+                <td><?php echo $value->getDescription() ?></td>
+                <td><?php echo date("d M, Y H:i:s", $value->getCreated());?></td>
+                <td>
+                    <a href="/admin/marketing/edit/id/<?php echo $value->getId() ?>" title="Edit">edit</a>
+                    |
+                    <a href="/admin/marketing/status/id/<?php echo $value->getId() ?>" title="Status">status</a>
+                    |
+                    <a href="/admin/marketing/delete/id/<?php echo $value->getId() ?>" title="Delete">delete</a>
+                </td>
+            </tr>
+        <?php }?>
+    </table>
+<?php }else{?>
+    No sources in database!
+<?php }?>

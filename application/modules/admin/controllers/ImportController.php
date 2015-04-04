@@ -8,12 +8,19 @@
 class Admin_ImportController extends Zend_Controller_Action
 {
     /**
+     * @var Admin_Model_ImportSource $model
+     */
+    protected $model;
+
+    /**
      * init, initializes flash messenger
      */
     public function init()
     {
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->message = $this->_flashMessenger->getMessages();
+
+        $this->model = new Admin_Model_ImportSource();
     }
 
     /**
@@ -21,7 +28,9 @@ class Admin_ImportController extends Zend_Controller_Action
      */
 	public function indexAction()
 	{
-
+        $select = $this->model->getMapper()->getDbTable()->select();
+        $sources = $this->model->fetchAll($select);
+        $this->view->sources = $sources;
 	}
 
     /**
