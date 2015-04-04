@@ -20,27 +20,30 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     }
 }
 
-//BEGIN: ROUTER ROUTE REGEX
-	$ctrl  = Zend_Controller_Front::getInstance();
-	$router = $ctrl->getRouter();
-	// BEGIN: Redirect old to new tags
-	$rewriteTags = new Zend_Controller_Router_Route_Regex(
-		'taguri/([^_]*)\.html',
-		array(
-			'module'=>'default',
-			'controller'=>'redirect',
-			'action'=>'new-tags',
-		),
-		array(
-			1 => 'tag'
-		),
-		'taguri/%s.html'
-	);
-	$router->addRoute('rewriteTags', $rewriteTags);
-	// END: Redirect old to new tags
+$ctrl  = Zend_Controller_Front::getInstance();
+$router = $ctrl->getRouter();
 
-	// Article details
-	$article = new Zend_Controller_Router_Route_Regex(
+/**
+ * old tags to new route
+ */
+$rewriteTags = new Zend_Controller_Router_Route_Regex(
+    'taguri/([^_]*)\.html',
+    array(
+        'module'=>'default',
+        'controller'=>'redirect',
+        'action'=>'new-tags',
+    ),
+    array(
+        1 => 'tag'
+    ),
+    'taguri/%s.html'
+);
+$router->addRoute('rewriteTags', $rewriteTags);
+
+/**
+ * article details route
+ */
+$article = new Zend_Controller_Router_Route_Regex(
 	'([^_]*)/([^_]*)-([^_]*)\.html',
 	array(
 			'module' => 'default',
@@ -53,45 +56,33 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			3 => 'id'
 	),
 	'%s/%s-%d.html'
-	);
-	$router->addRoute('product', $article);
+);
+$router->addRoute('product', $article);
 
-	// BEGIN: CATEGORY
-	$article = new Zend_Controller_Router_Route_Regex(
-	'categorii/([^_]*)-([^_]*)\.html',
-	array(
-			'module' => 'default',
-			'controller' => 'catalog',
-			'action' => 'categories'
-	),
-	array(
-			1 => 'categoryName',
-			2 => 'id'
-	),
-	'categorii/%s-%d.html'
-	);
-	$router->addRoute('categoryDISABLED', $article);
-	// END: CATEGORY
-	//BEGIN: PRODUCT CATEGORY ROUTE WITH PAGINATION
-	$testRoute = new Zend_Controller_Router_Route_Regex(
-		'categorii/([^_]*)-([^-]*)/pagina-([^-]*)\.html',
-		array(
-			'module'=>'default',
-			'controller'=>'catalog',
-			'action'=>'categories',
-			'page'=>'1'
-		),
-		array(
-			1 => 'categoryName',
-			2 => 'id',
-			3 => 'page'
-		),
-		'categorii/%s-%d/pagina-%d.html'
-	);
-	$router->addRoute('category', $testRoute);
-	//END: PRODUCT CATEGORY ROUTE WITH PAGINATION
-	// BEGIN: TAG CLOUD
-	$article = new Zend_Controller_Router_Route_Regex(
+/**
+ * category route with pagination
+ */
+$testRoute = new Zend_Controller_Router_Route_Regex(
+    'categorii/([^_]*)-([^-]*)/pagina-([^-]*)\.html',
+    array(
+        'module'=>'default',
+        'controller'=>'catalog',
+        'action'=>'categories',
+        'page'=>'1'
+    ),
+    array(
+        1 => 'categoryName',
+        2 => 'id',
+        3 => 'page'
+    ),
+    'categorii/%s-%d/pagina-%d.html'
+);
+$router->addRoute('category', $testRoute);
+
+/**
+ * tag cloud route
+ */
+$article = new Zend_Controller_Router_Route_Regex(
 	'tag-cloud/([^_]*)\.html',
 	array(
 			'module' => 'default',
@@ -102,114 +93,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			1 => 'tag',
 	),
 	'tag-cloud/%s.html'
-	);
-	$router->addRoute('cloudtag', $article);
-	// END: TAG CLOUD
+);
+$router->addRoute('cloudtag', $article);
 
-	// BEGIN: Tags route with pagination
-	$tagsRoute = new Zend_Controller_Router_Route_Regex(
-		'taguri/([^_]*)/pagina-([^-]*)\.html',
-		array(
-			'module'=>'default',
-			'controller'=>'catalog',
-			'action'=>'tags',
-			'page'=>'1'
-		),
-		array(
-			1 => 'tag',
-			2 => 'page'
-		),
-		'taguri/%s/pagina-%d.html'
-	);
-	$router->addRoute('tag', $tagsRoute);
-	// END: Tags route with pagination
-
-	// BEGIN: WALL
-	$wall = new Zend_Controller_Router_Route_Regex(
-	'user/([^_]*)',
-	array(
-			'module' => 'default',
-			'controller' => 'account',
-			'action' => 'wall'
-	),
-	array(
-			1 => 'username',
-	),
-	'user/%s'
-	);
-	$router->addRoute('wall', $wall);
-	// END: WALL
-	/////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////
-	// BEGIN: FRIENDS
-	$friends = new Zend_Controller_Router_Route_Regex(
-	'friends/([^_]*)',
-	array(
-			'module' => 'default',
-			'controller' => 'account',
-			'action' => 'prieteni'
-	),
-	array(
-			1 => 'username',
-	),
-	'friends/%s'
-	);
-	$router->addRoute('friends', $friends);
-	// END: FRIENDS
-	/////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////
-	// BEGIN: Top rated galleries
-	$friends = new Zend_Controller_Router_Route_Regex(
-	'score',
-	array(
-			'module' => 'default',
-			'controller' => 'catalog',
-			'action' => 'score'
-	),
-	/*array(
-			1 => '',
-	),*/
-	'score'
-	);
-	$router->addRoute('score', $friends);
-	// END: Top rated galleries
-	/////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////
-	// BEGIN: Clipuri adaugate
-	$clipuri_adaugate = new Zend_Controller_Router_Route_Regex(
-	'clipuri-adaugate/([^_]*)',
-	array(
-			'module' => 'default',
-			'controller' => 'account',
-			'action' => 'clipuri'
-	),
-	array(
-			1 => 'username',
-	),
-	'clipuri-adaugate/%s'
-	);
-	$router->addRoute('clipuri-adaugate', $clipuri_adaugate);
-	// END: Clipuri adaugate
-	/////////////////////////////////////////////////////////
-
-	/////////////////////////////////////////////////////////
-	// BEGIN: Galerii adaugate
-	$galerii_adaugate = new Zend_Controller_Router_Route_Regex(
-	'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
-	array(
-			'module' => 'default',
-			'controller' => 'account',
-			'action'    => 'galerii',
-            'page'      => 1
-	),
-	array(
-			1 => 'username',
-            2 => 'page'
-	),
-	'galerii-adaugate/%s/pagina-%d.html'
-	);
-	$router->addRoute('galerii-adaugate', $galerii_adaugate);
-	// END: Galerii adaugate
+/**
+ * tags route with pagination
+ */
 $tagsRoute = new Zend_Controller_Router_Route_Regex(
     'taguri/([^_]*)/pagina-([^-]*)\.html',
     array(
@@ -226,21 +115,125 @@ $tagsRoute = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('tag', $tagsRoute);
 
-	/////////////////////////////////////////////////////////
-	// BEGIN: Galerii favorite
-	$favorites_galleries = new Zend_Controller_Router_Route_Regex(
-	'favorite/([^_]*)',
+/**
+ * wall route
+ */
+$wall = new Zend_Controller_Router_Route_Regex(
+	'user/([^_]*)',
 	array(
 			'module' => 'default',
 			'controller' => 'account',
-			'action' => 'favorites'
+			'action' => 'wall'
 	),
 	array(
 			1 => 'username',
 	),
-	'favorite/%s'
-	);
-	$router->addRoute('favorite', $favorites_galleries);
-	// END: Galerii favorite
-	/////////////////////////////////////////////////////////
-//END: ROUTER ROUTE REGEX
+	'user/%s'
+);
+$router->addRoute('wall', $wall);
+
+/**
+ * friends route
+ */
+$friends = new Zend_Controller_Router_Route_Regex(
+	'friends/([^_]*)',
+	array(
+			'module' => 'default',
+			'controller' => 'account',
+			'action' => 'prieteni'
+	),
+	array(
+			1 => 'username',
+	),
+	'friends/%s'
+);
+$router->addRoute('friends', $friends);
+
+/**
+ * top rated galleries route
+ */
+$friends = new Zend_Controller_Router_Route_Regex(
+	'score',
+	array(
+			'module' => 'default',
+			'controller' => 'catalog',
+			'action' => 'score'
+	),
+	/*array(
+			1 => '',
+	),*/
+	'score'
+);
+$router->addRoute('score', $friends);
+
+/**
+ * clips added route
+ */
+$clipuri_adaugate = new Zend_Controller_Router_Route_Regex(
+	'clipuri-adaugate/([^_]*)',
+	array(
+			'module' => 'default',
+			'controller' => 'account',
+			'action' => 'clipuri'
+	),
+	array(
+			1 => 'username',
+	),
+	'clipuri-adaugate/%s'
+);
+$router->addRoute('clipuri-adaugate', $clipuri_adaugate);
+
+/**
+ * added galleries route
+ */
+$galerii_adaugate = new Zend_Controller_Router_Route_Regex(
+    'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
+    array(
+            'module' => 'default',
+            'controller' => 'account',
+            'action'    => 'galerii',
+            'page'      => 1
+    ),
+    array(
+            1 => 'username',
+            2 => 'page'
+    ),
+    'galerii-adaugate/%s/pagina-%d.html'
+);
+$router->addRoute('galerii-adaugate', $galerii_adaugate);
+
+/**
+ * tags route
+ */
+$tagsRoute = new Zend_Controller_Router_Route_Regex(
+    'taguri/([^_]*)/pagina-([^-]*)\.html',
+    array(
+        'module'=>'default',
+        'controller'=>'catalog',
+        'action'=>'tags',
+        'page'=>'1'
+    ),
+    array(
+        1 => 'tag',
+        2 => 'page'
+    ),
+    'taguri/%s/pagina-%d.html'
+);
+$router->addRoute('tag', $tagsRoute);
+
+/**
+ * favorite galleries route
+ */
+$favorites_galleries = new Zend_Controller_Router_Route_Regex(
+    'favorite/([^_]*)',
+    array(
+            'module' => 'default',
+            'controller' => 'account',
+            'action' => 'favorites'
+    ),
+    array(
+            1 => 'username',
+    ),
+    'favorite/%s'
+);
+$router->addRoute('favorite', $favorites_galleries);
