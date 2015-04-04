@@ -57,8 +57,8 @@ class Admin_MarketingController extends Zend_Controller_Action
             $this->view->form = $form;
             if($this->getRequest()->isPost()){
                 if($form->isValid($this->getRequest()->getPost())){
-                    $model->setOptions($form->getValues());
-                    if($model->save()){
+                    $this->model->setOptions($form->getValues());
+                    if($this->model->save()){
                         $this->_flashMessenger->addMessage('<div class="mess-true">Comment successfully moderated!</div>');
                         $this->_redirect('/admin/marketing/');
                     }else{
