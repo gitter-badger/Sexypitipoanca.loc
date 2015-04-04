@@ -38,7 +38,9 @@ class Admin_ImportController extends Zend_Controller_Action
      */
     public function addSourceAction()
     {
-
+        $form = new Admin_Form_ImportSource();
+        $form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/import/addSource.phtml'))));
+        $this->view->form = $form;
     }
 
     /**
