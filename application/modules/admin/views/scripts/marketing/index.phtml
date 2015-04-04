@@ -11,7 +11,13 @@
 		<td><?php echo $value->getCode();?></td>
 		<td><?php echo $value->getStatus()?"active":"inactive";?></td>
 		<td><?php echo date("d M, Y H:i:s", $value->getCreated());?></td>
-		<td>-</td>
+		<td>
+            <a href="/admin/marketing/edit/id/<?php echo $value->getId() ?>" title="Edit">edit</a>
+            |
+            <a href="/admin/marketing/status/id/<?php echo $value->getId() ?>" title="Status">status</a>
+            |
+            <a href="/admin/marketing/delete/id/<?php echo $value->getId() ?>" title="Delete">delete</a>
+        </td>
 	</tr>
 	<?php }?>
 </table>

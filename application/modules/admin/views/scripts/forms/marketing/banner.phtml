@@ -1,0 +1,43 @@
+<form method="<?php echo $this->element->getMethod(); ?>" action="<?php echo $this->element->getAction(); ?>" id="<?php echo $this->element->getId('id'); ?>" class="<?php echo $this->element->getId('class'); ?>"	enctype="<?php echo $this->element->getEncType(); ?>">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="tableAdmin box-tbl-info">
+        <col width="200" />
+        <col width="" />
+        <tr>
+            <th align="left" valign="middle">
+                <?php
+                $attribs = array();
+                if ($this->element->code->isRequired()) {
+                    $attribs['class'] = 'required';
+                }
+                echo $this->formLabel(
+                    $this->element->code->getName(),
+                    $this->element->code->getLabel(),
+                    $attribs
+                );
+                ?>
+            </th>
+            <td>
+                <?php
+                echo $this->{$this->element->code->helper}(
+                    $this->element->code->getName(),
+                    $this->element->code->getValue(),
+                    $this->element->code->getAttribs()
+                );
+                ?>
+                <?php if('<ul class="errors"><li></li></ul>'!=($this->element->code->getMessages())){ echo  $this->formErrors($this->element->code->getMessages());} ?>
+                <div class="hint"><?php echo $this->element->code->getDescription(); ?></div>
+            </td>
+        </tr>
+        <tr>
+            <th>&nbsp;</th>
+            <td>
+                <?php echo $this->{$this->element->submit->helper}(
+                    $this->element->submit->getName(),
+                    $this->element->submit->getValue(),
+                    $this->element->submit->getAttribs()
+                );
+                ?>
+            </td>
+        </tr>
+    </table>
+</form>

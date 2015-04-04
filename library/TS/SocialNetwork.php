@@ -1,12 +1,20 @@
 <?php
 class TS_SocialNetwork
-{	
+{
+    /**
+     * user activity, get all articles by this user
+     * @param $userId
+     * @param $limit
+     * @return null
+     * ToDo: remove this method
+     */
 	public static function userActivity($userId, $limit)
 	{
 		$return = null;
 		$catalogModel = new Default_Model_CatalogProducts();
 		$select = $catalogModel->getMapper()->getDbTable()->select()
 				->where('user_id = ?', $userId)
+
 				->order('added DESC')
 				->limit($limit);
 		
