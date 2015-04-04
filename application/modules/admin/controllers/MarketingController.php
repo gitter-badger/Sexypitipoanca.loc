@@ -1,10 +1,18 @@
 <?php
 class Admin_MarketingController extends Zend_Controller_Action
 {
+
+    /**
+     * @var Default_Model_Marketing $model
+     */
+    protected $model;
+
 	public function init()
 	{
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->message = $this->_flashMessenger->getMessages();
+
+        $this->model = new Default_Model_Marketing();
 	}
 
 	public function indexAction()
@@ -42,10 +50,9 @@ class Admin_MarketingController extends Zend_Controller_Action
     public function editAction()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = new Default_Model_Marketing();
-        if($model->find($id)) {
+        if($this->model->find($id)) {
             $form = new Admin_Form_Marketing();
-            $form->edit($model);
+            $form->edit($this->model);
             $form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/marketing/banner.phtml'))));
             $this->view->form = $form;
             if($this->getRequest()->isPost()){
@@ -69,11 +76,10 @@ class Admin_MarketingController extends Zend_Controller_Action
     public function statusAction()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = new Default_Model_Marketing();
-        if ($model->find($id)) {
-            $nextStatus = $model->getStatus() ? 0 : 1;
-            $model->setStatus($nextStatus);
-            $model->save();
+        if ($this->model->find($id)) {
+            $nextStatus = $this->model->getStatus() ? 0 : 1;
+            $this->model->setStatus($nextStatus);
+            $this->model->save();
         }
         $this->_redirect('/admin/marketing');
     }
@@ -85,10 +91,8 @@ class Admin_MarketingController extends Zend_Controller_Action
     public function deleteAction()
     {
         $id = $this->getRequest()->getParam('id');
-
-        $model = new Default_Model_Marketing();
-        if ($model->find($id)) {
-           if ($model->delete()) {
+        if ($this->model->find($id)) {
+           if ($this->model->delete()) {
                $this->_flashMessenger->addMessage('<div class="mess-true">Success! Data deleted.</div>');
            } else {
                $this->_flashMessenger->addMessage('<div class="mess-false">Error! Data not deleted.</div>');
