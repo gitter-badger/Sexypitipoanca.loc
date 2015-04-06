@@ -16,7 +16,7 @@ class IndexController extends Zend_Controller_Action
 				->order('added DESC');
 		
 		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-		$paginator->setItemCountPerPage(10);
+		$paginator->setItemCountPerPage(5);
 		$paginator->setCurrentPageNumber($this->_getParam('page'));
 		$paginator->setPageRange(5);
 		$this->view->result = $paginator;
