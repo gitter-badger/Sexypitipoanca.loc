@@ -1,0 +1,5 @@
+<?php if($this->elements): ?>
+    <?php foreach($this->elements as $element): ?>
+        <img src="<?php echo $element->getCode() ?>">
+    <?php endforeach ?>
+<?php endif ?>

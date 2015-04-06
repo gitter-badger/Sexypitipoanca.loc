@@ -1,16 +1,15 @@
 <?php
-class Admin_Model_DbTable_ImportItem extends Zend_Db_Table_Abstract
+class Admin_Model_DbTable_ImportElement extends Zend_Db_Table_Abstract
 {
 	protected $_name    = 'import_element';
 	protected $_primary = 'id';
 }
 
-class Admin_Model_ImportItem
+class Admin_Model_ImportElement
 {
 	protected $_id;
-	protected $_title;
-	protected $_description;
-	protected $_url;
+	protected $_itemId;
+	protected $_code;
 	protected $_created;
 	protected $_modified;
 	protected $_mapper;
@@ -63,37 +62,26 @@ class Admin_Model_ImportItem
 		return $this->_id;
 	}
 
-	public function setTitle($title)
+	public function setTypeId($itemId)
 	{
-		$this->_title = (string) $title;
+		$this->_itemId = (int) $itemId;
 		return $this;
 	}
 
-	public function getTitle()
+	public function getTypeId()
 	{
-		return $this->_title;
+		return $this->_itemId;
 	}
 
-	public function setDescription($value)
+	public function setCode($code)
 	{
-		$this->_description = (!empty($value))?(string) $value:null;
+		$this->_code = (string) $code;
 		return $this;
 	}
 
-	public function getDescription()
+	public function getCode()
 	{
-		return $this->_description;
-	}
-
-	public function setUrl($url)
-	{
-		$this->_url = (string) $url;
-		return $this;
-	}
-
-	public function getUrl()
-	{
-		return $this->_url;
+		return $this->_code;
 	}
 
 	public function setCreated($value)
@@ -127,7 +115,7 @@ class Admin_Model_ImportItem
 	public function getMapper()
 	{
 		if(null === $this->_mapper) {
-			$this->setMapper(new Admin_Model_ImportItemMapper());
+			$this->setMapper(new Admin_Model_ImportElementMapper());
 		}
 		return $this->_mapper;
 	}
@@ -156,7 +144,7 @@ class Admin_Model_ImportItem
 	}
 }
 
-class Admin_Model_ImportItemMapper
+class Admin_Model_ImportElementMapper
 {
 	protected $_dbTable;
 
@@ -175,17 +163,16 @@ class Admin_Model_ImportItemMapper
 	public function getDbTable()
 	{
 		if(null === $this->_dbTable) {
-			$this->setDbTable('Admin_Model_DbTable_ImportItem');
+			$this->setDbTable('Admin_Model_DbTable_ImportElement');
 		}
 		return $this->_dbTable;
 	}
 
-	public function save(Admin_Model_ImportItem $model)
+	public function save(Admin_Model_ImportElement $model)
 	{
 		$data = array(
-			'title'	 	 		 => $model->getTitle(),
-			'description'	 	 => $model->getDescription(),
-			'url'	 	 		 => $model->getUrl(),
+			'itemId'	  		 => $model->getItemId(),
+			'description'	 	 => $model->getCode(),
 		);
 		if(null === ($id = $model->getId())) {
 			$data['created']	 = new Zend_Db_Expr('NOW()');
@@ -197,7 +184,7 @@ class Admin_Model_ImportItemMapper
 		return $id;
 	}
 
-	public function find($id, Admin_Model_ImportItem $model)
+	public function find($id, Admin_Model_ImportElement $model)
 	{
 		$result = $this->getDbTable()->find($id);
 		if(0 == count($result)) {
@@ -213,7 +200,7 @@ class Admin_Model_ImportItemMapper
 		$resultSet = $this->getDbTable()->fetchAll($select);
 		$entries = array();
 		foreach($resultSet as $row) {
-			$model = new Admin_Model_ImportItem();
+			$model = new Admin_Model_ImportElement();
 			$model->setOptions($row->toArray())
 				->setMapper($this);
 			$entries[] = $model;

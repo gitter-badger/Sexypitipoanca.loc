@@ -29,6 +29,84 @@
             </td>
         </tr>
         <tr>
+            <th align="left" valign="middle">
+                <?php
+                $attribs = array();
+                if ($this->element->description->isRequired()) {
+                    $attribs['class'] = 'required';
+                }
+                echo $this->formLabel(
+                    $this->element->description->getName(),
+                    $this->element->description->getLabel(),
+                    $attribs
+                );
+                ?>
+            </th>
+            <td>
+                <?php
+                echo $this->{$this->element->description->helper}(
+                    $this->element->description->getName(),
+                    $this->element->description->getValue(),
+                    $this->element->description->getAttribs()
+                );
+                ?>
+                <?php if('<ul class="errors"><li></li></ul>'!=($this->element->description->getMessages())){ echo  $this->formErrors($this->element->description->getMessages());} ?>
+                <div class="hint"><?php echo $this->element->description->getDescription(); ?></div>
+            </td>
+        </tr>
+        <tr>
+            <th align="left" valign="middle">
+                <?php
+                $attribs = array();
+                if ($this->element->url->isRequired()) {
+                    $attribs['class'] = 'required';
+                }
+                echo $this->formLabel(
+                    $this->element->url->getName(),
+                    $this->element->url->getLabel(),
+                    $attribs
+                );
+                ?>
+            </th>
+            <td>
+                <?php
+                echo $this->{$this->element->url->helper}(
+                    $this->element->url->getName(),
+                    $this->element->url->getValue(),
+                    $this->element->url->getAttribs()
+                );
+                ?>
+                <?php if('<ul class="errors"><li></li></ul>'!=($this->element->url->getMessages())){ echo  $this->formErrors($this->element->url->getMessages());} ?>
+                <div class="hint"><?php echo $this->element->url->getDescription(); ?></div>
+            </td>
+        </tr>
+        <tr>
+            <th align="left" valign="middle">
+                <?php
+                $attribs = array();
+                if ($this->element->schema->isRequired()) {
+                    $attribs['class'] = 'required';
+                }
+                echo $this->formLabel(
+                    $this->element->schema->getName(),
+                    $this->element->schema->getLabel(),
+                    $attribs
+                );
+                ?>
+            </th>
+            <td>
+                <?php
+                echo $this->{$this->element->schema->helper}(
+                    $this->element->schema->getName(),
+                    $this->element->schema->getValue(),
+                    $this->element->schema->getAttribs()
+                );
+                ?>
+                <?php if('<ul class="errors"><li></li></ul>'!=($this->element->schema->getMessages())){ echo  $this->formErrors($this->element->schema->getMessages());} ?>
+                <div class="hint"><?php echo $this->element->schema->getDescription(); ?></div>
+            </td>
+        </tr>
+        <tr>
             <th>&nbsp;</th>
             <td>
                 <?php echo $this->{$this->element->submit->helper}(

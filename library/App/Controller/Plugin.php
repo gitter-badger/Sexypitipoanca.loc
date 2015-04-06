@@ -274,7 +274,14 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 						'controller'	=> 'import',
 						'resource'		=> 'admin:import',
 						'pages'			=> array(
-
+                            array(
+                                'label'			=> 'Import Items',
+                                'title'			=> 'Import Items',
+                                'module'		=> 'admin',
+                                'controller'	=> 'import',
+                                'action'		=> 'import-item',
+                                'visible'		=> true,
+                            ),
 						),
 					),
 					///////End: Import///////
