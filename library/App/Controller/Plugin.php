@@ -455,6 +455,14 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 								'action'		=> 'analytics',
 								'resource'		=> 'admin:marketing',
 							),
+                            array(
+								'label'			=> 'Send email',
+								'title'			=> 'Send email',
+								'module'		=> 'admin',
+								'controller'	=> 'marketing',
+								'action'		=> 'send-email',
+								'resource'		=> 'admin:marketing',
+							),
 						),
 					),
 					///////END: Marketing///////

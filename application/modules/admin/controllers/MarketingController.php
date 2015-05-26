@@ -107,4 +107,38 @@ class Admin_MarketingController extends Zend_Controller_Action
 	{
 		
 	}
+
+    /**
+     * Send an email to a non user
+     * @throws Zend_Form_Exception
+     * @throws Zend_Mail_Exception
+     */
+    public function sendEmailAction()
+    {
+        // BEGIN: Send form
+        $form = new Admin_Form_Message();
+        $form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/message.phtml'))));
+        $this->view->form = $form;
+
+        // Send mail
+        if($this->getRequest()->isPost()){
+            if($form->isValid($this->getRequest()->getPost())){
+                // BEGIN: Send email
+                $mail = new Zend_Mail();
+                $mail->setFrom($form->getValue('fromEmail'), $form->getValue('fromName'));
+                $mail->setSubject($form->getValue('subject'));
+                $mail->setBodyHtml($form->getValue('message'));
+                $mail->addTo($form->getValue('to'));
+                if($mail->send())
+                {
+                    $this->_flashMessenger->addMessage('<div class="mess-true">Your message was sent!</div>');
+                }
+                else{
+                    $this->_flashMessenger->addMessage('<div class="mess-false">Your message was not sent!</div>');
+                }
+                $this->_redirect('/admin/user');
+                // END: Send email
+            }
+        }
+    }
 }
