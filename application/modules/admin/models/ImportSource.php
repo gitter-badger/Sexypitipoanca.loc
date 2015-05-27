@@ -10,7 +10,6 @@ class Admin_Model_ImportSource
 	protected $_id;
 	protected $_title;
 	protected $_description;
-
 	protected $_url;
 
     /**
@@ -100,6 +99,17 @@ class Admin_Model_ImportSource
 	public function getUrl()
 	{
 		return $this->_url;
+	}
+
+	public function seSchema($schema)
+	{
+		$this->_schema = (string) $schema;
+		return $this;
+	}
+
+	public function getSchema()
+	{
+		return $this->_schema;
 	}
 
 	public function setCreated($value)
@@ -192,6 +202,7 @@ class Admin_Model_ImportSourceMapper
 			'title'	 	 		 => $model->getTitle(),
 			'description'	 	 => $model->getDescription(),
 			'url'	 	 		 => $model->getUrl(),
+			'schema'	  		 => $model->getSchema(),
 		);
 		if(null === ($id = $model->getId())) {
 			$data['created']	 = new Zend_Db_Expr('NOW()');
