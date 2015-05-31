@@ -16,15 +16,15 @@ class Admin_Model_ImportElement
 
 	public function __construct(array $options = null)
 	{
-		if(is_array($options)) {
+		if (is_array($options)) {
 			$this->setOptions($options);
 		}
 	}
 
 	public function __set($name, $value)
 	{
-		$method = 'set' . $name;
-		if(('mapper' == $name) || !method_exists($this, $method)) {
+		$method = 'set'.$name;
+		if (('mapper' == $name) || !method_exists($this, $method)) {
 			throw new Exception('Invalid '.$name.' property '.$method);
 		}
 		$this->$method($value);
@@ -32,8 +32,8 @@ class Admin_Model_ImportElement
 
 	public function __get($name)
 	{
-		$method = 'get' . $name;
-		if(('mapper' == $name) || !method_exists($this, $method)) {
+		$method = 'get'.$name;
+		if (('mapper' == $name) || !method_exists($this, $method)) {
 			throw new Exception('Invalid '.$name.' property '.$method);
 		}
 		return $this->$method();
@@ -42,9 +42,9 @@ class Admin_Model_ImportElement
 	public function setOptions(array $options)
 	{
 		$methods = get_class_methods($this);
-		foreach($options as $key => $value) {
-			$method = 'set' . ucfirst($key);
-			if(in_array($method, $methods)) {
+		foreach ($options as $key => $value) {
+			$method = 'set'.ucfirst($key);
+			if (in_array($method, $methods)) {
 				$this->$method($value);
 			}
 		}
@@ -86,7 +86,7 @@ class Admin_Model_ImportElement
 
 	public function setCreated($value)
 	{
-		$this->_created = (!empty($value) && strtotime($value)>0)?strtotime($value):null;
+		$this->_created = (!empty($value) && strtotime($value)>0) ? strtotime($value) : null;
 		return $this;
 	}
 
@@ -97,7 +97,7 @@ class Admin_Model_ImportElement
 
 	public function setUpdated($value)
 	{
-		$this->_modified = (!empty($value) && strtotime($value)>0)?strtotime($value):null;
+		$this->_modified = (!empty($value) && strtotime($value)>0) ? strtotime($value) : null;
 		return $this;
 	}
 
@@ -114,7 +114,7 @@ class Admin_Model_ImportElement
 
 	public function getMapper()
 	{
-		if(null === $this->_mapper) {
+		if (null === $this->_mapper) {
 			$this->setMapper(new Admin_Model_ImportElementMapper());
 		}
 		return $this->_mapper;
@@ -137,7 +137,7 @@ class Admin_Model_ImportElement
 
 	public function delete()
 	{
-		if(null === ($id = $this->getId())) {
+		if (null === ($id = $this->getId())) {
 			throw new Exception('Invalid record selected!');
 		}
 		return $this->getMapper()->delete($id);
@@ -150,10 +150,10 @@ class Admin_Model_ImportElementMapper
 
 	public function setDbTable($dbTable)
 	{
-		if(is_string($dbTable)) {
+		if (is_string($dbTable)) {
 			$dbTable = new $dbTable();
 		}
-		if(!$dbTable instanceof Zend_Db_Table_Abstract) {
+		if (!$dbTable instanceof Zend_Db_Table_Abstract) {
 			throw new Exception('Invalid table data gateway provided');
 		}
 		$this->_dbTable = $dbTable;
@@ -162,7 +162,7 @@ class Admin_Model_ImportElementMapper
 
 	public function getDbTable()
 	{
-		if(null === $this->_dbTable) {
+		if (null === $this->_dbTable) {
 			$this->setDbTable('Admin_Model_DbTable_ImportElement');
 		}
 		return $this->_dbTable;
@@ -174,11 +174,11 @@ class Admin_Model_ImportElementMapper
 			'itemId'	  		 => $model->getItemId(),
 			'description'	 	 => $model->getCode(),
 		);
-		if(null === ($id = $model->getId())) {
-			$data['created']	 = new Zend_Db_Expr('NOW()');
+		if (null === ($id = $model->getId())) {
+			$data['created'] = new Zend_Db_Expr('NOW()');
 			$id = $this->getDbTable()->insert($data);
 		} else {
-			$data['modified']	 = new Zend_Db_Expr('NOW()');
+			$data['modified'] = new Zend_Db_Expr('NOW()');
 			$this->getDbTable()->update($data, array('id = ?' => $id));
 		}
 		return $id;
@@ -187,7 +187,7 @@ class Admin_Model_ImportElementMapper
 	public function find($id, Admin_Model_ImportElement $model)
 	{
 		$result = $this->getDbTable()->find($id);
-		if(0 == count($result)) {
+		if (0 == count($result)) {
 			return;
 		}
 		$row = $result->current();
@@ -199,7 +199,7 @@ class Admin_Model_ImportElementMapper
 	{
 		$resultSet = $this->getDbTable()->fetchAll($select);
 		$entries = array();
-		foreach($resultSet as $row) {
+		foreach ($resultSet as $row) {
 			$model = new Admin_Model_ImportElement();
 			$model->setOptions($row->toArray())
 				->setMapper($this);
