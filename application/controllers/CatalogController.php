@@ -243,6 +243,10 @@ class CatalogController extends Zend_Controller_Action
 		}
 	}
 
+    /**
+     * add to favorites, adauga la favorite
+     * ToDo: move to ajax
+     */
 	public function addtofavoritesAction()
 	{
 		$id = (int) $this->getRequest()->getParam('id');

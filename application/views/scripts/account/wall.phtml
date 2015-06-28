@@ -1,10 +1,12 @@
 <?php
 if(Zend_Registry::isRegistered('currentUser'))
 {
-	$currentUser = $this->display_user;
-	$userActivity = TS_SocialNetwork::userActivity($currentUser->getId(), 10);
+    $model = 'CatalogProducts';
+    $userActivity = TS_Base::paginatorToModel($model, $this->activity);
+    $currentUser = $this->currentUser;
+
+if(Zend_Registry::isRegistered('authUser') && $currentUser->getId() == Zend_Registry::get('authUser')->getId()) {
 ?>
-<?php if(Zend_Registry::isRegistered('authUser') && $currentUser->getId() == Zend_Registry::get('authUser')->getId()){?>
 <div id="tabs" class="post">
 	<ul class="post_tabs">
 		<li class="tabs_stare">
@@ -351,6 +353,9 @@ if(Zend_Registry::isRegistered('currentUser'))
 //
 //	});
 </script>
+    <?php if($this->itemCountPerPage < $this->totalItemCount): ?>
+        <?php echo $this->activity ?>
+    <?php endif ?>
 <?php }else{?>
 Utilizatorul nu a postat nimic.
 <?php

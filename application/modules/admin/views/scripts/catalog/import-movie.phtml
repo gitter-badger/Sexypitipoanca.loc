@@ -1,0 +1,23 @@
+<?php
+    // video import 219531 is dinamic
+    // http://37.48.92.208/23-saveas/219531.mp4
+    $videoId = "2".rand(10000,99999);
+?>
+<div id='mediaspace'>This text will be replaced</div>
+<script type='text/javascript'>
+jwplayer('mediaspace').setup({
+    'flashplayer': '/theme/default/js/jwp/player.swf',
+    'file': 'http://37.48.92.208/23-saveas/<?php echo $videoId?>.mp4',
+    'controlbar': 'bottom',
+    'width': '<?php echo PLAYER_WIDTH ?>',
+    'height': '<?php echo PLAYER_HEIGHT ?>',
+    'autostart': true,
+    plugins:
+    {
+        viral: {
+        onpause: false,
+            oncomplete: false
+        }
+    }
+});
+</script>

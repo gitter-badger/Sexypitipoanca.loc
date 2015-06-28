@@ -1,6 +1,13 @@
 <?php
+
+/**
+ * @property Zend_Controller_Action_Helper_Abstract _flashMessenger
+ */
 class AccountController extends Zend_Controller_Action
 {
+    /**
+     * init, initializes flash messenger
+     */
 	public function init()
 	{
 		$this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
@@ -73,10 +80,52 @@ class AccountController extends Zend_Controller_Action
 		}
 			
 	}
-	
+
+    /**
+     * gallerii, show the galleries for the selected user
+     */
 	public function galeriiAction()
 	{
-		
+        // get selected username
+        $username = $this->getRequest()->getParam('username');
+
+        // get user id by username
+        if($username)
+        {
+            $model = new Default_Model_AccountUsers();
+            $select = $model->getMapper()->getDbTable()->select()
+                ->where('username = ?', $username);
+            $result = $model->fetchAll($select);
+            if($result)
+            {
+                $userId = $result[0]->getId();
+                $this->view->currentUser = $result[0];
+            }
+        }
+
+        // ToDo: combine these 2 selects into 1
+
+        // get galleries by user id
+        if ($userId) {
+            $model = new Default_Model_CatalogProducts();
+            $select = $model->getMapper()->getDbTable()->select()
+                ->where('user_id = ?', $userId)
+                ->where('type = ?', 'gallery')
+                ->where('status = ?', '1')
+                ->order('added DESC');
+
+            // paginate the result
+            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+            $paginator->setItemCountPerPage(10);
+            $paginator->setCurrentPageNumber($this->_getParam('page'));
+            $paginator->setPageRange(5);
+            $this->view->galleries = $paginator;
+            $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+            $this->view->totalItemCount = $paginator->getTotalItemCount();
+
+            Zend_Paginator::setDefaultScrollingStyle('Sliding');
+            Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+        }
 	}
 	
 	public function clipuriAction()
@@ -120,8 +169,7 @@ class AccountController extends Zend_Controller_Action
 	}
 	
 	/**
-	 * Todo
-	 * move to AjaxController
+	 * ToDo: move to AjaxController
 	 */
 	public function befriendAction()
 	{
@@ -214,46 +262,7 @@ class AccountController extends Zend_Controller_Action
 			Zend_View_Helper_PaginationControl::setDefaultViewPartial(array('_pagination.phtml', $param));
 			
 		}
-		
-//		$txtSearch = $this->getRequest()->getParam('txtHeaderSearch');
-//		if($txtSearch)
-//		{
-//			if($form->isValid($this->getRequest()->getPost()))
-//			{
-//				$posts = $this->getRequest()->getPost();
-//				Zend_Debug::dump($this->getRequest()->getPost());
-//				$txtSearch = $posts['txtHeaderSearch'];
-////				if($posts['search_type'] == 'user'){
-//					$model = new Default_Model_AccountUsers();
-//					$select = $model->getMapper()->getDbTable()->select();
-//					$select->where("username LIKE '%".$txtSearch."%'");
-//					$result = $model->fetchAll($select);
-//					if(NULL != $result)
-//					{
-//						$type = 'users';
-//						$this->view->userId = $userId;
-//						$this->view->result = $result;
-//					}
-//				}else{					
-//					$userId = $currentUser->getId();
-//					$model = new Default_Model_SocialUserConnections();
-//					$select = $model->getMapper()->getDbTable()->select()
-//							->from(array('uc'=>'social_user_connections'))
-//							->joinLeft(array('u'=>'j_account_users'),'uc.receiverUserId = u.id',array('uid'=>'u.id'))							
-//							->where('uc.receiverUserId = ?', $userId)
-//							->where('u.username LIKE ?', '%'.$txtSearch.'%')
-//							->orwhere('uc.initiatorUserId = ?', $userId)
-//							->where('u.username LIKE ?', '%'.$txtSearch.'%')
-//							->where('uc.isConfirmed IS TRUE');
-//					$result = $model->fetchAll($select);
-//					if(NULL != $result)
-//					{
-//						$this->view->userId = $userId;
-//						$this->view->result = $result;
-//					}
-//				}				
-//			}
-//		}
+
 		// END: Search
 		else
 		{
@@ -299,25 +308,12 @@ class AccountController extends Zend_Controller_Action
 	
 	public function acceptRequestAction()
 	{
-		$id = $this->getRequest()->getParam('id');
-		$model = new Default_Model_SocialUserConnections();
-		if($model->find($id))
-		{
-			$model->setIsConfirmed(1);
-			$model->save();
-		}
-		$this->_redirect('/account/user-requests');
+		$this->handleRequest(true);
 	}
 	
 	public function denyRequestAction()
 	{
-		$id = $this->getRequest()->getParam('id');
-		$model = new Default_Model_SocialUserConnections();
-		if($model->find($id))
-		{
-			$model->delete();
-		}
-		$this->_redirect('/account/user-requests');
+        $this->handleRequest(false);
 	}
 	
 	public function messagesAction()
@@ -351,6 +347,31 @@ class AccountController extends Zend_Controller_Action
 		}
 		else
 		{
+            // get selected username
+            $currentUser = Zend_Registry::get('currentUser');
+            $this->view->currentUser = $currentUser;
+
+            // Begin: Show user activity
+            $catalogModel = new Default_Model_CatalogProducts();
+            $select = $catalogModel->getMapper()->getDbTable()->select()
+                ->where('user_id = ?', $currentUser->getId())
+                ->where('status = ?', '1')
+                ->order('added DESC')
+                ->limit(10);
+
+            // paginate the result
+            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+            $paginator->setItemCountPerPage(10);
+            $paginator->setCurrentPageNumber($this->_getParam('page'));
+            $paginator->setPageRange(5);
+            $this->view->activity = $paginator;
+            $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+            $this->view->totalItemCount = $paginator->getTotalItemCount();
+            Zend_Paginator::setDefaultScrollingStyle('Sliding');
+            Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+            // End: Show user activity
+
+
 			$username = $this->getRequest()->getParam('username');
 			if($this->getRequest()->isPost())
 			{
@@ -431,7 +452,7 @@ class AccountController extends Zend_Controller_Action
 						// END: Save tags
 						$modelVideo = new Default_Model_Video();
 						$modelVideo->setProductId($productId);
-						$modelVideo->setUrl($this->getRequest()->getPost('video_url'));					
+						$modelVideo->setUrl($this->getRequest()->getPost('video_url'));
 						if($modelVideo->save())
 						{
 							$this->_redirect('/user/'.$username);
@@ -523,11 +544,12 @@ class AccountController extends Zend_Controller_Action
 									$subject = $signup->getSubjectro();
 									$message = $signup->getValuero();
 									
-									$message = str_replace('{'.'$'.'username}', $username, $message);									
+									$message = str_replace('{'.'$'.'username}', $username, $message);
+                                    // ToDo: find where email is coming from
 									$message = str_replace('{'.'$'.'email}', $email, $message);
 									$message = str_replace('{'.'$'.'activationlink}', $activationlink, $message);	
 									
-									
+									// ToDo: change hardcoded variables
 									$emailcompany = 'contact@sexypitipoanca.ro';
 									$institution = 'SexyPitipoanca.ro';
 									
@@ -559,7 +581,8 @@ class AccountController extends Zend_Controller_Action
 	{
 		$auth = Zend_Auth::getInstance();
 		$authAccount = $auth->getStorage()->read();
-		if(null != $authAccount) {
+
+		if ($authAccount) {
 			if(null != $authAccount->getId()) {
 				$account = new Default_Model_AccountUsers();
 				if($account->find($authAccount->getId())) {
@@ -575,7 +598,7 @@ class AccountController extends Zend_Controller_Action
 					$this->view->formPassword = $formPassword;
 		
 					if($this->getRequest()->isPost()) {
-						if($this->getRequest()->getPost('control') == 'edit'){				
+						if($this->getRequest()->getPost('control') == 'edit'){
 							if($form->isValid($this->getRequest()->getPost())){								
 								$birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
 								$allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
@@ -615,128 +638,16 @@ class AccountController extends Zend_Controller_Action
 								} else {
 									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute! Trebuie sa aveti peste 18 ani.</span>');
 								}
-								$this->_redirect('/account/edit');
 							}
 						} elseif($this->getRequest()->getPost('control') == 'editPassword') {
-							if($formPassword->isValid($this->getRequest()->getPost())) {
-								$post = $this->getRequest()->getPost();
-								if(md5($post['oldPassword']) == $account->getPassword()) {
-									$account->setPassword(md5($post['password']));									
-									if($account->save()) {										
-										$this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
-										
-									}else{
-										$this->_flashMessenger->addMessage('<span class="mess-true">Eraore! Parola nu a putut fi modificata.</span>');
-									}
-									$this->_redirect('/account/edit');
-								} else{								
-									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Parola veche eronata!</span>');
-									$this->_redirect('/account/edit');
-								}
-							}
+                            $this->changePassword($formPassword, $account);
 						}
+                        $this->_redirect('/account/edit');
 					}
 				}
 			}
 		} else {
 			$this->_redirect('/account');
-		}
-	}
-
-	public function productAddAction()
-	{
-		$this->_redirect('/account'); // NOT ALLOWED
-
-		$auth = Zend_Auth::getInstance();
-		$authAccount = $auth->getStorage()->read();
-		if($authAccount) {
-			if($authAccount->getId()) {
-				$account = new Default_Model_AccountUsers();
-				$account->find($authAccount->getId());
-				
-				$form = new Default_Form_Catalog();
-				$form->productAdd();
-				$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/catalog/product-add.phtml'))));
-				$this->view->form = $form;
-
-				if($this->getRequest()->isPost()) {
-					if($this->getRequest()->getPost('control') == 'productAdd') {
-						if($form->isValid($this->getRequest()->getPost())) {
-
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId(), 0777, true);
-							}
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/' . $form->getValue('name') . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/' . $form->getValue('name') . '/', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/' . $form->getValue('name') . '/full', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/' . $form->getValue('name') . '/big', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $account->getId() . '/' . $form->getValue('name') . '/small', 0777, true);
-							}
-
-							$model = new Default_Model_CatalogProducts();
-							$model->setUser_id($account->getId());
-							$model->setCategory_id($form->getValue('category'));
-							$model->setName($form->getValue('name'));
-							$model->setStatus('0');
-							if(($productId = $model->save())) {
-
-								if($form->getValue('tags')) {
-									$tags = explode(',', $form->getValue('tags'));
-									foreach($tags as $tag) {
-										$model2 = new Default_Model_Tags();
-										$select = $model2->getMapper()->getDbTable()->select()
-												->where('name = ?', $tag);
-										$result = $model2->fetchAll($select);
-										if($result) {
-											$model3 = new Default_Model_CatalogProductTags();
-											$model3->setProduct_id($productId);
-											$model3->setTag_id($result[0]->getId());
-											$model3->save();
-										} else {
-											$model3 = new Default_Model_Tags();
-											$model3->setName($tag);
-											if(($tagId = $model3->save())) {
-												$model4 = new Default_Model_CatalogProductTags();
-												$model4->setProduct_id($productId);
-												$model4->setTag_id($tagId);
-												$model4->save();
-											}
-										}
-									}
-								}
-
-								$upload = new Zend_File_Transfer_Adapter_Http();
-								$upload->addValidator('Size', false, 2000000, 'image');
-								$upload->setDestination('media/catalog/products/'.$account->getId().'/'.$form->getValue('name').'/full/');
-								$files = $upload->getFileInfo();
-								foreach($files as $file => $info) {
-									if($upload->isValid($file)) {
-										if($upload->receive($file)) {
-										
-											$model2 = new Default_Model_CatalogProductImages();
-											$model2->setProduct_id($productId);
-											$model2->setPosition('999');
-											$model2->setName($info['name']);
-											if($model2->save()) {
-												require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-												$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$account->getId().'/'.$form->getValue('name').'/full/'.$info['name']);
-												$thumb->resize(600, 600)->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$account->getId().'/'.$form->getValue('name').'/big/'.$info['name']);
-												$thumb->resize(120, 120)->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$account->getId().'/'.$form->getValue('name').'/small/'.$info['name']);
-											}
-										
-										} else {
-											
-										}
-									}
-								}
-							}
-							$this->_redirect('/account');
-						}
-					}
-				}
-			}
-		} else {
-			$this->_redirect('/account/new');
 		}
 	}
 
@@ -809,15 +720,12 @@ class AccountController extends Zend_Controller_Action
 	
 	public function favoritesAction()
 	{
-		if(!Zend_Registry::isRegistered('currentUser'))
-		{
+		if (!Zend_Registry::isRegistered('currentUser')) {
 			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
-		else
-		{
+		} else {
 			$userId = Zend_Registry::get('currentUser')->getId();
 				$result = TS_Products::favoriteProducts($userId);
-				if(NULL != $result){
+				if (NULL != $result) {
 					$paginator = Zend_Paginator::factory($result);
 					$paginator->setItemCountPerPage(15);
 					$paginator->setCurrentPageNumber($this->_getParam('page'));
@@ -835,8 +743,8 @@ class AccountController extends Zend_Controller_Action
 	public function deletefavoritesAction(){
 		$auth = Zend_Auth::getInstance();
 		$authAccount = $auth->getStorage()->read();
-		if($authAccount){
-			if($authAccount->getId()) {
+		if ($authAccount) {
+			if ($authAccount->getId()) {
 				$account = new Default_Model_AccountUsers();
 				$account->find($authAccount->getId());
 				$id = (int) $this->getRequest()->getParam('id');
@@ -861,4 +769,41 @@ class AccountController extends Zend_Controller_Action
 	{
 		
 	}
+
+    protected function changePassword($formPassword, $account)
+    {
+        if($formPassword->isValid($this->getRequest()->getPost())) {
+            $post = $this->getRequest()->getPost();
+            if (md5($post['oldPassword']) == $account->getPassword()) {
+                $account->setPassword(md5($post['password']));
+                if($account->save()) {
+                    $this->_flashMessenger->addMessage('<span class="mess-true">Modificarile au fost efectuate cu succes</span>');
+                }else{
+                    $this->_flashMessenger->addMessage('<span class="mess-true">Eroare! Parola nu a putut fi modificata.</span>');
+                }
+            } else{
+                $this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Parola veche eronata!</span>');
+            }
+        }
+    }
+
+    /**
+     * handle request, used to handle social request between users
+     * @param bool $accept
+     * @throws Exception
+     */
+    protected function handleRequest($accept = true)
+    {
+        $id = $this->getRequest()->getParam('id');
+        $model = new Default_Model_SocialUserConnections();
+        if ($model->find($id)) {
+            if ($accept) {
+                $model->setIsConfirmed(1);
+                $model->save();
+            } else {
+                $model->delete();
+            }
+        }
+        $this->_redirect('/account/user-requests');
+    }
 }

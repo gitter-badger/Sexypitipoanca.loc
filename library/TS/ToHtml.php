@@ -236,9 +236,11 @@ EOD;
 		}
 		elseif($model->getType() == 'embed' && $protected == TRUE)
 		{
-				echo "<a href='".$link."' title='".$product->getName()."'>";
-					echo TS_ToHtml::videoThumb($product->getId());
-				echo "</a>";
+			$videoImage = TS_Products::getVideo($product->getId())->getImage();
+			echo "<a href='".$link."' title='".$product->getName()."'>";
+				//echo TS_ToHtml::videoThumb($product->getId());
+			echo "<img src='/media/catalog/video/big/".$videoImage."' alt='".$product->getName()."' title='".$product->getName()."' />";
+			echo "</a>";
 		}
 		elseif($model->getType() == 'embed')
 		{

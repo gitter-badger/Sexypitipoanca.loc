@@ -35,7 +35,7 @@ $tsProducts = new TS_Products();
 							<a <?php if($this->controller == "account" && $this->action == "wall"){echo "class='selected'";}?> href="/user/<?php echo $currentUser->getUsername();?>">Perete</a>
 						</li>
 						<li>
-							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
+							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>/pagina-1.html">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
 						</li>
 						<li>
 							<a <?php if($this->controller == "account" && $this->action == "clipuri-adaugate"){echo "class='selected'";}?> href="/clipuri-adaugate/<?php echo $currentUser->getUsername();?>">Clipuri adaugate (<?php echo TS_SocialNetwork::userMenuEmbedCount($currentUser->getId());?>)</a>
@@ -65,9 +65,12 @@ $tsProducts = new TS_Products();
 		</div>
 		<?php TS_Marketing::customCommercial(true);?>
 	<?php }else{
-	$frontendOptions = array('lifetime' => CACHE_MENU_TOP_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_MENU_TOP);
-	$backendOptions = array('cache_dir' => './data/cache/');
-	$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+	if(MENU_TOP_STATUS) {
+		$frontendOptions = array('lifetime' => CACHE_MENU_TOP_EXP, 'automatic_serialization' => TRUE, 'caching' => CACHE_MENU_TOP);
+		$backendOptions = array('cache_dir' => './data/cache/');
+		$cache = Zend_Cache::factory('Output', 'File', $frontendOptions, $backendOptions);
+	}
+	if(MENU_TOP_STATUS)
 	if(!$cache->start('menu_left_top')){?>
 	<div id="tabs" class="modul">
 		<ul class="titlu">

@@ -45,6 +45,7 @@
 			<col width="100" />
 			<col width="100" />
 			<col width="100" />
+			<col width="100" />
 		</colgroup>
 		<tr>
 			<th>Username</th>
@@ -52,6 +53,7 @@
 			<th>Gender</th>
 			<th>Status</th>
 			<th>Created</th>
+			<th>Last login</th>
 			<th>Actions</th>
 		</tr>
 		<?php
@@ -76,6 +78,7 @@
 				</a>
 			</td>
 			<td align="center"><?php echo $value->getCreated()?date("d M , Y",$value->getCreated()):"-";?></td>
+			<td align="center"><?php echo $value->getLastLogin()?date("d M , Y",$value->getLastLogin()):"-";?></td>
 			<td align="center">
 				<a href="/admin/user/details/id/<?php echo $value->getId();?>" title="View details">
 					<img src="/theme/admin/icons/icon-details.png" alt="View details" />

@@ -49,6 +49,7 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 		$acl->add(new Zend_Acl_Resource('admin:index'));
 		$acl->add(new Zend_Acl_Resource('admin:dashboard'));
 		$acl->add(new Zend_Acl_Resource('admin:catalog'));
+		$acl->add(new Zend_Acl_Resource('admin:import'));
 		$acl->add(new Zend_Acl_Resource('admin:user'));
 		$acl->add(new Zend_Acl_Resource('admin:comments'));
 		$acl->add(new Zend_Acl_Resource('admin:newsletter'));
@@ -245,10 +246,46 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 											),
 										),
 							),
+							array(
+								'label'			=> 'Import',
+								'title'			=> 'Import',
+								'module'		=> 'admin',
+								'controller'	=> 'catalog',
+								'action'		=> 'import',
+								'visible'		=> true,
+							),
+							array(
+								'label'			=> 'Import Movie',
+								'title'			=> 'Import Movie',
+								'module'		=> 'admin',
+								'controller'	=> 'catalog',
+								'action'		=> 'import-movie',
+								'visible'		=> true,
+							),
 						),
 					),
 					///////END: GALLERY///////
 					//
+					///////Begin: Import///////
+					array(
+						'label'			=> 'Import',
+						'title'			=> 'Import',
+						'module'		=> 'admin',
+						'controller'	=> 'import',
+						'resource'		=> 'admin:import',
+						'pages'			=> array(
+                            array(
+                                'label'			=> 'Import Items',
+                                'title'			=> 'Import Items',
+                                'module'		=> 'admin',
+                                'controller'	=> 'import',
+                                'action'		=> 'import-item',
+                                'visible'		=> true,
+                            ),
+						),
+					),
+					///////End: Import///////
+
 					///////BEGIN: USERS///////
 					array(
 						'label'			=> 'Users',
@@ -425,6 +462,14 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 								'action'		=> 'analytics',
 								'resource'		=> 'admin:marketing',
 							),
+                            array(
+								'label'			=> 'Send email',
+								'title'			=> 'Send email',
+								'module'		=> 'admin',
+								'controller'	=> 'marketing',
+								'action'		=> 'send-email',
+								'resource'		=> 'admin:marketing',
+							),
 						),
 					),
 					///////END: Marketing///////
@@ -473,8 +518,8 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 									),
 								),
 							),
-							
-						),	
+
+						),
 					),
 					///////END: NOTIFICATIONS///////
 					//
@@ -760,6 +805,7 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 // END: Set logged in user data
 
 // BEGIN: Check if logged in user or display user
+    // ToDo: move this to account controller
 	if($controller == 'account')
 	{
 		$username = $this->getRequest()->getParam('username');

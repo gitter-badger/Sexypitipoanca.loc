@@ -12,7 +12,8 @@ class Admin_Form_Post extends Zend_Form
         $options = array();
 		$options['0'] = 'admin';
 		$model = new Default_Model_AccountUsers();
-		$select = $model->getMapper()->getDbTable()->select();
+		$select = $model->getMapper()->getDbTable()->select()
+                    ->where('id IN (?)', explode(',', TEST_USERS));
 		if(($result = $model->fetchAll($select))) {
 			foreach($result as $value) {
 				$options[$value->getId()] = $value->getUsername();
@@ -29,7 +30,6 @@ class Admin_Form_Post extends Zend_Form
         $options = array();
 		$model = new Default_Model_CatalogCategories();
 		$select = $model->getMapper()->getDbTable()->select()
-				->where('status = ?', '1')
 				->order('position ASC');
 		if(($result = $model->fetchAll($select))) {
 			foreach($result as $value) {
