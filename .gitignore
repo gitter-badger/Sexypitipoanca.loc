@@ -1,1 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
+.idea
+.htaccess
+application/configs/application.ini
+data/cache
+data/db
+data/min
+data/sessions
+media
