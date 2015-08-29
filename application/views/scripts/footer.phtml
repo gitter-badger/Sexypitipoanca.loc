@@ -24,12 +24,9 @@
 		<div class="info">
 			<h2>Info:</h2>
 			<ul>
-				<li>
-					<a rel="nofollow" href="/contact">Contact</a>
-				</li>
-				<li>
-					<a rel="nofollow" href="/account/terms">Termeni si conditii</a>
-				</li>
+                <li><a href="/" class="<?php if($this->controller == 'index' && $this->action == 'index'){echo "sel";}?>">Acasa</a></li>
+                <li></li><a href="/account/terms" class="<?php if($this->controller == 'account' && $this->action == 'terms'){echo "sel";}?>">Termeni si conditii</a></li>
+                <li></li><a href="/contact" class="<?php if($this->controller == 'contact' && $this->action == 'index'){echo "sel";}?>">Contact</a></li>
 			</ul>
 		</div>
 		<div class="taguri">
