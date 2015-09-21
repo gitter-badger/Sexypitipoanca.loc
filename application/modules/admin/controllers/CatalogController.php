@@ -944,4 +944,9 @@ class Admin_CatalogController extends Zend_Controller_Action
 	{
 
 	}
+    
+	public function importMoviesAction()
+	{
+
+	}
 }
