@@ -46,11 +46,18 @@ class ApiController extends Zend_Controller_Action
 
     public function postAction()
     {
+        // parameters
+        $start = $this->getRequest()->getParam('start');
+        $count = $this->getRequest()->getParam('count');
+
         $model = new Default_Model_CatalogProducts();
-        $select = $model->getMapper()->getDbTable()->select()
-            ->where("(`type` = 'gallery' OR `type` = 'embed' OR `type` = 'video')")
-            ->where('status = ?', '1')
-            ->order('added DESC');
+        $select = $model->getMapper()->getDbTable()->select();
+        $select->where("(`type` = 'gallery' OR `type` = 'embed' OR `type` = 'video')");
+        $select->where('status = ?', '1');
+        $select->order('added DESC');
+        if ($start || $count) {
+            $select->limit($start, $count);
+        }
         $posts = $model->fetchAll($select);
 
         if ($posts) {
