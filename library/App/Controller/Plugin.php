@@ -830,28 +830,6 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 				}
 				// end: catalog categories
 				
-				// begin: most 5 visited
-				$model = new Default_Model_CatalogProducts();
-				$select = $model->getMapper()->getDbTable()->select()
-						->where('status = ?', 1)
-						->order(array('visits DESC'))
-						->limit('5');
-				if(($result = $model->fetchAll($select))) {
-					$layout->getView()->most5visited = $result;
-				}
-				// end: most 5 visited
-				
-				// begin: Cms
-				$model = new Default_Model_Cms();
-				$select = $model->getMapper()->getDbTable()->select()
-						->where('status = ?', '1')
-						->order(array('position ASC'))
-						;
-				if(($result = $model->fetchAll($select))) {
-					$layout->getView()->pages = $result;
-				}
-				// end: Cms
-				
 				switch($controller) {
 					case 'error':
 						switch($action) {
