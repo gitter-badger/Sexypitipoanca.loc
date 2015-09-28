@@ -12,6 +12,72 @@ class ApiController extends TS_Controller_Action
         ]);
     }
 
+    public function loginAction()
+    {
+        $body = $this->getRequest()->getRawBody();
+        $data = Zend_Json::decode($body);
+
+        $dbAdapter = new Zend_Auth_Adapter_DbTable($this->db, 'j_account_users', 'username', 'password', 'MD5(?) AND status = "1"');
+        $dbAdapter->setIdentity($data['username'])
+            ->setCredential($data['password']);
+
+        $auth = Zend_Auth::getInstance($data['password']);
+        $result = $auth->authenticate($dbAdapter);
+        if(!$result->isValid())
+        {
+            switch($result->getCode())
+            {
+                case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
+                case Zend_Auth_Result::FAILURE_CREDENTIAL_INVALID:
+                    ;
+                    break;
+                default:
+                    ;
+                    break;
+            }
+            $this->getResponse()->setHttpResponseCode(401);
+        }
+        else
+        {
+            $account = $dbAdapter->getResultRowObject();
+            $model = new Default_Model_AccountUsers();
+            $model->find($account->id);
+            $model->saveLastLogin();
+            $storage = $auth->getStorage();
+            $storage->write($model);
+            $this->getResponse()->setHttpResponseCode(200);
+        }
+    }
+
+    public function favoritesAction()
+    {
+        // check logged in user
+        $auth = Zend_Auth::getInstance();
+        $authAccount = $auth->getStorage()->read();
+        if (null != $authAccount) {
+            $model = new Default_Model_CatalogProducts();
+            $select = $model->getMapper()->getDbTable()->select()
+                ->from(['p' => 'j_catalog_products'], [])
+                ->joinCross(['f' => 'j_catalog_product_favorites'], [])
+                ->where('f.userId = ?', $authAccount->getId())
+                ->where('f.type = ?', 'favorite')
+                ->order('f.created DESC')
+                ->setIntegrityCheck(false);
+            $posts = $model->fetchAll($select);
+
+            if ($posts) {
+                echo Zend_Json_Encoder::encode(
+                    $this->parsePostData($posts)
+                );
+                $this->getResponse()->setHttpResponseCode(200);
+            } else {
+                $this->getResponse()->setHttpResponseCode(204);
+            }
+        } else {
+            $this->getResponse()->setHttpResponseCode(401);
+        }
+    }
+
     public function categoryAction()
     {
         $model = new Default_Model_CatalogCategories();
