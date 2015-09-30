@@ -3,6 +3,8 @@ class ApiController extends TS_Controller_Action
 {
     public function indexAction()
     {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+
         $body = $this->getRequest()->getRawBody();
         $data = Zend_Json::decode($body);
 
@@ -14,6 +16,8 @@ class ApiController extends TS_Controller_Action
 
     public function loginAction()
     {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+
         $body = $this->getRequest()->getRawBody();
         $data = Zend_Json::decode($body);
 
@@ -51,6 +55,8 @@ class ApiController extends TS_Controller_Action
 
     public function favoritesAction()
     {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+
         // check logged in user
         $auth = Zend_Auth::getInstance();
         $authAccount = $auth->getStorage()->read();
@@ -78,8 +84,14 @@ class ApiController extends TS_Controller_Action
         }
     }
 
+    /**
+     * fetch all categories
+     * @throws Zend_Controller_Response_Exception
+     */
     public function categoryAction()
     {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+
         $model = new Default_Model_CatalogCategories();
         $select = $model->getMapper()->getDbTable()->select()
             ->where('status = ?', 1);
@@ -95,9 +107,14 @@ class ApiController extends TS_Controller_Action
         }
     }
 
+    /**
+     * fetch all posts or paginate
+     * @throws Zend_Controller_Response_Exception
+     */
     public function postAction()
     {
-        // parameters
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+
         $start = $this->getRequest()->getParam('start');
         $count = $this->getRequest()->getParam('count');
 
