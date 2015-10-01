@@ -189,7 +189,6 @@ class Zend_View_Helper_MinifyHeadScript extends Zend_View_Helper_HeadScript {
 		$escapeEnd = ($useCdata) ? '//]]>' : '//-->';
 		
 		$this->getContainer()->ksort();
-        $groupIndex = 0;
 		foreach ($this as $i => $item) {
             if ($this->_isNeedToMinify($item)) {
                 if (!empty($item->attributes['minify_split_before']) || !empty($item->attributes['minify_split'])) {
