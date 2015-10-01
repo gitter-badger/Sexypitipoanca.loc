@@ -1,3 +1,2 @@
-<?
-Header( "Location: testskin.xml" ); 
-?> 
+<?php
+Header( "Location: testskin.xml" );
