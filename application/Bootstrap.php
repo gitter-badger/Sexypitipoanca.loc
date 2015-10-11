@@ -1,6 +1,8 @@
 <?php
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+    protected $namespaces = ['J_', 'TS_'];
+
     protected function _initRoutes()
     {
         include APPLICATION_PATH . "/configs/routes.php";
@@ -15,8 +17,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
     protected function _initAutoload()
     {
-		Zend_Loader_Autoloader::getInstance()->registerNamespace('J_');
-		Zend_Loader_Autoloader::getInstance()->registerNamespace('TS_');
+        foreach ($this->namespaces as $namespace) {
+            Zend_Loader_Autoloader::getInstance()->registerNamespace($namespace);
+        }
+
         $autoLoader = new Zend_Application_Module_Autoloader(array(
             'namespace' => 'Default_',
             'basePath'  => dirname(__FILE__),
