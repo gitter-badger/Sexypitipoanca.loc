@@ -1,16 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tsergium
- * Date: 10/1/2015
- * Time: 7:37 AM
- */
 
 $router = Zend_Controller_Front::getInstance()->getRouter();
 
-/**
- * old tags to new route
- */
 $rewriteTags = new Zend_Controller_Router_Route_Regex(
     'taguri/([^_]*)\.html',
     array(
@@ -25,9 +16,6 @@ $rewriteTags = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('rewriteTags', $rewriteTags);
 
-/**
- * article details route
- */
 $article = new Zend_Controller_Router_Route_Regex(
     '([^_]*)/([^_]*)-([^_]*)\.html',
     array(
@@ -44,9 +32,6 @@ $article = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('product', $article);
 
-/**
- * category route with pagination
- */
 $testRoute = new Zend_Controller_Router_Route_Regex(
     'categorii/([^_]*)-([^-]*)/pagina-([^-]*)\.html',
     array(
@@ -64,9 +49,6 @@ $testRoute = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('category', $testRoute);
 
-/**
- * tag cloud route
- */
 $article = new Zend_Controller_Router_Route_Regex(
     'tag-cloud/([^_]*)\.html',
     array(
@@ -81,9 +63,6 @@ $article = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('cloudtag', $article);
 
-/**
- * tags route with pagination
- */
 $tagsRoute = new Zend_Controller_Router_Route_Regex(
     'taguri/([^_]*)/pagina-([^-]*)\.html',
     array(
@@ -100,9 +79,6 @@ $tagsRoute = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('tag', $tagsRoute);
 
-/**
- * wall route
- */
 $wall = new Zend_Controller_Router_Route_Regex(
     'user/([^_]*)',
     array(
@@ -117,9 +93,6 @@ $wall = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('wall', $wall);
 
-/**
- * friends route
- */
 $friends = new Zend_Controller_Router_Route_Regex(
     'friends/([^_]*)',
     array(
@@ -134,9 +107,6 @@ $friends = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('friends', $friends);
 
-/**
- * top rated galleries route
- */
 $friends = new Zend_Controller_Router_Route_Regex(
     'score',
     array(
@@ -144,16 +114,10 @@ $friends = new Zend_Controller_Router_Route_Regex(
         'controller' => 'catalog',
         'action' => 'score'
     ),
-    /*array(
-            1 => '',
-    ),*/
     'score'
 );
 $router->addRoute('score', $friends);
 
-/**
- * clips added route
- */
 $clipuri_adaugate = new Zend_Controller_Router_Route_Regex(
     'clipuri-adaugate/([^_]*)',
     array(
@@ -168,9 +132,6 @@ $clipuri_adaugate = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('clipuri-adaugate', $clipuri_adaugate);
 
-/**
- * added galleries route
- */
 $galerii_adaugate = new Zend_Controller_Router_Route_Regex(
     'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
     array(
@@ -187,9 +148,6 @@ $galerii_adaugate = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('galerii-adaugate', $galerii_adaugate);
 
-/**
- * tags route
- */
 $tagsRoute = new Zend_Controller_Router_Route_Regex(
     'taguri/([^_]*)/pagina-([^-]*)\.html',
     array(
@@ -206,9 +164,6 @@ $tagsRoute = new Zend_Controller_Router_Route_Regex(
 );
 $router->addRoute('tag', $tagsRoute);
 
-/**
- * favorite galleries route
- */
 $favorites_galleries = new Zend_Controller_Router_Route_Regex(
     'favorite/([^_]*)',
     array(
