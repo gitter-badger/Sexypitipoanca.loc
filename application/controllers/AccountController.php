@@ -758,7 +758,7 @@ class AccountController extends Zend_Controller_Action
 				if(null != $result){
 					$result[0]->delete();
 				}
-				$this->_redirect('/account/favorites');
+				$this->_redirect('/favorite/'.$account->getUsername());
 			}else{
 				$this->_redirect('/account/new');
 			}
