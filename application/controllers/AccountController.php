@@ -117,6 +117,7 @@ class AccountController extends Zend_Controller_Action
 		$select = $model->getMapper()->getDbTable()->select()
 			->where('user_id = ?', $userId)
 			->where("type = 'video' OR type = 'embed'")
+			->where('status = ?', '1')
 			->order('added DESC');
 
 		// paginate the result
