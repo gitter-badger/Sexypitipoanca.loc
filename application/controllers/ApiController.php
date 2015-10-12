@@ -3,15 +3,15 @@ class ApiController extends TS_Controller_Action
 {
     public function indexAction()
     {
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-
         $body = $this->getRequest()->getRawBody();
         $data = Zend_Json::decode($body);
 
-        echo Zend_Json_Encoder::encode([
-            'data' => $data,
-            'version' => '0.1'
-        ]);
+        $this->printJson([
+                'data' => $data,
+                'version' => '0.1'
+            ],
+            200
+        );
     }
 
     public function loginAction()
@@ -113,8 +113,6 @@ class ApiController extends TS_Controller_Action
      */
     public function postAction()
     {
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-
         $start = $this->getRequest()->getParam('start');
         $count = $this->getRequest()->getParam('count');
 
@@ -129,10 +127,10 @@ class ApiController extends TS_Controller_Action
         $posts = $model->fetchAll($select);
 
         if ($posts) {
-            echo Zend_Json_Encoder::encode(
-                $this->parsePostData($posts)
+            $this->printJson(
+                $this->parsePostData($posts),
+                200
             );
-            $this->getResponse()->setHttpResponseCode(200);
         } else {
             $this->getResponse()->setHttpResponseCode(204);
         }
