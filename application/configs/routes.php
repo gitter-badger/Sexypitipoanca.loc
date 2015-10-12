@@ -119,26 +119,28 @@ $friends = new Zend_Controller_Router_Route_Regex(
 $router->addRoute('score', $friends);
 
 $clipuri_adaugate = new Zend_Controller_Router_Route_Regex(
-    'clipuri-adaugate/([^_]*)',
+    'clipuri-adaugate/([^_]*)/pagina-([^-]*)\.html',
     array(
-        'module' => 'default',
-        'controller' => 'account',
-        'action' => 'clipuri'
+        'module'        => 'default',
+        'controller'    => 'account',
+        'action'        => 'clipuri',
+        'page'          => 1
     ),
     array(
         1 => 'username',
+        2 => 'page'
     ),
-    'clipuri-adaugate/%s'
+    'clipuri-adaugate/%s/pagina-%d.html'
 );
 $router->addRoute('clipuri-adaugate', $clipuri_adaugate);
 
 $galerii_adaugate = new Zend_Controller_Router_Route_Regex(
     'galerii-adaugate/([^_]*)/pagina-([^-]*)\.html',
     array(
-        'module' => 'default',
-        'controller' => 'account',
-        'action'    => 'galerii',
-        'page'      => 1
+        'module'        => 'default',
+        'controller'    => 'account',
+        'action'        => 'galerii',
+        'page'          => 1
     ),
     array(
         1 => 'username',

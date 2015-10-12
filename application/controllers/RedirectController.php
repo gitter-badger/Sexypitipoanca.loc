@@ -15,4 +15,13 @@ class RedirectController extends Zend_Controller_Action
 		$link = $view->url(array('tag' => $tag), 'tag');
 		$this->_redirect($link, array('code'=>301));
 	}
+
+	public function newClipsPageAction()
+	{
+		$tag = $this->getRequest()->getParam('username');
+
+		$view = new Zend_View();
+		$link = $view->url(array('tag' => $tag), 'tag');
+		$this->_redirect($link, array('code'=>301));
+	}
 }

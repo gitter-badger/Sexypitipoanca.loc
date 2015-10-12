@@ -1,9 +1,10 @@
 <?php
-	$currentUser = $this->display_user;
-	$userActivity = TS_SocialNetwork::userAddedVideo($currentUser->getId());
+$model = 'CatalogProducts';
+$result = TS_Base::paginatorToModel($model, $this->galleries);
+$currentUser = $this->currentUser;
 ?>
-<?php if($userActivity){?>
-	<?php foreach($userActivity as $value){?>
+<?php if($result){?>
+	<?php foreach($result as $value){?>
 		<?php
 		$product = new J_Product();
 		$product->Product($value->getId(), array('category', 'image', 'commentsNo'));
@@ -63,13 +64,13 @@
 					if(NULL != $videoImage)
 					{
 						echo "<a href='".$link."' title='".$product->getName()."'>";
-							echo "<img src='/media/catalog/video/big/".$videoImage."' alt='".$product->getName()."' title='".$product->getName()."' />";
+							echo "<img width='533' src='/media/catalog/video/big/".$videoImage."' alt='".$product->getName()."' title='".$product->getName()."' />";
 						echo "</a>";
 					}
 					else
 					{
 						echo "<a href='".$link."' title='".$product->getName()."'>";
-							echo "<img src='/theme/default/images/no-video.jpg' alt='".$product->getName()."' title='".$product->getName()."' />";
+							echo "<img width='533' src='/theme/default/images/no-video.jpg' alt='".$product->getName()."' title='".$product->getName()."' />";
 						echo "</a>";
 					}
 				}
@@ -133,4 +134,7 @@
 			</div>
 		</div>
 	<?php }?>
+    <?php if($this->itemCountPerPage < $this->totalItemCount): ?>
+        <?php echo $this->galleries ?>
+    <?php endif ?>
 <?php }?>

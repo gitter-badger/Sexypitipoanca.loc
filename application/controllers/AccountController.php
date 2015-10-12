@@ -86,22 +86,23 @@ class AccountController extends Zend_Controller_Action
      */
 	public function galeriiAction()
 	{
-        // get selected username
-        $username = $this->getRequest()->getParam('username');
+		if (!Zend_Registry::isRegistered('currentUser')) {
+			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
+		}
 
-        // get user id by username
-        if($username)
-        {
-            $model = new Default_Model_AccountUsers();
-            $select = $model->getMapper()->getDbTable()->select()
-                ->where('username = ?', $username);
-            $result = $model->fetchAll($select);
-            if($result)
-            {
-                $userId = $result[0]->getId();
-                $this->view->currentUser = $result[0];
-            }
-        }
+		$username = $this->getRequest()->getParam('username');
+		$userId = null;
+
+		if ($username) {
+			$model = new Default_Model_AccountUsers();
+			$select = $model->getMapper()->getDbTable()->select()
+				->where('username = ?', $username);
+			$result = $model->fetchAll($select);
+			if ($result) {
+				$userId = $result[0]->getId();
+				$this->view->currentUser = $result[0];
+			}
+		}
 
         // ToDo: combine these 2 selects into 1
 
@@ -130,7 +131,42 @@ class AccountController extends Zend_Controller_Action
 	
 	public function clipuriAction()
 	{
-		
+		if (!Zend_Registry::isRegistered('currentUser')) {
+			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
+		}
+
+		$username = $this->getRequest()->getParam('username');
+		$userId = null;
+
+		if ($username) {
+			$model = new Default_Model_AccountUsers();
+			$select = $model->getMapper()->getDbTable()->select()
+				->where('username = ?', $username);
+			$result = $model->fetchAll($select);
+			if ($result) {
+				$userId = $result[0]->getId();
+				$this->view->currentUser = $result[0];
+			}
+		}
+
+		$return = null;
+		$model = new Default_Model_CatalogProducts();
+		$select = $model->getMapper()->getDbTable()->select()
+			->where('user_id = ?', $userId)
+			->where("type = 'video' OR type = 'embed'")
+			->order('added DESC');
+
+		// paginate the result
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+		$paginator->setItemCountPerPage(10);
+		$paginator->setCurrentPageNumber($this->_getParam('page'));
+		$paginator->setPageRange(5);
+		$this->view->galleries = $paginator;
+		$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+		$this->view->totalItemCount = $paginator->getTotalItemCount();
+
+		Zend_Paginator::setDefaultScrollingStyle('Sliding');
+		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
 	}
 	
 	public function pmAction()
