@@ -112,7 +112,6 @@ class AccountController extends Zend_Controller_Action
 	{
 		$userId = $this->findUserByUsername();
 
-		$return = null;
 		$model = new Default_Model_CatalogProducts();
 		$select = $model->getMapper()->getDbTable()->select()
 			->where('user_id = ?', $userId)
