@@ -140,29 +140,21 @@ class ApiController extends TS_Controller_Action
 
     public function successAction()
     {
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-
         $response = [
             'name'          => 'New resource created',
             'description'   => 'There is no description yet.'
         ];
-
-        echo Zend_Json_Encoder::encode($response);
-        $this->getResponse()->setHttpResponseCode(200);
+        $this->printJson($response, 200);
     }
 
     public function errorAction()
     {
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-
         $response = [
             'code'          => 400,
             'message'       => 'There was an error',
             'description'   => 'So...I don\'t know what happened but...it failed'
         ];
-
-        echo Zend_Json_Encoder::encode($response);
-        $this->getResponse()->setHttpResponseCode(400);
+        $this->printJson($response, 400);
     }
 
     /**
@@ -213,5 +205,19 @@ class ApiController extends TS_Controller_Action
             ];
         }
         return $result;
+    }
+
+
+    /**
+     * print json response
+     * @param $response
+     * @param $httpCode
+     * @throws Zend_Controller_Response_Exception
+     */
+    protected function printJson($response, $httpCode) {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->getResponse()->setHttpResponseCode($httpCode);
+
+        echo Zend_Json_Encoder::encode($response);
     }
 }
