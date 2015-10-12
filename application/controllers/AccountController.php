@@ -86,68 +86,31 @@ class AccountController extends Zend_Controller_Action
      */
 	public function galeriiAction()
 	{
-		if (!Zend_Registry::isRegistered('currentUser')) {
-			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
+		$userId = $this->findUserByUsername();
 
-		$username = $this->getRequest()->getParam('username');
-		$userId = null;
+		$model = new Default_Model_CatalogProducts();
+		$select = $model->getMapper()->getDbTable()->select()
+			->where('user_id = ?', $userId)
+			->where('type = ?', 'gallery')
+			->where('status = ?', '1')
+			->order('added DESC');
 
-		if ($username) {
-			$model = new Default_Model_AccountUsers();
-			$select = $model->getMapper()->getDbTable()->select()
-				->where('username = ?', $username);
-			$result = $model->fetchAll($select);
-			if ($result) {
-				$userId = $result[0]->getId();
-				$this->view->currentUser = $result[0];
-			}
-		}
+		// paginate the result
+		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+		$paginator->setItemCountPerPage(10);
+		$paginator->setCurrentPageNumber($this->_getParam('page'));
+		$paginator->setPageRange(5);
+		$this->view->galleries = $paginator;
+		$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+		$this->view->totalItemCount = $paginator->getTotalItemCount();
 
-        // ToDo: combine these 2 selects into 1
-
-        // get galleries by user id
-        if ($userId) {
-            $model = new Default_Model_CatalogProducts();
-            $select = $model->getMapper()->getDbTable()->select()
-                ->where('user_id = ?', $userId)
-                ->where('type = ?', 'gallery')
-                ->where('status = ?', '1')
-                ->order('added DESC');
-
-            // paginate the result
-            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-            $paginator->setItemCountPerPage(10);
-            $paginator->setCurrentPageNumber($this->_getParam('page'));
-            $paginator->setPageRange(5);
-            $this->view->galleries = $paginator;
-            $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-            $this->view->totalItemCount = $paginator->getTotalItemCount();
-
-            Zend_Paginator::setDefaultScrollingStyle('Sliding');
-            Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
-        }
+		Zend_Paginator::setDefaultScrollingStyle('Sliding');
+		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
 	}
 	
 	public function clipuriAction()
 	{
-		if (!Zend_Registry::isRegistered('currentUser')) {
-			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
-
-		$username = $this->getRequest()->getParam('username');
-		$userId = null;
-
-		if ($username) {
-			$model = new Default_Model_AccountUsers();
-			$select = $model->getMapper()->getDbTable()->select()
-				->where('username = ?', $username);
-			$result = $model->fetchAll($select);
-			if ($result) {
-				$userId = $result[0]->getId();
-				$this->view->currentUser = $result[0];
-			}
-		}
+		$userId = $this->findUserByUsername();
 
 		$return = null;
 		$model = new Default_Model_CatalogProducts();
@@ -167,6 +130,26 @@ class AccountController extends Zend_Controller_Action
 
 		Zend_Paginator::setDefaultScrollingStyle('Sliding');
 		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+	}
+
+	protected function findUserByUsername()
+	{
+		if (!Zend_Registry::isRegistered('currentUser')) {
+			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
+		}
+
+		$username = $this->getRequest()->getParam('username');
+		$model = new Default_Model_AccountUsers();
+		$select = $model->getMapper()->getDbTable()->select()
+			->where('username = ?', $username);
+		$user = $model->fetchRow($select);
+
+		if ($user) {
+			$this->view->currentUser = $user;
+			return $user->getId();
+		}
+
+		return null;
 	}
 	
 	public function pmAction()

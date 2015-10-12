@@ -233,6 +233,11 @@ class Default_Model_AccountUsers
 		return $this->getMapper()->fetchAll($select);
 	}
 
+	public function fetchRow($select =null)
+	{
+		return $this->getMapper()->fetchRow($select,$this);
+	}
+
 	public function save()
 	{
 		return $this->getMapper()->save($this);

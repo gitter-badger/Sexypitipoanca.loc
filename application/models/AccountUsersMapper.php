@@ -47,6 +47,17 @@ class Default_Model_AccountUsersMapper
 		return $entries;
 	}
 
+	public function fetchRow($select, Default_Model_AccountUsers $model)
+	{
+		$result=$this->getDbTable()->fetchRow($select);
+		if(0 == count($result))
+		{
+			return;
+		}
+		$model->setOptions($result->toArray());
+		return $model;
+	}
+
 	public function save(Default_Model_AccountUsers $model)
 	{
 		$data = array(
