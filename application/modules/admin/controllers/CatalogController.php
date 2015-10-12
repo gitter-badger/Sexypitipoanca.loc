@@ -5,22 +5,6 @@ class Admin_CatalogController extends Zend_Controller_Action
     {
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->message = $this->_flashMessenger->getMessages();
-
-		// Magic Quotes
-		function magicEffinQuotesArray($array)
-		{
-			$_aux = $array;
-			if(!get_magic_quotes_gpc()){return $array;}
-			foreach($array as $key => $value){
-				$_aux[$key] = stripslashes($value);
-			}
-			return $_aux;
-		}
-		function magicEffinQuotesValue($value)
-		{
-			if(!get_magic_quotes_gpc()){return $value;}
-			return stripslashes($value);
-		}
     }
 
 	public function indexAction()
@@ -96,7 +80,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 					$model = new Default_Model_Video();
 					$model->setProductId($productId);
 					$model->setUrl($form->getValue('url'));
-					$model->setEmbed(magicEffinQuotesValue($form->getValue('embed')));
+					$model->setEmbed($form->getValue('embed'));
 
 					if($form->image->receive()) {
 						if($form->image->getFileName()){
@@ -165,7 +149,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 						if(NULL != $result)
 						{
 							$result[0]->setProductId($productId);
-							$result[0]->setEmbed(magicEffinQuotesValue($form->getValue('embed')));
+							$result[0]->setEmbed($form->getValue('embed'));
 							$result[0]->setUrl($form->getValue('url'));
 
 							// BEGIN: Replace old image
