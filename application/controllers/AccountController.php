@@ -33,33 +33,6 @@ class AccountController extends Zend_Controller_Action
 			$this->_redirect('/account/new');
 		}
 	}
-	
-	public function systemAction()
-	{
-		if(Zend_Registry::isRegistered('authUser')){
-			$id = Zend_Registry::get('authUser')->getId();		
-			$messageModel = new Default_Model_Notifications();
-			$select = $messageModel->getMapper()->getDbTable()->select()
-					->from(array('nu'=>'notifications'))
-					->joinLeft(array('u'=>'notification_users'),'nu.id = u.notificationId',array('ucreated'=>'u.created','read'=>'u.read'))
-					->where('u.sentTo = ?',$id)				
-					->order('nu.created DESC')
-					->setIntegrityCheck(false);	
-			$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-			$paginator->setItemCountPerPage(10);
-			$paginator->setCurrentPageNumber($this->_getParam('page'));
-			$paginator->setPageRange(5);
-			$this->view->result = $paginator;
-			$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-			$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-			Zend_Paginator::setDefaultScrollingStyle('Sliding');
-			Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');	
-		}else{
-			$this->_redirect('/');
-		}
-			
-	}
 
     /**
      * gallerii, show the galleries for the selected user
