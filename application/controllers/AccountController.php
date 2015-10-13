@@ -161,18 +161,17 @@ class AccountController extends Zend_Controller_Action
 			}
 		}
 	}
-	
-	public function userRequestsAction()
+
+    /**
+     * Show friendship requests
+     */
+    public function userRequestsAction()
 	{
-		$userId = NULL;
+		$userId = null;
 		$auth = Zend_Auth::getInstance();
 		$authAccount = $auth->getStorage()->read();
-		if(null != $authAccount)
-		{
-			if(null != $authAccount->getId())
-			{
-				$userId = $authAccount->getId();
-			}
+		if (null != $authAccount) {
+            $userId = $authAccount->getId();
 		}
 		
 		if($userId != NULL)

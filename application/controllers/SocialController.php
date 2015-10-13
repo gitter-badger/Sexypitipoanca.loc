@@ -11,6 +11,10 @@ class SocialController extends Zend_Controller_Action
         $this->view->message = $this->_flashMessenger->getMessages();
     }
 
+    /**
+     * Delete conversations from a specific user
+     * @throws Zend_Exception
+     */
     public function deleteBulkMessagesAction()
     {
         $displayUserId = $this->getRequest()->getParam('uid');
