@@ -32,7 +32,7 @@ $tsProducts = new TS_Products();
 				<div class="right_content">
 					<ul>
 						<li>
-							<a <?php if($this->controller == "account" && $this->action == "wall"){echo "class='selected'";}?> href="/user/<?php echo $currentUser->getUsername();?>">Perete</a>
+							<a <?php if($this->controller == "account" && $this->action == "wall"){echo "class='selected'";}?> href="/user/<?php echo $currentUser->getUsername();?>"><?php echo Zend_Registry::get('translate')->_('user_wall') ?></a>
 						</li>
 						<li>
 							<a <?php if($this->controller == "account" && $this->action == "galerii-adaugate"){echo "class='selected'";}?> href="/galerii-adaugate/<?php echo $currentUser->getUsername();?>/pagina-1.html">Galerii adaugate (<?php echo TS_SocialNetwork::userMenuGalleryCount($currentUser->getId());?>)</a>
@@ -74,7 +74,7 @@ $tsProducts = new TS_Products();
 	<div id="tabs" class="modul">
 		<ul class="titlu">
 			<li class="left_titlu">
-				<p><a href="#tabs-1">Galerie foto</a></p>
+				<p><a href="#tabs-1"><?php echo Zend_Registry::get('translate')->_('photo_gallery') ?></a></p>
 			</li>
 			<li class="right_titlu">
 				<p><a href="#tabs-2">Video</a></p>

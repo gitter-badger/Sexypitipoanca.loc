@@ -631,8 +631,33 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 				),
 			);
 
+			// ToDo: remove this, not used
 			if($module == 'default')
 			{
+				// BEGIN: TRANSLATE
+				$validLang = 'ro';
+				$translate = new Zend_Translate('csv', 'data/lang/en.csv', 'en');
+				$translate->addTranslation('data/lang/ro.csv', 'ro');
+				$translate->addTranslation('data/lang/it.csv', 'it');
+				$translate->addTranslation('data/lang/fr.csv', 'fr');
+				$translate->addTranslation('data/lang/de.csv', 'de');
+				if($validLang)
+				{
+					$layout->getView()->language = $validLang;
+					Zend_Registry::set('lang', $validLang);
+					$translate->setLocale($validLang);
+				}
+				else
+				{
+					$validLang = 'ro';
+					$layout->getView()->language = $validLang;
+					Zend_Registry::set('lang', $validLang);
+					$translate->setLocale($validLang);
+				}
+				Zend_Registry::set('translate', $translate);
+				// END: TRANSLATE
+
+
 				// BEGIN: SEO SERP DYNAMIC PARAM
 				$seoId = NULL;
 				$seoPage = NULL;
