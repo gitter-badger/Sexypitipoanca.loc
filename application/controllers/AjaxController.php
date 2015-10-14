@@ -64,7 +64,6 @@ class AjaxController extends TS_Controller_Action
 	
 	public function subscribeAction()
 	{
-		$response = "";
 		$email = $this->getRequest()->getParam('email');
 		if(null != $email)
 		{
@@ -108,21 +107,8 @@ class AjaxController extends TS_Controller_Action
 			$tempFile = $_FILES['Filedata']['tmp_name'];
 			$targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
 			$targetFile =  str_replace('//','/',$targetPath) . $_FILES['Filedata']['name'];
-
-			// $fileTypes  = str_replace('*.','',$_REQUEST['fileext']);
-			// $fileTypes  = str_replace(';','|',$fileTypes);
-			// $typesArray = split('\|',$fileTypes);
-			// $fileParts  = pathinfo($_FILES['Filedata']['name']);
-
-			// if (in_array($fileParts['extension'],$typesArray)) {
-				// Uncomment the following line if you want to make the directory if it doesn't exist
-				// mkdir(str_replace('//','/',$targetPath), 0755, true);
-
-				move_uploaded_file($tempFile,$targetFile);
-				echo Zend_Json_Encoder::encode(str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile));
-			// } else {
-			// 	echo 'Invalid file type.';
-			// }
+            move_uploaded_file($tempFile,$targetFile);
+            echo Zend_Json_Encoder::encode(str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile));
 		}
 	}
 
@@ -264,7 +250,6 @@ class AjaxController extends TS_Controller_Action
 		$model = new Default_Model_AccountUsers();
 		$select = $model->getMapper()->getDbTable()->select();
 		if($params){
-//			$select->where("username LIKE '%".$params."%' OR username LIKE '".$params."%' OR username LIKE '%".$params."'");
 			$select->where("username LIKE '%".$params."%'");
 		}
 		$select->order('created DESC');
