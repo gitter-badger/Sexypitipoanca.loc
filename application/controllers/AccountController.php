@@ -160,10 +160,9 @@ class AccountController extends Zend_Controller_Action
     public function userRequestsAction()
 	{
 		if ($authAccount = $this->isAuthenticated()) {
-            $userId = $authAccount->getId();
 			$model = new Default_Model_SocialUserConnections();
 			$select = $model->getMapper()->getDbTable()->select()
-					->where('receiverUserId = ?', $userId)
+					->where('receiverUserId = ?', $authAccount->getId())
 					->where('isConfirmed IS FALSE');
 			$result = $model->fetchAll($select);
 			if(NULL != $result)
@@ -694,7 +693,7 @@ class AccountController extends Zend_Controller_Action
         $auth = Zend_Auth::getInstance();
         $authAccount = $auth->getStorage()->read();
         if (null != $authAccount) {
-            $result = $auth;
+            $result = $authAccount;
         } else {
             $result = false;
         }
