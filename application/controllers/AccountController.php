@@ -16,22 +16,14 @@ class AccountController extends Zend_Controller_Action
 
 	public function indexAction()
 	{
-		$auth = Zend_Auth::getInstance();
-		$authAccount = $auth->getStorage()->read();
-		if(null != $authAccount)
-		{
-			if(null != $authAccount->getId())
-			{
-				$account = new Default_Model_AccountUsers();
-				$account->find($authAccount->getId());
-				$this->view->result = $account;
-				$this->_redirect('/account/edit');
-			}
+		if ($authAccount = $this->isAuthenticated()) {
+            $account = new Default_Model_AccountUsers();
+            $account->find($authAccount->getId());
+            $this->view->result = $account;
+            $this->_redirect('/account/edit');
 		}
-		else
-		{
-			$this->_redirect('/account/new');
-		}
+
+        $this->_redirect('/account/new');
 	}
 
     /**
@@ -167,15 +159,8 @@ class AccountController extends Zend_Controller_Action
      */
     public function userRequestsAction()
 	{
-		$userId = null;
-		$auth = Zend_Auth::getInstance();
-		$authAccount = $auth->getStorage()->read();
-		if (null != $authAccount) {
+		if ($authAccount = $this->isAuthenticated()) {
             $userId = $authAccount->getId();
-		}
-		
-		if($userId != NULL)
-		{
 			$model = new Default_Model_SocialUserConnections();
 			$select = $model->getMapper()->getDbTable()->select()
 					->where('receiverUserId = ?', $userId)
@@ -312,12 +297,9 @@ class AccountController extends Zend_Controller_Action
 
 	public function wallAction()
 	{
-		if(!Zend_Registry::isRegistered('currentUser'))
-		{
+		if (!Zend_Registry::isRegistered('currentUser')) {
 			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
-		else
-		{
+		} else {
             // get selected username
             $currentUser = Zend_Registry::get('currentUser');
             $this->view->currentUser = $currentUser;
@@ -449,15 +431,11 @@ class AccountController extends Zend_Controller_Action
 	}
 
 	public function newAction()
-	{		
-		$auth = Zend_Auth::getInstance();
-		$authAccount = $auth->getStorage()->read();
-		if(null != $authAccount) {
-			if(null != $authAccount->getId()) {
-				$account = new Default_Model_AccountUsers();
-				$account->find($authAccount->getId());
-				$this->_redirect('/account');
-			}
+	{
+		if ($authAccount = $this->isAuthenticated()) {
+            $account = new Default_Model_AccountUsers();
+            $account->find($authAccount->getId());
+            $this->_redirect('/account');
 		} else {
 			$form = new Default_Form_Account();
 			$form->add();
@@ -709,5 +687,18 @@ class AccountController extends Zend_Controller_Action
             }
         }
         $this->_redirect('/account/user-requests');
+    }
+
+    protected function isAuthenticated()
+    {
+        $auth = Zend_Auth::getInstance();
+        $authAccount = $auth->getStorage()->read();
+        if (null != $authAccount) {
+            $result = $auth;
+        } else {
+            $result = false;
+        }
+
+        return $result;
     }
 }
