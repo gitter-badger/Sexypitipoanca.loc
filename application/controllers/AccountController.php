@@ -490,7 +490,6 @@ class AccountController extends Base_Controller_Action
 									$message = $signup->getValuero();
 									
 									$message = str_replace('{'.'$'.'username}', $username, $message);
-                                    // ToDo: find where email is coming from
 									$message = str_replace('{'.'$'.'email}', $email, $message);
 									$message = str_replace('{'.'$'.'activationlink}', $activationlink, $message);	
 									
@@ -560,7 +559,12 @@ class AccountController extends Base_Controller_Action
                                         $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
                                         $thumb->adaptiveResize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
                                         $thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
-                                        @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+                                        if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename)) {
+                                            unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+                                        } else {
+                                            // ToDo: catch exception
+                                            echo 'file not found';
+                                        }
                                         $account->setAvatar($filename);
                                     }
                                 }
@@ -568,8 +572,18 @@ class AccountController extends Base_Controller_Action
 
                             if($account->save()) {
                                 if(null != $oldAvatar){
-                                    @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar);
-                                    @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar);
+                                    if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar)) {
+                                        unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar);
+                                    } else {
+                                        // ToDo: catch exception
+                                        echo 'file not found';
+                                    }
+                                    if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar)) {
+                                        unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar);
+                                    } else {
+                                        // ToDo: catch exception
+                                        echo 'file not found';
+                                    }
                                 }
                                 $this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
                             }else{
