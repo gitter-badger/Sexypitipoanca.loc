@@ -1,16 +1,7 @@
 <?php
 
-class SocialController extends Zend_Controller_Action
+class SocialController extends Base_Controller_Action
 {
-    /**
-     * init, initializes flash messenger
-     */
-    public function init()
-    {
-        $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
-        $this->view->message = $this->_flashMessenger->getMessages();
-    }
-
     /**
      * Delete conversations from a specific user
      * @throws Zend_Exception

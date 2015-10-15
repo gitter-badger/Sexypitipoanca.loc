@@ -3,17 +3,8 @@
 /**
  * @property Zend_Controller_Action_Helper_Abstract _flashMessenger
  */
-class AccountController extends Zend_Controller_Action
+class AccountController extends Base_Controller_Action
 {
-    /**
-     * init, initializes flash messenger
-     */
-	public function init()
-	{
-		$this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
-		$this->view->message = $this->_flashMessenger->getMessages();
-	}
-
 	public function indexAction()
 	{
 		if ($authAccount = $this->isAuthenticated()) {
@@ -482,9 +473,10 @@ class AccountController extends Zend_Controller_Action
 									}
 									
 									//BEGIN:ACTIVARE
-									$url = "http://".$_SERVER['SERVER_NAME'];
-									$username			= $model->getUsername();									
-									$activationlink		= '<a href="'.$url.'/auth/activation?code='.$activation_code.'">Activare</a>';
+									$url            = "http://".$_SERVER['SERVER_NAME'];
+									$username		= $model->getUsername();
+                                    $email          = $model->getEmail();
+									$activationlink = '<a href="'.$url.'/auth/activation?code='.$activation_code.'">Activare</a>';
 									
 									$signup = new Default_Model_Templates();
 									$signup->find('signUp');
@@ -527,73 +519,66 @@ class AccountController extends Zend_Controller_Action
 
 	public function editAction()
 	{
-		$auth = Zend_Auth::getInstance();
-		$authAccount = $auth->getStorage()->read();
+        if ($authAccount = $this->isAuthenticated()) {
+            $account = new Default_Model_AccountUsers();
+            $form = new Default_Form_Account();
+            $form->add();
+            $form->edit($account);
+            $form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/edit.phtml'))));
+            $this->view->form = $form;
 
-		if ($authAccount) {
-			if(null != $authAccount->getId()) {
-				$account = new Default_Model_AccountUsers();
-				if($account->find($authAccount->getId())) {
-					$form = new Default_Form_Account();
-					$form->add();
-					$form->edit($account);
-					$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/edit.phtml'))));
-					$this->view->form = $form;
+            $formPassword = new Default_Form_Account();
+            $formPassword->editPassword();
+            $formPassword->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/editPassword.phtml'))));
+            $this->view->formPassword = $formPassword;
 
-					$formPassword = new Default_Form_Account();
-					$formPassword->editPassword();
-					$formPassword->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/editPassword.phtml'))));
-					$this->view->formPassword = $formPassword;
-		
-					if($this->getRequest()->isPost()) {
-						if($this->getRequest()->getPost('control') == 'edit'){
-							if($form->isValid($this->getRequest()->getPost())){								
-								$birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
-								$allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
-								if($birthday <= $allowed) {
-									$account->setOptions($form->getValues());
-									$account->setBirth_day($form->getValue('birth_year').'-'.$form->getValue('birth_month').'-'.$form->getValue('birth_day'));
-									$oldAvatar = $account->getAvatar();
+            if($this->getRequest()->isPost()) {
+                if($this->getRequest()->getPost('control') == 'edit'){
+                    if($form->isValid($this->getRequest()->getPost())){
+                        $birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
+                        $allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
+                        if($birthday <= $allowed) {
+                            $account->setOptions($form->getValues());
+                            $account->setBirth_day($form->getValue('birth_year').'-'.$form->getValue('birth_month').'-'.$form->getValue('birth_day'));
+                            $oldAvatar = $account->getAvatar();
 
-									if($form->image->receive())
-									{
-										if($form->image->getFileName())
-										{
-											$tmp = pathinfo($form->image->getFileName());
-											$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-											$filename = md5(uniqid(mt_rand(), true)).'.'.$extension;
-											if(@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename))
-											{
-												require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-												$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-												$thumb->adaptiveResize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
-												$thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
-												@unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-												$account->setAvatar($filename);
-											}
-										}
-									}
+                            if($form->image->receive())
+                            {
+                                if($form->image->getFileName())
+                                {
+                                    $tmp = pathinfo($form->image->getFileName());
+                                    $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
+                                    $filename = md5(uniqid(mt_rand(), true)).'.'.$extension;
+                                    if(@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename))
+                                    {
+                                        require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
+                                        $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+                                        $thumb->adaptiveResize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
+                                        $thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
+                                        @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+                                        $account->setAvatar($filename);
+                                    }
+                                }
+                            }
 
-									if($account->save()) {
-										if(null != $oldAvatar){
-											@unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar);
-											@unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar);
-										}
-										$this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
-									}else{
-										$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute!</span>');
-									}
-								} else {
-									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute! Trebuie sa aveti peste 18 ani.</span>');
-								}
-							}
-						} elseif($this->getRequest()->getPost('control') == 'editPassword') {
-                            $this->changePassword($formPassword, $account);
-						}
-                        $this->_redirect('/account/edit');
-					}
-				}
-			}
+                            if($account->save()) {
+                                if(null != $oldAvatar){
+                                    @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar);
+                                    @unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar);
+                                }
+                                $this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
+                            }else{
+                                $this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute!</span>');
+                            }
+                        } else {
+                            $this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Modificarile nu au fost facute! Trebuie sa aveti peste 18 ani.</span>');
+                        }
+                    }
+                } elseif($this->getRequest()->getPost('control') == 'editPassword') {
+                    $this->changePassword($formPassword, $account);
+                }
+                $this->_redirect('/account/edit');
+            }
 		} else {
 			$this->_redirect('/account');
 		}

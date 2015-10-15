@@ -1,7 +1,7 @@
 <?php
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
-    protected $namespaces = ['J_', 'TS_'];
+    protected $namespaces = ['Base_', 'J_', 'TS_'];
 
     protected function _initRoutes()
     {

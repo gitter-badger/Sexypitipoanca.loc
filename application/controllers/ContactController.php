@@ -1,12 +1,6 @@
 <?php
-class ContactController extends Zend_Controller_Action
+class ContactController extends Base_Controller_Action
 {
-    public function init()
-    {
-        $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
-        $this->view->message = $this->_flashMessenger->getMessages();
-    }
-
 	public function indexAction()
     {
 		$form = new Default_Form_Contact();
