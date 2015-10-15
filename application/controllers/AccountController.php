@@ -525,6 +525,7 @@ class AccountController extends Base_Controller_Action
 	{
         if ($authAccount = $this->isAuthenticated()) {
             $account = new Default_Model_AccountUsers();
+            $account->find($authAccount->getId());
             $form = new Default_Form_Account();
             $form->add();
             $form->edit($account);
