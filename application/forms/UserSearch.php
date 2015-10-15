@@ -1,6 +1,7 @@
 <?php
-class Default_Form_UserSearch extends Zend_Form{
-	function init()
+class Default_Form_UserSearch extends Zend_Form
+{
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmSearchUser'));

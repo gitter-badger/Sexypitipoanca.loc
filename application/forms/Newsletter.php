@@ -1,12 +1,12 @@
 <?php
 class Default_Form_Newsletter extends Zend_Form 
 {
-	function init()
+	public function init()
 	{
 		
 	}
 
-	function subscribe()
+	public function subscribe()
 	{
 		$this->setMethod('post');
 		$this->setAction('/news/subscribe');

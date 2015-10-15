@@ -1,12 +1,12 @@
 <?php
 class Default_Form_Intrari extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		
 	}
 
-	function intrari()
+	public function intrari()
 	{		
 		$this->setMethod('post');
 		$this->setAction(WEBROOT.'/iframe/intrari');
@@ -150,7 +150,7 @@ class Default_Form_Intrari extends Zend_Form
 		$this->addElement($submit);
 	}
 	
-	function iesiri()
+	public function iesiri()
 	{
 		$user = '';
 		$auth = Zend_Auth::getInstance();
@@ -169,7 +169,7 @@ class Default_Form_Intrari extends Zend_Form
 		$this->expeditor->setAttribs(array('readonly'=>'readonly'));
 	}
 	
-	function semnatura()
+	public function semnatura()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmSemnatura'));

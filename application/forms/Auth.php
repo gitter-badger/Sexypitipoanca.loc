@@ -1,12 +1,12 @@
 <?php
 class Default_Form_Auth extends Zend_Form 
 {
-	function init()
+	public function init()
 	{
 		
 	}
 
-	function login()
+	public function login()
 	{
 		$this->setMethod('post');
 		$this->setAction('/auth');
@@ -40,7 +40,7 @@ class Default_Form_Auth extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function loginIframe()
+	public function loginIframe()
 	{
 		$this->setMethod('post');
 		$this->setAction('/iframe/login');
@@ -69,7 +69,7 @@ class Default_Form_Auth extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function forgotPassword()
+	public function forgotPassword()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmAuthForgotPassword', 'class'=>''));

@@ -1,7 +1,7 @@
 <?php
 class Default_Form_Message extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmMessage'));

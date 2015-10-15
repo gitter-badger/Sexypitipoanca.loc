@@ -1,7 +1,7 @@
 <?php
 class Default_Form_Contact extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formContact'));

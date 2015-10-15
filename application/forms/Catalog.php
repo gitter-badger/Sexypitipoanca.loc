@@ -1,12 +1,11 @@
 <?php
 class Default_Form_Catalog extends Zend_Form
 {
-	function init()
+	public function init()
 	{
-		
 	}
 
-	function productAdd()
+	public function productAdd()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formProductAdd', 'class'=>''));
@@ -68,7 +67,7 @@ class Default_Form_Catalog extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function comentAdd()
+	public function comentAdd()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formComentAdd', 'class'=>''));

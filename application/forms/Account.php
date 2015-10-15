@@ -1,9 +1,9 @@
 <?php
 class Default_Form_Account extends Zend_Form
 {
-	function init(){}
+	public function init(){}
 
-	function add()
+	public function add()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formAccountNew', 'class'=>''));
@@ -134,7 +134,7 @@ class Default_Form_Account extends Zend_Form
 		$this->setElementFilters($filters);
 	}
 
-	function edit(Default_Model_AccountUsers $model)
+	public function edit(Default_Model_AccountUsers $model)
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formAccountEdit', 'class'=>''));
@@ -166,7 +166,7 @@ class Default_Form_Account extends Zend_Form
 		$this->removeElement('terms');
 	}
 
-	function editPassword()
+	public function editPassword()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formAccountEditPassword', 'class'=>''));
