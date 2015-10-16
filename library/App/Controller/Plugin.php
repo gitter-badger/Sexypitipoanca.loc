@@ -246,22 +246,6 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 											),
 										),
 							),
-							array(
-								'label'			=> 'Import',
-								'title'			=> 'Import',
-								'module'		=> 'admin',
-								'controller'	=> 'catalog',
-								'action'		=> 'import',
-								'visible'		=> true,
-							),
-							array(
-								'label'			=> 'Import Movie',
-								'title'			=> 'Import Movie',
-								'module'		=> 'admin',
-								'controller'	=> 'catalog',
-								'action'		=> 'import-movie',
-								'visible'		=> true,
-							),
 						),
 					),
 					///////END: GALLERY///////
@@ -280,6 +264,22 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
                                 'module'		=> 'admin',
                                 'controller'	=> 'import',
                                 'action'		=> 'import-item',
+                                'visible'		=> true,
+                            ),
+                            array(
+                                'label'			=> 'Import',
+                                'title'			=> 'Import',
+                                'module'		=> 'admin',
+                                'controller'	=> 'import',
+                                'action'		=> 'import',
+                                'visible'		=> true,
+                            ),
+                            array(
+                                'label'			=> 'Import Movie',
+                                'title'			=> 'Import Movie',
+                                'module'		=> 'admin',
+                                'controller'	=> 'import',
+                                'action'		=> 'import-movie',
                                 'visible'		=> true,
                             ),
 						),
@@ -733,11 +733,6 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 					$layout->getView()->ogUrl = $url;
 					$layout->getView()->ogTitle = $titleG;
 					$layout->getView()->ogImage = $firstI;
-//					$layout->getView()->headMeta()->setProperty('og:url', $url);
-//					$layout->getView()->headMeta()->setProperty('og:title', $titleG);
-//					$layout->getView()->headMeta()->setProperty('og:type', 'website');
-//					$layout->getView()->headMeta()->setProperty('og:site_name', 'SexyPitipoanca');
-//					$layout->getView()->headMeta()->setProperty('og:image:', $firstI);
 				}
 				// END: Facebook share metas (og)
 			}
@@ -749,27 +744,6 @@ class App_Controller_Plugin extends Zend_Controller_Plugin_Abstract
 						   ->appendStylesheet('/theme/default/js/jquery_ui/css/jquery.ui.all.css');
 					$layout->getView()->headScript()->prependFile('/theme/default/js/jquery-1.7.2.js');
 				}
-				else
-				{
-//					$layout->getView()->headLink()->appendStylesheet('/theme/default/css/tsGlobal.css')
-//						   ->appendStylesheet('/theme/default/js/jquery-ui/css/blitzer/jquery-ui-1.8.19.custom.css')
-//						   ->appendStylesheet('/theme/default/js/jquery_ui/css/jquery.ui.selectmenu.css');
-				}
-//
-//				$layout->getView()->headLink()->appendStylesheet('/theme/default/css/style.css')
-//											  ->appendStylesheet('/theme/default/js/validationEngine/validationEngine.css');
-//				$layout->getView()->headScript()->prependFile('/theme/default/js/global.js');
-//				$layout->getView()->headScript()->prependFile('/theme/default/js/jquery-1.7.2.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.core.js') // jQuery UI
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.widget.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.position.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.autocomplete.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.menu.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.selectmenu.js')
-//												->appendFile('/theme/default/js/jquery_ui/ui/jquery.ui.tabs.js')
-//												->appendFile('/theme/default/js/validationEngine/validationEngine.js')
-//												->appendFile('/theme/default/js/validationEngine/ro.js')
-//												->appendFile('/theme/mediaplayer-5.9/jwplayer.min.js');
 
 				// BEGIN: Fancybox
 				$layout->getView()->headLink()->appendStylesheet('/theme/default/js//jquery.fancybox/fancybox/jquery.fancybox-1.3.4.css');

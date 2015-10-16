@@ -124,4 +124,14 @@ class Admin_ImportController extends Zend_Controller_Action
             $this->view->elements = $elements;
         }
     }
+
+    public function importAction()
+    {
+
+    }
+
+    public function importMovieAction()
+    {
+
+    }
 }

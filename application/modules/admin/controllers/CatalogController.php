@@ -918,14 +918,4 @@ class Admin_CatalogController extends Zend_Controller_Action
 			$this->_redirect('/admin/catalog');
 		}
 	}
-
-	public function importAction()
-	{
-
-	}
-
-	public function importMovieAction()
-	{
-
-	}
 }
