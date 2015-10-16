@@ -455,10 +455,12 @@ class Admin_CatalogController extends Base_Controller_Action
                                     ]);
 								}
 							}
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big');
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small');
-							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2);
 
+                            $this->safeRemoveDir([
+                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big',
+                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small',
+                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2
+                            ]);
 						}
 						
 						else

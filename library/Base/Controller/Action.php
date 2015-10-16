@@ -90,4 +90,17 @@ class Base_Controller_Action extends Zend_Controller_Action
             }
         }
     }
+
+    protected function safeRemoveDir($dirNames)
+    {
+        $dirNameData = (array) $dirNames;
+
+        foreach ($dirNameData as $dirName) {
+            if (is_dir($dirName)) {
+                rmdir($dirName);
+            } else {
+                // ToDo: catch exception
+            }
+        }
+    }
 }
