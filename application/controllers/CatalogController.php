@@ -184,22 +184,22 @@ class CatalogController extends Base_Controller_Action
 		$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/catalog/product-coment-add.phtml'))));
 		$this->view->form = $form;
 
-		if($this->getRequest()->isPost()) {
-			if($this->getRequest()->getPost('control') == 'comentAdd') {
-				if($form->isValid($this->getRequest()->getPost())) {
-					if($loggedIn == true){
+		if ($this->getRequest()->isPost()) {
+			if ($this->getRequest()->getPost('control') == 'comentAdd') {
+				if ($form->isValid($this->getRequest()->getPost())) {
+					if ($loggedIn === true){
 						$model = new Default_Model_CatalogProductComments();
 						$model->setProduct_id($id);
 						$model->setUserId($account->getId());
 						$model->setName($account->getUsername());
 						$model->setComment($form->getValue('message'));
-						if($model->save()){
+						if ($model->save()) {
 							$this->_flashMessenger->addMessage('<div class="mess-true">Comentariul tau a fost salvat!</div>');
-						}else{
+						} else {
 							$this->_flashMessenger->addMessage('<div class="mess-false">nu</div>');
 						}
 						$this->_redirect('/catalog/product-details/id/'.$id.'/#comment');
-					}else{
+					} else {
 						$this->_flashMessenger->addMessage('<div class="mess-false">Te rugam sa te autentifici!</div>');
 						$this->_redirect('/catalog/product-details/id/'.$id.'/#comment');
 					}
