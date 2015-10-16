@@ -168,9 +168,9 @@ class CatalogController extends Base_Controller_Action
 
 			// BEGIN: REDIRECT FOR 18+ CATEGORIES
 			$censored = false;
-			if($loggedIn == false){
-				if(null != $model->getCategory_id()){
-					if($model->getCategory_id() == 8 || $model->getCategory_id() == 2){
+			if ($loggedIn === false) {
+				if (null != $model->getCategory_id()) {
+					if ($model->getCategory_id() == 8 || $model->getCategory_id() == 2) {
 						$censored = true;
 					}
 				}

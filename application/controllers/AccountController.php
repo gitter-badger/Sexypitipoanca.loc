@@ -573,18 +573,10 @@ class AccountController extends Base_Controller_Action
 
                             if($account->save()) {
                                 if(null != $oldAvatar){
-                                    if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar)) {
-                                        unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar);
-                                    } else {
-                                        // ToDo: catch exception
-                                        echo 'file not found';
-                                    }
-                                    if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar)) {
-                                        unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar);
-                                    } else {
-                                        // ToDo: catch exception
-                                        echo 'file not found';
-                                    }
+                                    $this->safeDelete([
+                                        APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar,
+                                        APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar
+                                    ]);
                                 }
                                 $this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
                             }else{

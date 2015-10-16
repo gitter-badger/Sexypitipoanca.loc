@@ -73,4 +73,21 @@ class Base_Controller_Action extends Zend_Controller_Action
 
         return $result;
     }
+
+    /**
+     * Safely delete files
+     * @param $filePaths
+     */
+    protected function safeDelete($filePaths)
+    {
+        $filePathData = (array) $filePaths;
+
+        foreach ($filePathData as $filePath) {
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            } else {
+                // ToDo: catch exception
+            }
+        }
+    }
 }
