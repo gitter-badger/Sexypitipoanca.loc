@@ -22,6 +22,7 @@ class Admin_Form_Newsletter extends Zend_Form
 
 		$company = new Default_Model_Company();
     	$select = $company->getMapper()->getDbTable()->select();
+        $email = '';
     	if(($company = $company->fetchAll($select))) {
 			$email = $company[0]->getEmail();
     	}
