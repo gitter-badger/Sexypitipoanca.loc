@@ -565,7 +565,7 @@ class AccountController extends Base_Controller_Action
                                 if(null != $oldAvatar){
                                     $this->safeDelete([
                                         APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar,
-                                        APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$oldAvatar
+                                        APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$oldAvatar
                                     ]);
                                 }
                                 $this->_flashMessenger->addMessage('<span class="mess-true">Modficarile au fost efectuate cu succes</span>');
