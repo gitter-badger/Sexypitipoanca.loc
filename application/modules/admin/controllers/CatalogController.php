@@ -1,12 +1,6 @@
 <?php
-class Admin_CatalogController extends Zend_Controller_Action
+class Admin_CatalogController extends Base_Controller_Action
 {
-    public function init()
-    {
-        $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
-        $this->view->message = $this->_flashMessenger->getMessages();
-    }
-
 	public function indexAction()
 	{
 		$page = $this->_getParam('page')?$this->_getParam('page'):1;
@@ -94,8 +88,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 									  ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
 									  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/video/big/'.$filename);
 								$thumb->tsResizeWithFill(150, 150, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/catalog/video/small/'.$filename);
-
-								@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename);
+                                $this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename);
 								$model->setImage($filename);
 							}
 						}
@@ -168,10 +161,12 @@ class Admin_CatalogController extends Zend_Controller_Action
 										$thumb->tsResizeWithFill(150, 150, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/catalog/video/small/'.$filename);
 
 										$result[0]->setImage($filename);
-										@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename);
+                                        $this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename);
 										if(null != $oldAvatar){
-											@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/video/big/'.$oldImage);
-											@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/video/small/'.$oldImage);
+                                            $this->safeDelete([
+                                                APPLICATION_PUBLIC_PATH.'/media/catalog/video/big/'.$oldImage,
+                                                APPLICATION_PUBLIC_PATH.'/media/catalog/video/small/'.$oldImage
+                                            ]);
 										}
 									}
 								}
@@ -285,7 +280,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 											  ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
 											  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
 										$thumb->resize(150)->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
-										@unlink('media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/'.$info['name']);
+										$this->safeDelete('media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/'.$info['name']);
 									}
 								}else{
 									$this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload.</div>');
@@ -453,9 +448,11 @@ class Admin_CatalogController extends Zend_Controller_Action
 									//mutam pozele vechi
 									copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
 									copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
-									
-									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume);
-									@unlink(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume);
+
+                                    $this->safeDelete([
+                                        APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume,
+                                        APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume
+                                    ]);
 								}
 							}
 							@rmdir(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big');
@@ -496,7 +493,7 @@ class Admin_CatalogController extends Zend_Controller_Action
 												  ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
 												  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/big/'.$pozaNume);
 											$thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
-											@unlink('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
+											$this->safeDelete('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
 										}
 									}else{
 										$this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
@@ -570,9 +567,11 @@ class Admin_CatalogController extends Zend_Controller_Action
 				if($model->delete()) {
 					$allowed = "/[^a-z0-9\\-\\_]+/i";  
 					$folderName = preg_replace($allowed,"-", strtolower(trim($model2->getName())));	
-					$folderName = trim($folderName,'-');					
-					@unlink('media/catalog/products/'.($model2->getUser_id()?$model2->getUser_id():'0').'/'.$folderName.'/big/'.$image);
-					@unlink('media/catalog/products/'.($model2->getUser_id()?$model2->getUser_id():'0').'/'.$folderName.'/small/'.$image);
+					$folderName = trim($folderName,'-');
+                    $this->safeDelete([
+					    'media/catalog/products/'.($model2->getUser_id()?$model2->getUser_id():'0').'/'.$folderName.'/big/'.$image,
+					    'media/catalog/products/'.($model2->getUser_id()?$model2->getUser_id():'0').'/'.$folderName.'/small/'.$image
+                    ]);
 					$this->_flashMessenger->addMessage('<div class="mess-true">Poza a fost stearsa cu succes!</div>');
 				} else {
 					$this->_flashMessenger->addMessage('<div class="mess-false">Eroare stergere poza!</div>');

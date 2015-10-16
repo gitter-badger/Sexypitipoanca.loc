@@ -457,12 +457,7 @@ class AccountController extends Base_Controller_Action
 											$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
 											$thumb->resize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
 											$thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
-                                            if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename)) {
-                                                unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-                                            } else {
-                                                // ToDo: catch exception
-                                                echo 'file not found';
-                                            }
+                                            $this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
 											$model->setAvatar($filename);
 										}
 									}
@@ -560,12 +555,7 @@ class AccountController extends Base_Controller_Action
                                         $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
                                         $thumb->adaptiveResize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
                                         $thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
-                                        if (file_exists(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename)) {
-                                            unlink(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-                                        } else {
-                                            // ToDo: catch exception
-                                            echo 'file not found';
-                                        }
+                                        $this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
                                         $account->setAvatar($filename);
                                     }
                                 }
