@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Sendmail extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		 // Set the method for the display form to POST
         $this->setMethod('post');

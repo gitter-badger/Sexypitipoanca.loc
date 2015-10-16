@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Editpassword extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		
 	}

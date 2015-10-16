@@ -1,12 +1,12 @@
 <?php
 class Admin_Form_Catalog extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		
 	}
 
-	function productAdd()
+	public function productAdd()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formProductAdd', 'class'=>''));
@@ -95,7 +95,7 @@ class Admin_Form_Catalog extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function productEdit(Default_Model_CatalogProducts $model)
+	public function productEdit(Default_Model_CatalogProducts $model)
 	{
 		$this->category->setValue($model->getCategory_id());
 		$this->user->setValue($model->getUser_id());
@@ -122,7 +122,7 @@ class Admin_Form_Catalog extends Zend_Form
 		$this->name->getValidator('Zend_Validate_Db_NoRecordExists')->setExclude(array('field'=>'name', 'value' => $model->getName()));
 	}
 
-	function categoriesAdd()
+	public function categoriesAdd()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formCategoriesAdd', 'class'=>''));
@@ -150,14 +150,14 @@ class Admin_Form_Catalog extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function categoriesEdit(Default_Model_CatalogCategories $model)
+	public function categoriesEdit(Default_Model_CatalogCategories $model)
 	{
 		$this->name->setValue($model->getName());
 		$this->status->setValue($model->getStatus());
 		$this->submit->setValue('modifica');
 	}
 
-	function visitsAdd()
+	public function visitsAdd()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formVisitsAdd', 'class'=>''));

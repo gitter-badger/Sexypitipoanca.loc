@@ -1,12 +1,12 @@
 <?php
 class Admin_Form_Cms extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		// Set the method for the display form to POST
 	}
 
-	function pageAdd()
+	public function pageAdd()
 	{
         $this->setMethod('post');
         $this->addAttribs(array('id'=>'frmPage'));
@@ -65,7 +65,7 @@ class Admin_Form_Cms extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function pageEdit(Default_Model_Cms $model)
+	public function pageEdit(Default_Model_Cms $model)
 	{
 		$this->position->setValue($model->getPosition());
 		$this->title->setValue($model->getTitle());
@@ -77,7 +77,7 @@ class Admin_Form_Cms extends Zend_Form
 		$this->submit->setValue('modifica');
 	}
 
-	function header()
+	public function header()
 	{
 		$this->setMethod('post');
         $this->addAttribs(array('id'=>'frmCmsHeader'));
@@ -149,7 +149,7 @@ class Admin_Form_Cms extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function seoAdd()
+	public function seoAdd()
 	{
 		// Set the method for the display form to POST
 		$this->setMethod('post');
@@ -190,7 +190,7 @@ class Admin_Form_Cms extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function seoEdit(Default_Model_CmsSeo $value)
+	public function seoEdit(Default_Model_CmsSeo $value)
 	{
 		// Set the method for the display form to POST
 		$this->title->setValue($value->getTitle());
@@ -201,7 +201,7 @@ class Admin_Form_Cms extends Zend_Form
 		$this->removeElement('page');
 	}
 
-	function analyticsAdd()
+	public function analyticsAdd()
 	{
 		// Set the method for the display form to POST
         $this->setMethod('post');
@@ -233,7 +233,7 @@ class Admin_Form_Cms extends Zend_Form
 
 	}
 
-	function analyticsEdit(Default_Model_Analytics $value)
+	public function analyticsEdit(Default_Model_Analytics $value)
 	{
 		$this->code->setValue($value->getCode());
 		$this->status->setValue($value->getStatus());

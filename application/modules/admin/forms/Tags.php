@@ -2,7 +2,7 @@
 
 class Admin_Form_Tags extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		// Set the method for the display form to POST
         $this->setMethod('post');
@@ -22,7 +22,7 @@ class Admin_Form_Tags extends Zend_Form
 		$this->addElement($submit);
 	}
 	
-	function edit(Default_Model_Tags $model)
+	public function edit(Default_Model_Tags $model)
 	{
 		$this->name->setValue($model->getName());
 		$this->submit->setValue('Modify');

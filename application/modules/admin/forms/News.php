@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_News extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		// Set the method for the display form to POST
         $this->setMethod('post');
@@ -35,13 +35,4 @@ class Admin_Form_News extends Zend_Form
 
 		$this->addElements(array($title, $message, $status, $submit));
 	}
-
-//	public function editNews(Default_Model_News $news)
-//	{
-//        // Set the method for the display form to POST
-//		$this->title->setValue($news->getTitle());
-//		$this->message->setValue($news->getMessage());
-//		$this->status->setValue($news->getStatus());
-//		$this->submit->setValue(Zend_Registry::get('translate')->_('marketing_add_news_table_modify'));
-//	}
 }

@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Marketing extends Zend_Form
 {
-    function init()
+    public function init()
     {
         $this->setMethod('post');
         $this->addAttribs(array('id'=>'frmMarketing'));

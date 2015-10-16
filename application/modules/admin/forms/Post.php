@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Post extends Zend_Form
 {
-	function addVideo()
+	public function addVideo()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'formProductAdd', 'class'=>''));
@@ -93,7 +93,7 @@ class Admin_Form_Post extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function editVideo(Default_Model_CatalogProducts $model)
+	public function editVideo(Default_Model_CatalogProducts $model)
 	{
 		$this->user_id->setValue($model->getUser_id());
 		$this->category_id->setValue($model->getCategory_id());

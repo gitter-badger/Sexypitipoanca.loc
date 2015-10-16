@@ -1,12 +1,12 @@
 <?php
 class Admin_Form_Template extends Zend_Form 
 {
-	function init()
+	public function init()
 	{
 		
 	}
 
-	function site()
+	public function site()
 	{
         $this->setMethod('post');
         $this->addAttribs(array('id'=>'frmSite'));
@@ -24,7 +24,7 @@ class Admin_Form_Template extends Zend_Form
         $this->addElements(array($value, $submit));
 	}
 
-	function email()
+	public function email()
 	{
         $this->setMethod('post');
         $this->addAttribs(array('id'=>'frmEmail'));

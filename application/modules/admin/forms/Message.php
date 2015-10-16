@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Message extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmSendMessage', 'class'=>''));
@@ -47,7 +47,7 @@ class Admin_Form_Message extends Zend_Form
 		$this->addElement($submit);
 	}
 	
-	function fill(Default_Model_AccountUsers $model)
+	public function fill(Default_Model_AccountUsers $model)
 	{
 		$this->to->setValue($model->getEmail());
 	}

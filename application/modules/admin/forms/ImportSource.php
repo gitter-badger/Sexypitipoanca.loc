@@ -7,7 +7,7 @@
  * @property null|Zend_Form|Zend_Form_Element submit
  */
 class Admin_Form_ImportSource extends Zend_Form{
-	function init()
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmImportSources'));
@@ -39,7 +39,7 @@ class Admin_Form_ImportSource extends Zend_Form{
 		$this->addElement($submit);
 	}
 	
-	function edit(Admin_Model_ImportSource $model)
+	public function edit(Admin_Model_ImportSource $model)
 	{
 		$this->title->setValue($model->getTitle());
         $this->description->setValue($model->getDescription());

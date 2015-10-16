@@ -1,6 +1,7 @@
 <?php
-class Admin_Form_Notification extends Zend_Form{
-	function init()
+class Admin_Form_Notification extends Zend_Form
+{
+	public function init()
 	{
 		// Set the method for the display form to POST
 		$this->setMethod('post');

@@ -1,6 +1,6 @@
 <?php
 class Admin_Form_Comments extends Zend_Form{
-	function init()
+	public function init()
 	{
 		$this->setMethod('post');
 		$this->addAttribs(array('id'=>'frmNotifications'));
@@ -19,7 +19,7 @@ class Admin_Form_Comments extends Zend_Form{
 		$this->addElement($submit);
 	}
 	
-	function edit(Default_Model_CatalogProductComments $model)
+	public function edit(Default_Model_CatalogProductComments $model)
 	{
 		$this->comment->setValue($model->getComment());
 	}

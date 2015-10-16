@@ -1,7 +1,7 @@
 <?php
 class Admin_Form_Settings extends Zend_Form
 {
-	function init()
+	public function init()
 	{
 		// Set the method for the display form to POST
 	}
@@ -62,7 +62,7 @@ class Admin_Form_Settings extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function productTaxesAdd()
+	public function productTaxesAdd()
 	{
         // Set the method for the display form to POST
         $this->setMethod('post');
@@ -109,7 +109,7 @@ class Admin_Form_Settings extends Zend_Form
 		$this->addElement($submit);
 	}
 
-	function productTaxesEdit(Default_Model_ProductsTaxes $value)
+	public function productTaxesEdit(Default_Model_ProductsTaxes $value)
 	{
 		$this->name->setValue($value->getName());
 		$this->value->setValue($value->getValue());
@@ -118,7 +118,7 @@ class Admin_Form_Settings extends Zend_Form
 		$this->submit->setValue(Zend_Registry::get('translate')->_('products_add_table_button_modify'));
 	}
 
-	function vatEdit(Default_Model_ProductsTaxes $value)
+	public function vatEdit(Default_Model_ProductsTaxes $value)
 	{
 	   $this->name->setValue($value->getName());
 	   $this->value->setValue($value->getValue());
