@@ -305,212 +305,199 @@ class Admin_CatalogController extends Base_Controller_Action
 	public function productsEditAction()
 	{
 		$id = $this->getRequest()->getParam('id');
-		$page = $this->getRequest()->getParam('page');
 		$model = new Default_Model_CatalogProducts();
-		if($model->find($id)) {
-			$this->view->productId = $id;
-			$form = new Admin_Form_Catalog();
-			$form->productAdd();
-			$form->productEdit($model);
-			$this->view->form = $form;
-			
-			$eTags = array();
-			$model2 = new Default_Model_CatalogProductTags();
-			$select = $model2->getMapper()->getDbTable()->select()
-					->where('product_id = ?', $id);
-			$result = $model2->fetchAll($select);
-			if($result)
-			{
-				$this->view->tags = $result;
+		if(!$model->find($id)) {
+			$this->_flashMessenger->addMessage('<div class="mess-error">Product does not exist!</div>');
+			$this->_redirect('/admin/catalog/');
+		}
+
+		$this->view->productId = $id;
+		$form = new Admin_Form_Catalog();
+		$form->productAdd();
+		$form->productEdit($model);
+		$this->view->form = $form;
+
+		$model2 = new Default_Model_CatalogProductTags();
+		$select = $model2->getMapper()->getDbTable()->select()
+				->where('product_id = ?', $id);
+		$result = $model2->fetchAll($select);
+		if($result)
+		{
+			$this->view->tags = $result;
+		}
+
+		$eImages = array();
+		$imagesForEdit = array();
+		$model2 = new Default_Model_CatalogProductImages();
+		$select = $model2->getMapper()->getDbTable()->select()
+				->where('product_id = ?', $id)
+				->order('position ASC');
+		$result = $model2->fetchAll($select);
+		if($result)
+		{
+			$imagesForEdit = $result;
+			$this->view->imagini = $result;
+			foreach($result as $value) {
+				$eImages[$value->getId()] = $value->getName();
 			}
-			
-			$eImages = array();
-			$imagesForEdit = array();
-			$model2 = new Default_Model_CatalogProductImages();
-			$select = $model2->getMapper()->getDbTable()->select()
-					->where('product_id = ?', $id)
-					->order('position ASC');
-			$nr_poze = 0;
-			$result = $model2->fetchAll($select);
-			if($result)
+			$this->view->images = $eImages;
+		}
+
+		if($this->getRequest()->isPost()) // post info available
+		{
+			if($form->isValid($this->getRequest()->getPost()))
 			{
-				$imagesForEdit = $result;
-				$this->view->imagini = $result;
-				$nr_poze = count($result);
-				foreach($result as $value) {
-					$eImages[$value->getId()] = $value->getName();
+				$oldName = '';
+				if($model->getName() != $form->getValue('name')) {
+					$oldName = $model->getName();
+
+
+					$nameC = TS_Products::formatName($form->getValue('name'));
+					$model->setName($nameC);
 				}
-				$this->view->images = $eImages;
-			}
-
-			if($this->getRequest()->isPost()) // post info available
-            {
-				if($form->isValid($this->getRequest()->getPost()))
-                {
-					$oldname = '';
-					//daca difera numele categoriei de numele vechi a ctegoriei
-					if($model->getName() != $form->getValue('name')) {
-						$oldname = $model->getName();
-//						$allowed = "/[^a-z0-9\\-\\_]+/i";  
-//						$nameC = preg_replace($allowed," ", ($form->getValue('name')));
-//						$nameC = trim($nameC);
-//						$model->setName($nameC);
-//						rename(APPLICATION_PUBLIC_PATH . '/media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/' . $model->getName() . '/', APPLICATION_PUBLIC_PATH . '/media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/' . $nameC . '/');
-					
-
-						$nameC = TS_Products::formatName($form->getValue('name'));
-						$model->setName($nameC);
-					}
-					$model->setCategory_id($form->getValue('category'));
-					$model->setStatus($form->getValue('status'));
-					$model->setDescription($form->getValue('description'));
-					if($model->save()) {
-						$this->_flashMessenger->addMessage('<div class="mess-true">Modificarile au fost efectuate cu succes!</div>');
-						if($form->getValue('tags')) {
-							$tags = explode(',', trim($form->getValue('tags')));
-							foreach($tags as $tag) {
-								$tag = trim($tag);
-								$model2 = new Default_Model_Tags();
-								$select = $model2->getMapper()->getDbTable()->select()
-										->where('name = ?', $tag);
-								$result = $model2->fetchAll($select);
-								if($result) {
-									$model3 = new Default_Model_CatalogProductTags();
-									$select = $model3->getMapper()->getDbTable()->select()
-											->where('product_id = ?', $id)
-											->where('tag_id = ?', $result[0]->getId())
-											;
-									$result2 = $model3->fetchAll($select);
-									if($result2) {
+				$model->setCategory_id($form->getValue('category'));
+				$model->setStatus($form->getValue('status'));
+				$model->setDescription($form->getValue('description'));
+				if($model->save()) {
+					$this->_flashMessenger->addMessage('<div class="mess-true">Modificarile au fost efectuate cu succes!</div>');
+					if($form->getValue('tags')) {
+						$tags = explode(',', trim($form->getValue('tags')));
+						foreach($tags as $tag) {
+							$tag = trim($tag);
+							$model2 = new Default_Model_Tags();
+							$select = $model2->getMapper()->getDbTable()->select()
+									->where('name = ?', $tag);
+							$result = $model2->fetchAll($select);
+							if($result) {
+								$model3 = new Default_Model_CatalogProductTags();
+								$select = $model3->getMapper()->getDbTable()->select()
+										->where('product_id = ?', $id)
+										->where('tag_id = ?', $result[0]->getId())
 										;
-									} else {
-										$model4 = new Default_Model_CatalogProductTags();
-										$model4->setProduct_id($model->getId());
-										$model4->setTag_id($result[0]->getId());
-										$model4->save();
-									}
+								$result2 = $model3->fetchAll($select);
+								if($result2) {
+									;
 								} else {
-									$model3 = new Default_Model_Tags();
-									$model3->setName($tag);
-									$tagId = $model3->save();
-									if($tagId)
-									{
-										$model4 = new Default_Model_CatalogProductTags();
-										$model4->setProduct_id($model->getId());
-										$model4->setTag_id($tagId);
-										$model4->save();
-									}
+									$model4 = new Default_Model_CatalogProductTags();
+									$model4->setProduct_id($model->getId());
+									$model4->setTag_id($result[0]->getId());
+									$model4->save();
+								}
+							} else {
+								$model3 = new Default_Model_Tags();
+								$model3->setName($tag);
+								$tagId = $model3->save();
+								if($tagId)
+								{
+									$model4 = new Default_Model_CatalogProductTags();
+									$model4->setProduct_id($model->getId());
+									$model4->setTag_id($tagId);
+									$model4->save();
 								}
 							}
 						}
-
-                        $userId = $form->getValue('user');
-                        if(!$form->getValue('user'))
-                        {
-                            $userId = $model->getUser_id();
-                        }
-
-						if(!empty($oldname))
-						{
-							//daca a fost modificat user-ul si user-ul nou nu are inca folder creat
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
-							}
-
-							//cream folderele cu numele galerie noua
-							$allowed = "/[^a-z0-9\\-\\_]+/i";  
-							$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));	
-							$folderName = trim($folderName,'-');
-							if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
-								mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
-							}
-							
-							//copiem pozele din folderul vechi
-							$folderName2 = preg_replace($allowed,"-", strtolower(trim($oldname)));	
-							$folderName2 = trim($folderName2,'-');							
-							
-							foreach ($imagesForEdit as $valueImg) 
-							{
-								$model2 = new Default_Model_CatalogProductImages();
-								$model2->find($valueImg->getId());
-								$oldPozaNume = $model2->getName();
-								Zend_Debug::dump($oldPozaNume);
-								$rand = rand(99, 9999);
-								$oldPath = 'media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
-								$tmp = pathinfo($oldPath);
-								$extension = (!empty($tmp['extension']))?$tmp['extension']:null;									
-								$pozaNume = $folderName.'-'.$rand.'.'.$extension;	
-								//modifica numele pozei
-								$model2->setName($pozaNume);
-								if($model2->save()) {	
-									//mutam pozele vechi
-									copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
-									copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
-
-                                    $this->safeDelete([
-                                        APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume,
-                                        APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume
-                                    ]);
-								}
-							}
-
-                            $this->safeRemoveDir([
-                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big',
-                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small',
-                                APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2
-                            ]);
-						}
-						
-						else
-						{
-							$allowed = "/[^a-z0-9\\-\\_]+/i";  
-							$folderName = preg_replace($allowed,"-", strtolower(trim($model->getName())));	
-							$folderName = trim($folderName,'-');
-						}						
-					
-						$upload = new Zend_File_Transfer_Adapter_Http();
-						$upload->addValidator('Size', false, 2000000, 'image');
-						$upload->setDestination('media/catalog/products/'.$userId.'/'.$folderName.'/');
-						$files = $upload->getFileInfo();
-						$i = 1;
-						$rand = '';
-						foreach($files as $file => $info) {
-							if($i<=20){
-								if($upload->isValid($file)) {								
-									if($upload->receive($file)){
-										$rand = rand(99, 9999);
-										$tmp = pathinfo($info['name']);
-										$extension = (!empty($tmp['extension']))?$tmp['extension']:null;									
-										$pozaNume = $folderName.'-'.$rand.'.'.$extension;										
-										$model2 = new Default_Model_CatalogProductImages();
-										$model2->setProduct_id($model->getId());
-										$model2->setPosition('999');
-										$model2->setName($pozaNume);
-										if($model2->save()) {
-											require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-											$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
-											$thumb->resize(600, 600)
-												  ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
-												  ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/big/'.$pozaNume);
-											$thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
-											$this->safeDelete('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
-										}
-									}else{
-										$this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
-										$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
-									}								
-								}
-							}else{
-								$this->_flashMessenger->addMessage('<div class="mess-info">Au fost adaugate numai primele 20 de poze.</div>');
-								$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
-							}	
-							$i++;
-						}						
 					}
-					$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
+
+					$userId = $form->getValue('user');
+					if(!$form->getValue('user'))
+					{
+						$userId = $model->getUser_id();
+					}
+
+					if(!empty($oldName))
+					{
+						//daca a fost modificat user-ul si user-ul nou nu are inca folder creat
+						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
+							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
+						}
+
+						//cream folderele cu numele galerie noua
+						$allowed = "/[^a-z0-9\\-\\_]+/i";
+						$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));
+						$folderName = trim($folderName,'-');
+						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
+							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
+							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
+							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
+						}
+
+						//copiem pozele din folderul vechi
+						$folderName2 = preg_replace($allowed,"-", strtolower(trim($oldName)));
+						$folderName2 = trim($folderName2,'-');
+
+						foreach ($imagesForEdit as $valueImg)
+						{
+							$model2 = new Default_Model_CatalogProductImages();
+							$model2->find($valueImg->getId());
+							$oldPozaNume = $model2->getName();
+							Zend_Debug::dump($oldPozaNume);
+							$rand = rand(99, 9999);
+							$oldPath = 'media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
+							$tmp = pathinfo($oldPath);
+							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
+							$pozaNume = $folderName.'-'.$rand.'.'.$extension;
+							//modifica numele pozei
+							$model2->setName($pozaNume);
+							if($model2->save()) {
+								//mutam pozele vechi
+								copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
+								copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
+
+								$this->safeDelete([
+									APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume,
+									APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume
+								]);
+							}
+						}
+
+						$this->safeRemoveDir([
+							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big',
+							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small',
+							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2
+						]);
+					}
+
+					else
+					{
+						$allowed = "/[^a-z0-9\\-\\_]+/i";
+						$folderName = preg_replace($allowed,"-", strtolower(trim($model->getName())));
+						$folderName = trim($folderName,'-');
+					}
+
+					$upload = new Zend_File_Transfer_Adapter_Http();
+					$upload->addValidator('Size', false, 2000000, 'image');
+					$upload->setDestination('media/catalog/products/'.$userId.'/'.$folderName.'/');
+					$files = $upload->getFileInfo();
+					$i = 1;
+					foreach($files as $file => $info) {
+                        if($upload->isValid($file)) {
+                            if($upload->receive($file)){
+                                $rand = rand(99, 9999);
+                                $tmp = pathinfo($info['name']);
+                                $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
+                                $pozaNume = $folderName.'-'.$rand.'.'.$extension;
+                                $model2 = new Default_Model_CatalogProductImages();
+                                $model2->setProduct_id($model->getId());
+                                $model2->setPosition('999');
+                                $model2->setName($pozaNume);
+                                if($model2->save()) {
+                                    require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
+                                    $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
+                                    $thumb->resize(600, 600)
+                                          ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
+                                          ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/big/'.$pozaNume);
+                                    $thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
+                                    $this->safeDelete('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
+                                }
+                            }else{
+                                $this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
+                                $this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
+                            }
+                        }
+						$i++;
+					}
 				}
+				$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
 			}
 		}
 	}
