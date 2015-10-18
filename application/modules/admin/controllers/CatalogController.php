@@ -289,22 +289,21 @@ class Admin_CatalogController extends Base_Controller_Action
 
 	public function productsEditAction()
 	{
-		$id = $this->getRequest()->getParam('id');
-		$model = new Default_Model_CatalogProducts();
-		if(!$model->find($id)) {
+		$product = new Default_Model_CatalogProducts();
+		if(!$product->find($this->getRequest()->getParam('id'))) {
 			$this->_flashMessenger->addMessage('<div class="mess-error">Product does not exist!</div>');
 			$this->_redirect('/admin/catalog/');
 		}
 
-		$this->view->productId = $id;
+		$this->view->productId = $product->getId();
 		$form = new Admin_Form_Catalog();
 		$form->productAdd();
-		$form->productEdit($model);
+		$form->productEdit($product);
 		$this->view->form = $form;
 
 		$model2 = new Default_Model_CatalogProductTags();
 		$select = $model2->getMapper()->getDbTable()->select()
-				->where('product_id = ?', $id);
+				->where('product_id = ?', $product->getId());
 		$result = $model2->fetchAll($select);
 		if($result)
 		{
@@ -315,7 +314,7 @@ class Admin_CatalogController extends Base_Controller_Action
 		$imagesForEdit = array();
 		$model2 = new Default_Model_CatalogProductImages();
 		$select = $model2->getMapper()->getDbTable()->select()
-				->where('product_id = ?', $id)
+				->where('product_id = ?', $product)
 				->order('position ASC');
 		$result = $model2->fetchAll($select);
 		if($result)
@@ -333,17 +332,17 @@ class Admin_CatalogController extends Base_Controller_Action
 			if($form->isValid($this->getRequest()->getPost()))
 			{
 				$oldName = '';
-				if($model->getName() != $form->getValue('name')) {
-					$oldName = $model->getName();
+				if($product->getName() != $form->getValue('name')) {
+					$oldName = $product->getName();
 
 
 					$nameC = TS_Products::formatName($form->getValue('name'));
-					$model->setName($nameC);
+                    $product->setName($nameC);
 				}
-				$model->setCategory_id($form->getValue('category'));
-				$model->setStatus($form->getValue('status'));
-				$model->setDescription($form->getValue('description'));
-				if($model->save()) {
+                $product->setCategory_id($form->getValue('category'));
+                $product->setStatus($form->getValue('status'));
+                $product->setDescription($form->getValue('description'));
+				if($product->save()) {
 					$this->_flashMessenger->addMessage('<div class="mess-true">Modificarile au fost efectuate cu succes!</div>');
 					if($form->getValue('tags')) {
 						$tags = explode(',', trim($form->getValue('tags')));
@@ -356,7 +355,7 @@ class Admin_CatalogController extends Base_Controller_Action
 							if($result) {
 								$model3 = new Default_Model_CatalogProductTags();
 								$select = $model3->getMapper()->getDbTable()->select()
-										->where('product_id = ?', $id)
+										->where('product_id = ?', $product->getId())
 										->where('tag_id = ?', $result[0]->getId())
 										;
 								$result2 = $model3->fetchAll($select);
@@ -364,7 +363,7 @@ class Admin_CatalogController extends Base_Controller_Action
 									;
 								} else {
 									$model4 = new Default_Model_CatalogProductTags();
-									$model4->setProduct_id($model->getId());
+									$model4->setProduct_id($product->getId());
 									$model4->setTag_id($result[0]->getId());
 									$model4->save();
 								}
@@ -375,7 +374,7 @@ class Admin_CatalogController extends Base_Controller_Action
 								if($tagId)
 								{
 									$model4 = new Default_Model_CatalogProductTags();
-									$model4->setProduct_id($model->getId());
+									$model4->setProduct_id($product->getId());
 									$model4->setTag_id($tagId);
 									$model4->save();
 								}
@@ -386,7 +385,7 @@ class Admin_CatalogController extends Base_Controller_Action
 					$userId = $form->getValue('user');
 					if(!$form->getValue('user'))
 					{
-						$userId = $model->getUser_id();
+						$userId = $product->getUser_id();
 					}
 
 					if(!empty($oldName))
@@ -415,16 +414,13 @@ class Admin_CatalogController extends Base_Controller_Action
 							$model2 = new Default_Model_CatalogProductImages();
 							$model2->find($valueImg->getId());
 							$oldPozaNume = $model2->getName();
-							Zend_Debug::dump($oldPozaNume);
 							$rand = rand(99, 9999);
-							$oldPath = 'media/catalog/products/'.($model->getUser_id()?$model->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
+							$oldPath = 'media/catalog/products/'.($product->getUser_id()?$product->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
 							$tmp = pathinfo($oldPath);
 							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
 							$pozaNume = $folderName.'-'.$rand.'.'.$extension;
-							//modifica numele pozei
 							$model2->setName($pozaNume);
 							if($model2->save()) {
-								//mutam pozele vechi
 								copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
 								copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
 
@@ -445,7 +441,7 @@ class Admin_CatalogController extends Base_Controller_Action
 					else
 					{
 						$allowed = "/[^a-z0-9\\-\\_]+/i";
-						$folderName = preg_replace($allowed,"-", strtolower(trim($model->getName())));
+						$folderName = preg_replace($allowed,"-", strtolower(trim($product->getName())));
 						$folderName = trim($folderName,'-');
 					}
 
@@ -462,7 +458,7 @@ class Admin_CatalogController extends Base_Controller_Action
                                 $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
                                 $pozaNume = $folderName.'-'.$rand.'.'.$extension;
                                 $model2 = new Default_Model_CatalogProductImages();
-                                $model2->setProduct_id($model->getId());
+                                $model2->setProduct_id($product->getId());
                                 $model2->setPosition('999');
                                 $model2->setName($pozaNume);
                                 if($model2->save()) {
@@ -476,13 +472,13 @@ class Admin_CatalogController extends Base_Controller_Action
                                 }
                             }else{
                                 $this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
-                                $this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
+                                $this->_redirect('/admin/catalog/products-edit/id/'.$product->getId());
                             }
                         }
 						$i++;
 					}
 				}
-				$this->_redirect('/admin/catalog/products-edit/id/'.$model->getId());
+				$this->_redirect('/admin/catalog/products-edit/id/'.$product->getId());
 			}
 		}
 	}
