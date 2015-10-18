@@ -414,11 +414,10 @@ class Admin_CatalogController extends Base_Controller_Action
 							$model2 = new Default_Model_CatalogProductImages();
 							$model2->find($valueImg->getId());
 							$oldPozaNume = $model2->getName();
-							$rand = rand(99, 9999);
 							$oldPath = 'media/catalog/products/'.($product->getUser_id()?$product->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
 							$tmp = pathinfo($oldPath);
 							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-							$pozaNume = $folderName.'-'.$rand.'.'.$extension;
+							$pozaNume = $folderName.'-'.rand(99, 9999).'.'.$extension;
 							$model2->setName($pozaNume);
 							if($model2->save()) {
 								copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
@@ -453,10 +452,9 @@ class Admin_CatalogController extends Base_Controller_Action
 					foreach($files as $file => $info) {
                         if($upload->isValid($file)) {
                             if($upload->receive($file)){
-                                $rand = rand(99, 9999);
                                 $tmp = pathinfo($info['name']);
                                 $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-                                $pozaNume = $folderName.'-'.$rand.'.'.$extension;
+                                $pozaNume = $folderName.'-'.rand(99, 9999).'.'.$extension;
                                 $model2 = new Default_Model_CatalogProductImages();
                                 $model2->setProduct_id($product->getId());
                                 $model2->setPosition('999');
