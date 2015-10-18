@@ -13,17 +13,7 @@ class Admin_CatalogController extends Base_Controller_Action
 			}
 			$select->order('added DESC');
 
-		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-		$paginator->setItemCountPerPage(25);
-		$paginator->setCurrentPageNumber($this->_getParam('page'));
-		$paginator->setPageRange(5);
-		$this->view->result = $paginator;
-		$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-		$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-		Zend_Paginator::setDefaultScrollingStyle('Sliding');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
-
+		$this->paginateSelect($select);
 
 		// BEGIN: FILTERS
 		$model = new Default_Model_CatalogCategories();
@@ -214,12 +204,7 @@ class Admin_CatalogController extends Base_Controller_Action
 				$model = new Default_Model_CatalogProducts();
 				$model->setUser_id($form->getValue('user'));
 				$model->setCategory_id($form->getValue('category'));
-				
-//				$allowed = "/[^a-z0-9\\-\\_]+/i";  
-//				$nameC = preg_replace($allowed," ", ($form->getValue('name')));
-//				$nameC = trim($nameC);
 				$nameC = TS_Products::formatName($form->getValue('name'));
-				
 				$model->setName($nameC);
 				$model->setType('gallery');
 				$model->setDescription($form->getValue('description'));
@@ -803,10 +788,6 @@ class Admin_CatalogController extends Base_Controller_Action
 					}
 
 				}
-//				$allowed = "/[^a-z0-9\\-\\_]+/i";  
-//				$nameC = preg_replace($allowed," ", ($form->getValue('name')));
-//				$nameC = trim($nameC);
-//				$model2->setName($nameC);
 			}
 		}	
 		$this->_redirect('/admin/catalog');
@@ -820,16 +801,7 @@ class Admin_CatalogController extends Base_Controller_Action
 		$result = $model->fetchAll($select);
 		if(NULL != $result)
 		{
-			$paginator = Zend_Paginator::factory($result);
-			$paginator->setItemCountPerPage(25);
-			$paginator->setCurrentPageNumber($this->_getParam('page'));
-			$paginator->setPageRange(5);
-			$this->view->result = $paginator;
-			$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-			$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-			Zend_Paginator::setDefaultScrollingStyle('Sliding');
-			Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+            $this->paginateResult($result);
 		}
 	}
 	

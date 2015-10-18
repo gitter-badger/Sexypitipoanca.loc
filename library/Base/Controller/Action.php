@@ -103,4 +103,42 @@ class Base_Controller_Action extends Zend_Controller_Action
             }
         }
     }
+
+    /**
+     * paginate result and send it to Zend_View
+     * @param $result
+     * @throws Zend_Paginator_Exception
+     */
+    protected function paginateResult($result)
+    {
+        $paginator = Zend_Paginator::factory($result);
+        $paginator->setItemCountPerPage(25);
+        $paginator->setCurrentPageNumber($this->_getParam('page'));
+        $paginator->setPageRange(5);
+        $this->view->result = $paginator;
+        $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+        $this->view->totalItemCount = $paginator->getTotalItemCount();
+
+        Zend_Paginator::setDefaultScrollingStyle('Sliding');
+        Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+    }
+
+    /**
+     * paginate result and send it to Zend_View
+     * @param $select
+     * @throws Zend_Paginator_Exception
+     */
+    protected function paginateSelect($select)
+    {
+        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
+        $paginator->setItemCountPerPage(25);
+        $paginator->setCurrentPageNumber($this->_getParam('page'));
+        $paginator->setPageRange(5);
+        $this->view->result = $paginator;
+        $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
+        $this->view->totalItemCount = $paginator->getTotalItemCount();
+
+        Zend_Paginator::setDefaultScrollingStyle('Sliding');
+        Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+    }
 }
