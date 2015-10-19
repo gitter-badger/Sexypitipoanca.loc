@@ -305,8 +305,7 @@ class Admin_CatalogController extends Base_Controller_Action
 		$select = $model2->getMapper()->getDbTable()->select()
 				->where('product_id = ?', $product->getId());
 		$result = $model2->fetchAll($select);
-		if($result)
-		{
+		if ($result) {
 			$this->view->tags = $result;
 		}
 
@@ -317,8 +316,7 @@ class Admin_CatalogController extends Base_Controller_Action
 				->where('product_id = ?', $product)
 				->order('position ASC');
 		$result = $model2->fetchAll($select);
-		if($result)
-		{
+		if ($result) {
 			$imagesForEdit = $result;
 			$this->view->imagini = $result;
 			foreach($result as $value) {
@@ -327,24 +325,20 @@ class Admin_CatalogController extends Base_Controller_Action
 			$this->view->images = $eImages;
 		}
 
-		if($this->getRequest()->isPost()) // post info available
-		{
-			if($form->isValid($this->getRequest()->getPost()))
-			{
+		if ($this->getRequest()->isPost()) {
+			if ($form->isValid($this->getRequest()->getPost())) {
 				$oldName = '';
-				if($product->getName() != $form->getValue('name')) {
+				if ($product->getName() != $form->getValue('name')) {
 					$oldName = $product->getName();
-
-
 					$nameC = TS_Products::formatName($form->getValue('name'));
                     $product->setName($nameC);
 				}
                 $product->setCategory_id($form->getValue('category'));
                 $product->setStatus($form->getValue('status'));
                 $product->setDescription($form->getValue('description'));
-				if($product->save()) {
+				if ($product->save()) {
 					$this->_flashMessenger->addMessage('<div class="mess-true">Modificarile au fost efectuate cu succes!</div>');
-					if($form->getValue('tags')) {
+					if ($form->getValue('tags')) {
 						$tags = explode(',', trim($form->getValue('tags')));
 						foreach($tags as $tag) {
 							$tag = trim($tag);
@@ -352,16 +346,14 @@ class Admin_CatalogController extends Base_Controller_Action
 							$select = $model2->getMapper()->getDbTable()->select()
 									->where('name = ?', $tag);
 							$result = $model2->fetchAll($select);
-							if($result) {
+							if ($result) {
 								$model3 = new Default_Model_CatalogProductTags();
 								$select = $model3->getMapper()->getDbTable()->select()
 										->where('product_id = ?', $product->getId())
 										->where('tag_id = ?', $result[0]->getId())
 										;
 								$result2 = $model3->fetchAll($select);
-								if($result2) {
-									;
-								} else {
+								if (!$result2) {
 									$model4 = new Default_Model_CatalogProductTags();
 									$model4->setProduct_id($product->getId());
 									$model4->setTag_id($result[0]->getId());
@@ -371,7 +363,7 @@ class Admin_CatalogController extends Base_Controller_Action
 								$model3 = new Default_Model_Tags();
 								$model3->setName($tag);
 								$tagId = $model3->save();
-								if($tagId)
+								if ($tagId)
 								{
 									$model4 = new Default_Model_CatalogProductTags();
 									$model4->setProduct_id($product->getId());
@@ -383,13 +375,11 @@ class Admin_CatalogController extends Base_Controller_Action
 					}
 
 					$userId = $form->getValue('user');
-					if(!$form->getValue('user'))
-					{
+					if (!$form->getValue('user')) {
 						$userId = $product->getUser_id();
 					}
 
-					if(!empty($oldName))
-					{
+					if (!empty($oldName)) {
 						//daca a fost modificat user-ul si user-ul nou nu are inca folder creat
 						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
@@ -399,7 +389,7 @@ class Admin_CatalogController extends Base_Controller_Action
 						$allowed = "/[^a-z0-9\\-\\_]+/i";
 						$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));
 						$folderName = trim($folderName,'-');
-						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
+						if (!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
@@ -409,8 +399,7 @@ class Admin_CatalogController extends Base_Controller_Action
 						$folderName2 = preg_replace($allowed,"-", strtolower(trim($oldName)));
 						$folderName2 = trim($folderName2,'-');
 
-						foreach ($imagesForEdit as $valueImg)
-						{
+						foreach ($imagesForEdit as $valueImg) {
 							$model2 = new Default_Model_CatalogProductImages();
 							$model2->find($valueImg->getId());
 							$oldPozaNume = $model2->getName();
@@ -419,7 +408,7 @@ class Admin_CatalogController extends Base_Controller_Action
 							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
 							$pozaNume = $folderName.'-'.rand(99, 9999).'.'.$extension;
 							$model2->setName($pozaNume);
-							if($model2->save()) {
+							if ($model2->save()) {
 								copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
 								copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
 
@@ -435,10 +424,7 @@ class Admin_CatalogController extends Base_Controller_Action
 							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small',
 							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2
 						]);
-					}
-
-					else
-					{
+					} else {
 						$allowed = "/[^a-z0-9\\-\\_]+/i";
 						$folderName = preg_replace($allowed,"-", strtolower(trim($product->getName())));
 						$folderName = trim($folderName,'-');
@@ -449,8 +435,8 @@ class Admin_CatalogController extends Base_Controller_Action
 					$upload->setDestination('media/catalog/products/'.$userId.'/'.$folderName.'/');
 					$files = $upload->getFileInfo();
 					$i = 1;
-					foreach($files as $file => $info) {
-                        if($upload->isValid($file)) {
+					foreach ($files as $file => $info) {
+                        if ($upload->isValid($file)) {
                             if($upload->receive($file)){
                                 $tmp = pathinfo($info['name']);
                                 $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
@@ -459,7 +445,7 @@ class Admin_CatalogController extends Base_Controller_Action
                                 $model2->setProduct_id($product->getId());
                                 $model2->setPosition('999');
                                 $model2->setName($pozaNume);
-                                if($model2->save()) {
+                                if ($model2->save()) {
                                     require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
                                     $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
                                     $thumb->resize(600, 600)
@@ -468,7 +454,7 @@ class Admin_CatalogController extends Base_Controller_Action
                                     $thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
                                     $this->safeDelete('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
                                 }
-                            }else{
+                            } else {
                                 $this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
                                 $this->_redirect('/admin/catalog/products-edit/id/'.$product->getId());
                             }
