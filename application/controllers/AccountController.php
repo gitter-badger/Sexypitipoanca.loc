@@ -289,11 +289,16 @@ class AccountController extends Base_Controller_Action
 	{
 		if (!Zend_Registry::isRegistered('currentUser')) {
 			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		}
+		} else {
+            $currentUser = Zend_Registry::get('currentUser');
+            $this->view->currentUser = $currentUser;
+        }
+
+
 
         $catalogModel = new Default_Model_CatalogProducts();
         $select = $catalogModel->getMapper()->getDbTable()->select()
-            ->where('user_id = ?', Zend_Registry::get('authUser')->getId())
+            ->where('user_id = ?', $currentUser->getId())
             ->where('status = ?', '1')
             ->order('added DESC')
             ->limit(10);

@@ -20,7 +20,7 @@ class Admin_CatalogController extends Base_Controller_Action
 		$select = $model->getMapper()->getDbTable()->select()
 				->order('position ASC');
 		$result = $model->fetchAll($select);
-		if(null != $result) {
+		if (null != $result) {
 			$this->view->categories = $result;
 		}
 		// END: FILTERS
@@ -30,8 +30,9 @@ class Admin_CatalogController extends Base_Controller_Action
 	{
 		$id = $this->getRequest()->getParam('id');
 		$model = new Default_Model_CatalogProducts();
-		if($model->find($id))
-			$model->activate();
+		if ($model->find($id)) {
+            $model->activate();
+        }
 		$pagina = $this->getRequest()->getParam('pagina')?$this->getRequest()->getParam('pagina'):1;
 		$this ->_redirect("/admin/catalog/index/page/".$pagina);
 	}
@@ -43,35 +44,26 @@ class Admin_CatalogController extends Base_Controller_Action
 		$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/addVideo.phtml'))));
 		$this->view->form = $form;
 		
-		if($this->getRequest()->isPost()){
-			if($form->isValid($this->getRequest()->getPost())){
+		if ($this->getRequest()->isPost()){
+			if ($form->isValid($this->getRequest()->getPost())){
 				$name = TS_Products::formatName($form->getValue('name'));
 				
-				$model = new Default_Model_CatalogProducts();
-				$model->setOptions($form->getValues());
-				if(NULL != $form->getValue('url'))
-				{
-					$model->setType('embed');
-				}
-				else
-				{
-					$model->setType('video');
-				}
-				$model->setName($name);
-				$productId = $model->save();
-				if($productId)
-				{
+				$catalogProduct = new Default_Model_CatalogProducts();
+                $catalogProduct->setOptions($form->getValues());
+                $catalogProduct->setType((null != $form->getValue('url')) ? 'embed' : 'video');
+                $catalogProduct->setName($name);
+				if ($catalogProduct->save()) {
 					$model = new Default_Model_Video();
-					$model->setProductId($productId);
+					$model->setProductId($catalogProduct->getId());
 					$model->setUrl($form->getValue('url'));
 					$model->setEmbed($form->getValue('embed'));
 
-					if($form->image->receive()) {
-						if($form->image->getFileName()){
+					if ($form->image->receive()) {
+						if ($form->image->getFileName()){
 							$tmp = pathinfo($form->image->getFileName());
 							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
 							$filename = md5(uniqid(mt_rand(), true)).'.'.$extension;
-							if(@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename)) {
+							if (@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename)) {
 								require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
 								$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/video/'.$filename);
 								$thumb->resize(600, 600)
@@ -84,8 +76,8 @@ class Admin_CatalogController extends Base_Controller_Action
 						}
 					}
 
-					if($model->save())
-					{
+					if ($model->save()) {
+                        $this->_flashMessenger->addMessage('<div class="mess-true">Success! Video added.</div>');
 						$this->_redirect('/admin/catalog');
 					}
 				}
@@ -287,6 +279,11 @@ class Admin_CatalogController extends Base_Controller_Action
 		}
 	}
 
+    /**
+     * modify user photo
+     * @throws Zend_File_Transfer_Exception
+     * @throws Zend_Form_Exception
+     */
 	public function productsEditAction()
 	{
 		$product = new Default_Model_CatalogProducts();
@@ -310,10 +307,9 @@ class Admin_CatalogController extends Base_Controller_Action
 		}
 
 		$eImages = array();
-		$imagesForEdit = array();
 		$model2 = new Default_Model_CatalogProductImages();
 		$select = $model2->getMapper()->getDbTable()->select()
-				->where('product_id = ?', $product)
+				->where('product_id = ?', $product->getId())
 				->order('position ASC');
 		$result = $model2->fetchAll($select);
 		if ($result) {
@@ -323,6 +319,8 @@ class Admin_CatalogController extends Base_Controller_Action
 				$eImages[$value->getId()] = $value->getName();
 			}
 			$this->view->images = $eImages;
+		} else {
+			$imagesForEdit = [];
 		}
 
 		if ($this->getRequest()->isPost()) {
@@ -380,12 +378,10 @@ class Admin_CatalogController extends Base_Controller_Action
 					}
 
 					if (!empty($oldName)) {
-						//daca a fost modificat user-ul si user-ul nou nu are inca folder creat
 						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
 						}
 
-						//cream folderele cu numele galerie noua
 						$allowed = "/[^a-z0-9\\-\\_]+/i";
 						$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));
 						$folderName = trim($folderName,'-');
@@ -395,7 +391,6 @@ class Admin_CatalogController extends Base_Controller_Action
 							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
 						}
 
-						//copiem pozele din folderul vechi
 						$folderName2 = preg_replace($allowed,"-", strtolower(trim($oldName)));
 						$folderName2 = trim($folderName2,'-');
 
