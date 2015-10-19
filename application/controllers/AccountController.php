@@ -289,130 +289,42 @@ class AccountController extends Base_Controller_Action
 	{
 		if (!Zend_Registry::isRegistered('currentUser')) {
 			throw new Zend_Controller_Action_Exception('No registered user with that username', 404);
-		} else {
-            // get selected username
-            $currentUser = Zend_Registry::get('currentUser');
-            $this->view->currentUser = $currentUser;
-
-            // Begin: Show user activity
-            $catalogModel = new Default_Model_CatalogProducts();
-            $select = $catalogModel->getMapper()->getDbTable()->select()
-                ->where('user_id = ?', $currentUser->getId())
-                ->where('status = ?', '1')
-                ->order('added DESC')
-                ->limit(10);
-
-            // paginate the result
-            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-            $paginator->setItemCountPerPage(10);
-            $paginator->setCurrentPageNumber($this->_getParam('page'));
-            $paginator->setPageRange(5);
-            $this->view->activity = $paginator;
-            $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-            $this->view->totalItemCount = $paginator->getTotalItemCount();
-            Zend_Paginator::setDefaultScrollingStyle('Sliding');
-            Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
-            // End: Show user activity
-
-
-			$username = $this->getRequest()->getParam('username');
-			if($this->getRequest()->isPost())
-			{
-				$userId = Zend_Registry::get('authUser')->getId();
-				if($this->getRequest()->getPost('action') == 'status')
-				{
-					$modelArticle = new Default_Model_CatalogProducts();
-					$modelArticle->setUser_id($userId);
-					$modelArticle->setDescription($this->getRequest()->getPost('updateStatus'));
-					$modelArticle->setType('status');
-					$modelArticle->setStatus(1);
-					if($modelArticle->save())
-					{
-						$this->_redirect('/user/'.$username);
-					}
-				}
-				elseif($this->getRequest()->getPost('action') == 'gallery')
-				{
-					// BEGIN: Save article
-					$modelArticle = new Default_Model_CatalogProducts();
-					$modelArticle->setUser_id($userId);
-					$modelArticle->setName($this->getRequest()->getPost('photo_title'));
-					$modelArticle->setDescription($this->getRequest()->getPost('photo_description'));
-					$modelArticle->setCategory_id($this->getRequest()->getPost('photo_categ'));
-					$modelArticle->setType('gallery');
-					$modelArticle->setStatus(1);
-					$productId = $modelArticle->save();
-					// END: Save article
-					
-					if($productId)
-					{
-						// BEGIN: Save tags
-						$tags = $this->getRequest()->getPost('photo_tags');
-						TS_Catalog::saveTags($productId, $tags);
-						// END: Save tags
-						
-						// BEGIN: Save images
-						$allowed = "/[^a-z0-9\\-\\_]+/i";  
-						$folderName = preg_replace($allowed,"-", strtolower(trim($this->getRequest()->getPost('photo_title'))));	
-						$folderName = trim($folderName,'-');
-						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId. '/' . $folderName . '/')) {
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
-						}
-						
-						$imageCount = $this->getRequest()->getPost('uploader_count');
-						for ($i = 0; $i < $imageCount; $i++)
-						{
-							$imageName = $this->getRequest()->getPost('uploader_'.$i.'_name');
-							$tmpName = $this->getRequest()->getPost('uploader_'.$i.'_tmpname');
-							TS_Catalog::saveImage($productId, $imageName, $tmpName, $folderName);
-						}
-						// END: Save images
-					}
-					$this->_redirect('/user/'.$username);
-				}
-				elseif($this->getRequest()->getPost('action') == 'video')
-				{
-					$modelArticle = new Default_Model_CatalogProducts();
-					$modelArticle->setUser_id($userId);
-					$modelArticle->setName($this->getRequest()->getPost('video_title'));
-					$description = $this->getRequest()->getPost('video_description');
-					if($description != 'Descriere. . . '){
-						$modelArticle->setDescription($description);
-					}				
-					$modelArticle->setCategory_id($this->getRequest()->getPost('video_categ'));
-					$modelArticle->setType('embed');
-					$modelArticle->setStatus(1);
-					$productId = $modelArticle->save();
-					if($productId)
-					{
-						// BEGIN: Save tags
-						$tags = $this->getRequest()->getPost('video_tags');
-						if($tags != 'Adauga tag-uri separe prin virgula'){
-							TS_Catalog::saveTags($productId, $tags);
-						}
-						// END: Save tags
-						$modelVideo = new Default_Model_Video();
-						$modelVideo->setProductId($productId);
-						$modelVideo->setUrl($this->getRequest()->getPost('video_url'));
-						if($modelVideo->save())
-						{
-							$this->_redirect('/user/'.$username);
-						}
-					}
-				}
-			}
-			
-			$model = new Default_Model_AccountUsers();
-			$select = $model->getMapper()->getDbTable()->select()
-					->where('username = ?', $username);
-			$result = $model->fetchAll($select);
-			if(NULL != $result)
-			{
-				$this->view->result = $result[0];
-			}
 		}
+
+        $catalogModel = new Default_Model_CatalogProducts();
+        $select = $catalogModel->getMapper()->getDbTable()->select()
+            ->where('user_id = ?', Zend_Registry::get('authUser')->getId())
+            ->where('status = ?', '1')
+            ->order('added DESC')
+            ->limit(10);
+        $this->paginateSelect($select, 'activity', 10);
+
+
+        $username = $this->getRequest()->getParam('username');
+        if($this->getRequest()->isPost())
+        {
+            switch ($this->getRequest()->getPost('action')) {
+                case 'status':
+                    $this->saveUserStatus(Zend_Registry::get('authUser')->getId());
+                    break;
+                case 'gallery':
+                    $this->saveUserPhoto(Zend_Registry::get('authUser')->getId());
+                    break;
+                case 'video':
+                    $this->saveUserVideo(Zend_Registry::get('authUser')->getId());
+                    break;
+            }
+            $this->_redirect('/user/'.$username);
+        }
+
+        $model = new Default_Model_AccountUsers();
+        $select = $model->getMapper()->getDbTable()->select()
+                ->where('username = ?', $username);
+        $result = $model->fetchAll($select);
+        if(NULL != $result)
+        {
+            $this->view->result = $result[0];
+        }
 	}
 
 	public function termsAction()

@@ -107,15 +107,17 @@ class Base_Controller_Action extends Zend_Controller_Action
     /**
      * paginate result and send it to Zend_View
      * @param $result
+     * @param string $return
+     * @param int $count
      * @throws Zend_Paginator_Exception
      */
-    protected function paginateResult($result)
+    protected function paginateResult($result, $return = 'result', $count = 25)
     {
         $paginator = Zend_Paginator::factory($result);
-        $paginator->setItemCountPerPage(25);
+        $paginator->setItemCountPerPage($count);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
         $paginator->setPageRange(5);
-        $this->view->result = $paginator;
+        $this->view->$return = $paginator;
         $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
         $this->view->totalItemCount = $paginator->getTotalItemCount();
 
@@ -126,15 +128,17 @@ class Base_Controller_Action extends Zend_Controller_Action
     /**
      * paginate result and send it to Zend_View
      * @param $select
+     * @param string $return
+     * @param int $count
      * @throws Zend_Paginator_Exception
      */
-    protected function paginateSelect($select)
+    protected function paginateSelect($select, $return = 'result', $count = 25)
     {
         $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-        $paginator->setItemCountPerPage(25);
+        $paginator->setItemCountPerPage($count);
         $paginator->setCurrentPageNumber($this->_getParam('page'));
         $paginator->setPageRange(5);
-        $this->view->result = $paginator;
+        $this->view->$return = $paginator;
         $this->view->itemCountPerPage = $paginator->getItemCountPerPage();
         $this->view->totalItemCount = $paginator->getTotalItemCount();
 
@@ -191,6 +195,107 @@ class Base_Controller_Action extends Zend_Controller_Action
         $mail->addTo($user->getEmail());
         if ($mail->send()) {
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * save user status
+     * @param $userId
+     * @return bool
+     */
+    protected function saveUserStatus($userId)
+    {
+        $modelArticle = new Default_Model_CatalogProducts();
+        $modelArticle->setUser_id($userId);
+        $modelArticle->setDescription($this->getRequest()->getPost('updateStatus'));
+        $modelArticle->setType('status');
+        $modelArticle->setStatus(1);
+        if ($modelArticle->save())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * save user photo
+     * @param $userId
+     */
+    protected function saveUserPhoto($userId)
+    {
+        // BEGIN: Save article
+        $modelArticle = new Default_Model_CatalogProducts();
+        $modelArticle->setUser_id($userId);
+        $modelArticle->setName($this->getRequest()->getPost('photo_title'));
+        $modelArticle->setDescription($this->getRequest()->getPost('photo_description'));
+        $modelArticle->setCategory_id($this->getRequest()->getPost('photo_categ'));
+        $modelArticle->setType('gallery');
+        $modelArticle->setStatus(1);
+        $productId = $modelArticle->save();
+        // END: Save article
+
+        if($productId)
+        {
+            // BEGIN: Save tags
+            $tags = $this->getRequest()->getPost('photo_tags');
+            TS_Catalog::saveTags($productId, $tags);
+            // END: Save tags
+
+            // BEGIN: Save images
+            $allowed = "/[^a-z0-9\\-\\_]+/i";
+            $folderName = preg_replace($allowed,"-", strtolower(trim($this->getRequest()->getPost('photo_title'))));
+            $folderName = trim($folderName,'-');
+            if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId. '/' . $folderName . '/')) {
+                mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
+                mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
+                mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
+            }
+
+            $imageCount = $this->getRequest()->getPost('uploader_count');
+            for ($i = 0; $i < $imageCount; $i++)
+            {
+                $imageName = $this->getRequest()->getPost('uploader_'.$i.'_name');
+                $tmpName = $this->getRequest()->getPost('uploader_'.$i.'_tmpname');
+                TS_Catalog::saveImage($productId, $imageName, $tmpName, $folderName);
+            }
+            // END: Save images
+        }
+    }
+
+    /**
+     * save user video
+     * @param $userId
+     * @return bool
+     */
+    protected function saveUserVideo($userId)
+    {
+        $modelArticle = new Default_Model_CatalogProducts();
+        $modelArticle->setUser_id($userId);
+        $modelArticle->setName($this->getRequest()->getPost('video_title'));
+        $description = $this->getRequest()->getPost('video_description');
+        if($description != 'Descriere. . . '){
+            $modelArticle->setDescription($description);
+        }
+        $modelArticle->setCategory_id($this->getRequest()->getPost('video_categ'));
+        $modelArticle->setType('embed');
+        $modelArticle->setStatus(1);
+        $productId = $modelArticle->save();
+        if($productId)
+        {
+            // BEGIN: Save tags
+            $tags = $this->getRequest()->getPost('video_tags');
+            if($tags != 'Adauga tag-uri separe prin virgula'){
+                TS_Catalog::saveTags($productId, $tags);
+            }
+            // END: Save tags
+            $modelVideo = new Default_Model_Video();
+            $modelVideo->setProductId($productId);
+            $modelVideo->setUrl($this->getRequest()->getPost('video_url'));
+            if ($modelVideo->save())
+            {
+                return true;
+            }
         }
         return false;
     }
