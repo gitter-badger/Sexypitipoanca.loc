@@ -594,16 +594,7 @@ class AccountController extends Base_Controller_Action
 			$userId = Zend_Registry::get('currentUser')->getId();
 				$result = TS_Products::favoriteProducts($userId);
 				if (NULL != $result) {
-					$paginator = Zend_Paginator::factory($result);
-					$paginator->setItemCountPerPage(15);
-					$paginator->setCurrentPageNumber($this->_getParam('page'));
-					$paginator->setPageRange(5);
-					$this->view->result = $paginator;
-					$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-					$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-					Zend_Paginator::setDefaultScrollingStyle('Sliding');
-					Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+					$this->paginateResult($result);
 				}
 		}	
 	}

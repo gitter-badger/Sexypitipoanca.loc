@@ -19,4 +19,17 @@ class TS_Controller_Action extends Zend_Controller_Action
         $this->_flashMessenger = $this->_helper->getHelper('FlashMessenger');
         $this->view->message = $this->_flashMessenger->getMessages();
     }
+
+    /**
+     * print json response
+     * @param $response
+     * @param $httpCode
+     * @throws Zend_Controller_Response_Exception
+     */
+    protected function printJson($response, $httpCode) {
+        $this->getResponse()->setHeader('Content-Type', 'application/json');
+        $this->getResponse()->setHttpResponseCode($httpCode);
+
+        echo Zend_Json_Encoder::encode($response);
+    }
 }

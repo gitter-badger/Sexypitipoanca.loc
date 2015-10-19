@@ -155,6 +155,19 @@ class ApiController extends TS_Controller_Action
         $this->printJson($response, 400);
     }
 
+
+    public function testPostAction()
+    {
+        $body = $this->getRequest()->getRawBody();
+        $data = Zend_Json::decode($body);
+
+        if ($data['result'] === true) {
+            $this->printJson($data, 200);
+        } else {
+            $this->printJson([], 400);
+        }
+    }
+
     /**
      * prepare the post data as api response
      * @param $posts
@@ -203,19 +216,5 @@ class ApiController extends TS_Controller_Action
             ];
         }
         return $result;
-    }
-
-
-    /**
-     * print json response
-     * @param $response
-     * @param $httpCode
-     * @throws Zend_Controller_Response_Exception
-     */
-    protected function printJson($response, $httpCode) {
-        $this->getResponse()->setHeader('Content-Type', 'application/json');
-        $this->getResponse()->setHttpResponseCode($httpCode);
-
-        echo Zend_Json_Encoder::encode($response);
     }
 }
