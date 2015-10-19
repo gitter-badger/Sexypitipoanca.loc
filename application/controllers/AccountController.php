@@ -422,93 +422,63 @@ class AccountController extends Base_Controller_Action
 
 	public function newAction()
 	{
-		if ($authAccount = $this->isAuthenticated()) {
-            $account = new Default_Model_AccountUsers();
-            $account->find($authAccount->getId());
+		if ($this->isAuthenticated()) {
             $this->_redirect('/account');
-		} else {
-			$form = new Default_Form_Account();
-			$form->add();
-			$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/new.phtml'))));
-			$this->view->form = $form;
+		}
 
-			if($this->getRequest()->isPost()) {
-				if($this->getRequest()->getPost('control') == 'new') {
-					if($form->isValid($this->getRequest()->getPost())) {
-						if($form->getValue('terms') == '1') {
-							$birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
-							$allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
-							if($birthday <= $allowed) {
-								$model = new Default_Model_AccountUsers();
-								$model->setOptions($form->getValues());
-								$model->setRoleId('3');
-								$model->setBirth_day($form->getValue('birth_year').'-'.$form->getValue('birth_month').'-'.$form->getValue('birth_day'));
-								$model->setPassword(md5($form->getValue('passwordnew')));
-								if($form->image->receive())
+		$form = new Default_Form_Account();
+		$form->add();
+		$form->setDecorators(array('ViewScript', array('ViewScript', array('viewScript' => 'forms/account/new.phtml'))));
+		$this->view->form = $form;
+
+		if($this->getRequest()->isPost()) {
+			if($this->getRequest()->getPost('control') == 'new') {
+				if($form->isValid($this->getRequest()->getPost())) {
+					if($form->getValue('terms') == '1') {
+						$birthday = mktime(date('j'), date('i'), date('s'), $form->getValue('birth_month'), $form->getValue('birth_day'), $form->getValue('birth_year'));
+						$allowed = mktime(date('j'), date('i'), date('s'), date('m'), date('d'), date('Y')-18);
+						if($birthday <= $allowed) {
+							$model = new Default_Model_AccountUsers();
+							$model->setOptions($form->getValues());
+							$model->setRoleId('3');
+							$model->setBirth_day($form->getValue('birth_year').'-'.$form->getValue('birth_month').'-'.$form->getValue('birth_day'));
+							$model->setPassword(md5($form->getValue('passwordnew')));
+							if($form->image->receive())
+							{
+								if($form->image->getFileName())
 								{
-									if($form->image->getFileName())
+									$tmp = pathinfo($form->image->getFileName());
+									$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
+									$filename = md5(uniqid(mt_rand(), true)).'.'.$extension;
+									if(@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename))
 									{
-										$tmp = pathinfo($form->image->getFileName());
-										$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-										$filename = md5(uniqid(mt_rand(), true)).'.'.$extension;
-										if(@copy($form->image->getFileName(), APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename))
-										{
-											require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-											$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-											$thumb->resize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
-											$thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
-                                            $this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
-											$model->setAvatar($filename);
-										}
+										require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
+										$thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+										$thumb->resize(233, 176)->save(APPLICATION_PUBLIC_PATH.'/media/avatar/big/'.$filename);
+										$thumb->tsResizeWithFill(44, 44, 'ffffff')->save(APPLICATION_PUBLIC_PATH.'/media/avatar/small/'.$filename);
+										$this->safeDelete(APPLICATION_PUBLIC_PATH.'/media/avatar/'.$filename);
+										$model->setAvatar($filename);
 									}
 								}
-								$activation_code = substr(md5(uniqid(mt_rand(), true)),0,10);
-								$model->setActivationcode($activation_code);
-								$model->setStatus('0');
-								if($model->save()) {
-									if($form->getValue('newsletter') == '1') {
-										$model2 = new Default_Model_NewsletterSubscribers();										
-										$model2->setEmail($form->getValue('email'));										
-										$model2->save();
-									}
-									
-									//BEGIN:ACTIVARE
-									$url            = "http://".$_SERVER['SERVER_NAME'];
-									$username		= $model->getUsername();
-                                    $email          = $model->getEmail();
-									$activationlink = '<a href="'.$url.'/auth/activation?code='.$activation_code.'">Activare</a>';
-									
-									$signup = new Default_Model_Templates();
-									$signup->find('signUp');
-									
-									$subject = $signup->getSubjectro();
-									$message = $signup->getValuero();
-									
-									$message = str_replace('{'.'$'.'username}', $username, $message);
-									$message = str_replace('{'.'$'.'email}', $email, $message);
-									$message = str_replace('{'.'$'.'activationlink}', $activationlink, $message);	
-									
-									// ToDo: change hardcoded variables
-									$emailcompany = 'contact@sexypitipoanca.ro';
-									$institution = 'SexyPitipoanca.ro';
-									
-									$mail = new Zend_Mail();
-									$mail->setFrom($emailcompany, $institution);
-									$mail->setSubject($subject);
-									$mail->setBodyHtml($message);
-									$mail->addTo($model->getEmail());
-									$mail->send();
-									//END:ACTIVARE
-									
-									$this->_flashMessenger->addMessage('<span class="mess-true">Contul a fost creat cu succes. Un email cu codul de activare a fost trimis!</span>');
-									$this->_redirect('/account/new');
-								}else{
-									$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Contul nu a putut fi creat! Va rugam incercati mai tarziu!</span>');
-								}
-							} else {							
-								$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Contul nu a putut fi creat! Trebuie sa aveti peste 18 ani!</span>');
-								$this->_redirect('/account/new');
 							}
+							$activation_code = substr(md5(uniqid(mt_rand(), true)),0,10);
+							$model->setActivationcode($activation_code);
+							$model->setStatus('0');
+							if($model->save()) {
+								if($form->getValue('newsletter') == '1') {
+                                    $this->subscribe($form->getValue('email'));
+								}
+
+                                $this->activate($model);
+
+								$this->_flashMessenger->addMessage('<span class="mess-true">Contul a fost creat cu succes. Un email cu codul de activare a fost trimis!</span>');
+								$this->_redirect('/account/new');
+							}else{
+								$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Contul nu a putut fi creat! Va rugam incercati mai tarziu!</span>');
+							}
+						} else {
+							$this->_flashMessenger->addMessage('<span class="mess-false">Eroare! Contul nu a putut fi creat! Trebuie sa aveti peste 18 ani!</span>');
+							$this->_redirect('/account/new');
 						}
 					}
 				}
