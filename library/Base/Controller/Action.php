@@ -303,6 +303,7 @@ class Base_Controller_Action extends Zend_Controller_Action
     /**
      * save tags
      * @param string $tags
+     * @param $productId
      */
     protected function saveTags($tags, $productId)
     {
