@@ -299,4 +299,44 @@ class Base_Controller_Action extends Zend_Controller_Action
         }
         return false;
     }
+
+    /**
+     * save tags
+     * @param string $tags
+     */
+    protected function saveTags($tags, $productId)
+    {
+        $tagsArray = explode(',', trim($tags));
+        foreach($tagsArray as $tag) {
+            $tag = trim($tag);
+            $model2 = new Default_Model_Tags();
+            $select = $model2->getMapper()->getDbTable()->select()
+                ->where('name = ?', $tag);
+            $result = $model2->fetchAll($select);
+            if ($result) {
+                $model3 = new Default_Model_CatalogProductTags();
+                $select = $model3->getMapper()->getDbTable()->select()
+                    ->where('product_id = ?', $productId)
+                    ->where('tag_id = ?', $result[0]->getId());
+                $result2 = $model3->fetchAll($select);
+                if (!$result2) {
+                    $model4 = new Default_Model_CatalogProductTags();
+                    $model4->setProduct_id($productId);
+                    $model4->setTag_id($result[0]->getId());
+                    $model4->save();
+                }
+            } else {
+                $model3 = new Default_Model_Tags();
+                $model3->setName($tag);
+                $tagId = $model3->save();
+                if ($tagId)
+                {
+                    $model4 = new Default_Model_CatalogProductTags();
+                    $model4->setProduct_id($productId);
+                    $model4->setTag_id($tagId);
+                    $model4->save();
+                }
+            }
+        }
+    }
 }
