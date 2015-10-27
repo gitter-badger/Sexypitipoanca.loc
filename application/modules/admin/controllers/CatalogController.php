@@ -393,37 +393,7 @@ class Admin_CatalogController extends Base_Controller_Action
 						$folderName = trim($folderName,'-');
 					}
 
-					$upload = new Zend_File_Transfer_Adapter_Http();
-					$upload->addValidator('Size', false, 2000000, 'image');
-					$upload->setDestination('media/catalog/products/'.$userId.'/'.$folderName.'/');
-					$files = $upload->getFileInfo();
-					$i = 1;
-					foreach ($files as $file => $info) {
-                        if ($upload->isValid($file)) {
-                            if($upload->receive($file)){
-                                $tmp = pathinfo($info['name']);
-                                $extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-                                $pozaNume = $folderName.'-'.rand(99, 9999).'.'.$extension;
-                                $model2 = new Default_Model_CatalogProductImages();
-                                $model2->setProduct_id($product->getId());
-                                $model2->setPosition('999');
-                                $model2->setName($pozaNume);
-                                if ($model2->save()) {
-                                    require_once APPLICATION_PUBLIC_PATH.'/library/Needs/tsThumb/ThumbLib.inc.php';
-                                    $thumb = PhpThumbFactory::create(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
-                                    $thumb->resize(600, 600)
-                                          ->tsWatermark(APPLICATION_PUBLIC_PATH."/media/watermark-small.png")
-                                          ->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/big/'.$pozaNume);
-                                    $thumb->tsResizeWithFill(150, 150, "ffffff")->save(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName.'/small/'.$pozaNume);
-                                    $this->safeDelete('media/catalog/products/'.$userId.'/'.$folderName.'/'.$info['name']);
-                                }
-                            } else {
-                                $this->_flashMessenger->addMessage('<div class="mess-info">Eroare upload!</div>');
-                                $this->_redirect('/admin/catalog/products-edit/id/'.$product->getId());
-                            }
-                        }
-						$i++;
-					}
+                    $this->uploadArticleImages($userId, $folderName, $product);
 				}
 				$this->_redirect('/admin/catalog/products-edit/id/'.$product->getId());
 			}
