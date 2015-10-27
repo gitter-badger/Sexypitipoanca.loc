@@ -164,7 +164,12 @@ class ApiController extends TS_Controller_Action
         if ($data['result'] === true) {
             $this->printJson($data, 200);
         } else {
-            $this->printJson([], 400);
+            $response = [
+                'code'          => 400,
+                'message'       => 'There was an error',
+                'description'   => 'So...I don\'t know what happened but...it failed'
+            ];
+            $this->printJson($response, 400);
         }
     }
 
