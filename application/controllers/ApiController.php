@@ -39,7 +39,12 @@ class ApiController extends TS_Controller_Action
                     ;
                     break;
             }
-            $this->getResponse()->setHttpResponseCode(401);
+            $response = [
+                'code'          => 401,
+                'message'       => 'There was an error',
+                'description'   => 'So...I don\'t know what happened but...it failed'
+            ];
+            $this->printJson($response, 401);
         }
         else
         {
@@ -57,30 +62,30 @@ class ApiController extends TS_Controller_Action
     {
         $this->getResponse()->setHeader('Content-Type', 'application/json');
 
-        // check logged in user
         $auth = Zend_Auth::getInstance();
         $authAccount = $auth->getStorage()->read();
         if (null != $authAccount) {
             $model = new Default_Model_CatalogProducts();
             $select = $model->getMapper()->getDbTable()->select()
-                ->from(['p' => 'j_catalog_products'], [])
-                ->joinCross(['f' => 'j_catalog_product_favorites'], [])
+                ->from(['p' => 'j_catalog_products'])
+                ->joinInner(['f' => 'j_catalog_product_favorites'], 'p.id = f.productId')
                 ->where('f.userId = ?', $authAccount->getId())
                 ->where('f.type = ?', 'favorite')
                 ->order('f.created DESC')
                 ->setIntegrityCheck(false);
             $posts = $model->fetchAll($select);
-
             if ($posts) {
-                echo Zend_Json_Encoder::encode(
-                    $this->parsePostData($posts)
-                );
-                $this->getResponse()->setHttpResponseCode(200);
+                $this->printJson($this->parsePostData($posts), 200);
             } else {
                 $this->getResponse()->setHttpResponseCode(204);
             }
         } else {
-            $this->getResponse()->setHttpResponseCode(401);
+            $response = [
+                'code'          => 401,
+                'message'       => 'There was an error',
+                'description'   => 'So...I don\'t know what happened but...it failed'
+            ];
+            $this->printJson($response, 401);
         }
     }
 
