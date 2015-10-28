@@ -8,25 +8,15 @@ class CatalogController extends Base_Controller_Action
 	
 	public function scoreAction()
 	{
-		$tsStatistics = new TS_Statistics();
 		$tsProducts = new TS_Products();
-//		$topRated = $tsProducts->getTopGalleries('rating', 'gallery', null);
+		$topRated = $tsProducts->getTopGalleries('rating', 'gallery', null);
 		
 		$model = new Default_Model_CatalogProducts();
 		$select = $model->getMapper()->getDbTable()->select()
-//				->where('id IN (?)', array_keys($topRated))
+				->where('id IN (?)', array_keys($topRated))
 				->where('status = ?', '1')
 				->order('added DESC');
-		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-		$paginator->setItemCountPerPage(10);
-		$paginator->setCurrentPageNumber($this->_getParam('page'));
-		$paginator->setPageRange(5);
-		$this->view->result = $paginator;
-		$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-		$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-		Zend_Paginator::setDefaultScrollingStyle('Sliding');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
+        $this->paginateSelect($select, 'result', 10);
 	}
 
 	public function categoriesAction()
@@ -41,17 +31,7 @@ class CatalogController extends Base_Controller_Action
 				->where('category_id = ?', $id)
 				->where('status = ?', '1')
 				->order('added DESC');
-		$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-		$paginator->setItemCountPerPage(10);
-		$paginator->setCurrentPageNumber($this->_getParam('page'));
-		$paginator->setPageRange(5);
-		$this->view->result = $paginator;
-		$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-		$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-		Zend_Paginator::setDefaultScrollingStyle('Sliding');
-		Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
-		
+        $this->paginateSelect($select, 'result', 10);
 	}
 
 	public function tagsAction()
@@ -70,17 +50,7 @@ class CatalogController extends Base_Controller_Action
 					->join(array('t'=>'j_catalog_product_tags'), 'p.id = t.product_id', array('t.product_id', 't.tag_id'))
 					->where('t.tag_id = ?', $result[0]->getId())
 					->setIntegrityCheck(false);
-			$paginator = new Zend_Paginator(new Zend_Paginator_Adapter_DbSelect($select));
-			$paginator->setItemCountPerPage(10);
-			$paginator->setCurrentPageNumber($this->_getParam('page'));
-			$paginator->setPageRange(5);
-			$this->view->result = $paginator;
-			$this->view->itemCountPerPage = $paginator->getItemCountPerPage();
-			$this->view->totalItemCount = $paginator->getTotalItemCount();
-
-			Zend_Paginator::setDefaultScrollingStyle('Sliding');
-			Zend_View_Helper_PaginationControl::setDefaultViewPartial('_pagination.phtml');
-			
+            $this->paginateSelect($select, 'result', 10);
 		}
 	}
 
