@@ -218,4 +218,34 @@ class IframeController extends Zend_Controller_Action
 			}
 		}
 	}
+
+	public function testAction()
+	{
+		$curl = curl_init();
+		curl_setopt_array(
+            $curl,
+            array(
+                CURLOPT_URL => "http://192.168.0.104/sexypitipoanca.loc/api/test-post/",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    "cache-control: no-cache",
+                    "content-type: application/json",
+                    "postman-token: bac3af4e-dae5-dca0-c8f8-6742a1a6f5bc"
+                ),
+            )
+        );
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            echo $response;
+        }
+	}
 }

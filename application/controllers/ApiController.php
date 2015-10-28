@@ -141,6 +141,22 @@ class ApiController extends TS_Controller_Action
         }
     }
 
+    public function logoutAction()
+    {
+        $auth = Zend_Auth::getInstance();
+        if (!$auth->hasIdentity()) {
+            $response = [
+                'code'          => 401,
+                'message'       => 'There was an error',
+                'description'   => 'So...I don\'t know what happened but...it failed'
+            ];
+            $this->printJson($response, 401);
+        } else {
+            $auth->clearIdentity();
+            $this->printJson('', 200);
+        }
+    }
+
     public function successAction()
     {
         $response = [
