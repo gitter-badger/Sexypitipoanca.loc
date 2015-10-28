@@ -306,23 +306,6 @@ class Admin_CatalogController extends Base_Controller_Action
 			$this->view->tags = $result;
 		}
 
-		$eImages = array();
-		$model2 = new Default_Model_CatalogProductImages();
-		$select = $model2->getMapper()->getDbTable()->select()
-				->where('product_id = ?', $product->getId())
-				->order('position ASC');
-		$result = $model2->fetchAll($select);
-		if ($result) {
-			$imagesForEdit = $result;
-			$this->view->imagini = $result;
-			foreach($result as $value) {
-				$eImages[$value->getId()] = $value->getName();
-			}
-			$this->view->images = $eImages;
-		} else {
-			$imagesForEdit = [];
-		}
-
 		if ($this->getRequest()->isPost()) {
 			if ($form->isValid($this->getRequest()->getPost())) {
 				$oldName = '';
@@ -346,43 +329,14 @@ class Admin_CatalogController extends Base_Controller_Action
 					}
 
 					if (!empty($oldName)) {
-						if(!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/')) {
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId , 0777, true);
-						}
+                        list($folderName, $folderName2) = $this->createArticleFolders($userId, $form->getValue('name'), $oldName);
 
-						$allowed = "/[^a-z0-9\\-\\_]+/i";
-						$folderName = preg_replace($allowed,"-", strtolower(trim($form->getValue('name'))));
-						$folderName = trim($folderName,'-');
-						if (!file_exists(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/')) {
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/', 0777, true);
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/big', 0777, true);
-							mkdir(APPLICATION_PUBLIC_PATH . '/media/catalog/products/' . $userId . '/' . $folderName . '/small', 0777, true);
-						}
+                        $imagesForEdit = $this->getProductImages($product->getId());
+                        $this->view->images = $this->parseProductImages($imagesForEdit);
 
-						$folderName2 = preg_replace($allowed,"-", strtolower(trim($oldName)));
-						$folderName2 = trim($folderName2,'-');
+                        $this->renameArticleFolders($imagesForEdit, $product, $folderName2, $folderName, $userId, $form);
 
-						foreach ($imagesForEdit as $valueImg) {
-							$model2 = new Default_Model_CatalogProductImages();
-							$model2->find($valueImg->getId());
-							$oldPozaNume = $model2->getName();
-							$oldPath = 'media/catalog/products/'.($product->getUser_id()?$product->getUser_id():'0').'/'.$folderName2.'/big/'.$oldPozaNume;
-							$tmp = pathinfo($oldPath);
-							$extension = (!empty($tmp['extension']))?$tmp['extension']:null;
-							$pozaNume = $folderName.'-'.rand(99, 9999).'.'.$extension;
-							$model2->setName($pozaNume);
-							if ($model2->save()) {
-								copy(APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume, APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/big/'.$pozaNume);
-								copy((APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume), APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$form->getValue('user').'/'.$folderName.'/small/'.$pozaNume);
-
-								$this->safeDelete([
-									APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big/'.$oldPozaNume,
-									APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small/'.$oldPozaNume
-								]);
-							}
-						}
-
-						$this->safeRemoveDir([
+                        $this->safeRemoveDir([
 							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/big',
 							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2.'/small',
 							APPLICATION_PUBLIC_PATH.'/media/catalog/products/'.$userId.'/'.$folderName2
